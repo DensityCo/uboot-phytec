@@ -33,7 +33,8 @@ const struct omap_sysinfo sysinfo = {
 };
 
 static const struct dmm_lisa_map_regs am57xx_phycore_rdk_lisa_regs = {
-	.dmm_lisa_map_3 = 0x80740300,
+	.dmm_lisa_map_3 = 0x80600100,
+	.dmm_lisa_map_2 = 0xC0600200,
 	.is_ma_present  = 0x1
 };
 
