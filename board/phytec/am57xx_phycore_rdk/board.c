@@ -14,6 +14,7 @@
 #include <asm/omap_common.h>
 #include <asm/emif.h>
 #include <asm/arch/clock.h>
+#include <asm/arch/dra7xx_iodelay.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/arch/mmc_host_def.h>
 #include <asm/arch/sata.h>
@@ -47,7 +48,8 @@ static const struct emif_regs am57xx_phycore_rdk_ddr3_532mhz_emif_regs = {
 	.sdram_config_init	= 0x61851B32, /* dont know what to do about this */
 	.sdram_config		= 0x61851B32,
 	.sdram_config2		= 0x00000000,
-	.ref_ctrl		= 0x00001035,
+	.ref_ctrl		= 0x000040F1,
+	.ref_ctrl_final		= 0x00001035,
 	.sdram_tim1		= 0xCEEF266B,
 	.sdram_tim2		= 0x328F7FDA,
 	.sdram_tim3		= 0x027F88A8,
@@ -174,10 +176,17 @@ int board_late_init(void)
 void set_muxconf_regs_essential(void)
 {
 	do_set_mux32((*ctrl)->control_padconf_core_base,
-		     core_padconf_array_essential,
-		     sizeof(core_padconf_array_essential) /
-		     sizeof(struct pad_conf_entry));
+		early_padconf, ARRAY_SIZE(early_padconf));
 }
+
+#ifdef CONFIG_IODELAY_RECALIBRATION
+void recalibrate_iodelay(void)
+{
+        __recalibrate_iodelay(core_padconf_array_essential,
+                              ARRAY_SIZE(core_padconf_array_essential),
+                              iodelay_cfg_array, ARRAY_SIZE(iodelay_cfg_array));
+}
+#endif
 
 #if !defined(CONFIG_SPL_BUILD) && defined(CONFIG_GENERIC_MMC)
 int board_mmc_init(bd_t *bis)
@@ -312,7 +321,7 @@ int board_eth_init(bd_t *bis)
 #ifdef CONFIG_USB_XHCI_OMAP
 int board_usb_init(int index, enum usb_init_type init)
 {
-	setbits_le32((*prcm)->cm_l3init_usb_otg_ss_clkctrl,
+	setbits_le32((*prcm)->cm_l3init_usb_otg_ss1_clkctrl,
 			OTG_SS_CLKCTRL_MODULEMODE_HW | OPTFCLKEN_REFCLK960M);
 
 	return 0;
