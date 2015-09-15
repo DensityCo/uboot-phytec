@@ -120,7 +120,7 @@
 		"if test $board_name = am571x_idk && test $idk_lcd = no; then " \
 			"setenv fdtfile am571x-idk.dtb; fi;" \
 		"if test $board_name = am57xx_phycore_rdk; then " \
-			"setenv fdtfile am57xx-phycore-som-complete.dtb; fi;" \
+			"setenv fdtfile am57xx-phycore-rdk.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
 	"loadfdt=load mmc ${bootpart} ${fdtaddr} ${bootdir}/${fdtfile};\0" \
