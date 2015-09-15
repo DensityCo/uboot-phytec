@@ -81,16 +81,19 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 }
 
 static const u32 am57xx_phycore_rdk_ddr3_ext_phy_ctrl_const_regs[] = {
-	0x00800080, // 6
+	0x10040100,
+	0x00740074,
+	0x00780078,
+	0x007c007c,
+	0x007b007b,
+	0x00800080,
+	0x00360036,
+	0x00340034,
+	0x00360036,
+	0x00350035,
+	0x00350035,
 
-
-	0x00360036, // 7
-	0x00340034, // 8
-	0x00360036, // 9
-	0x00350035, // 10
-	0x00350035, // 11
-
-	0x01ff01ff, // 12
+	0x01ff01ff,
 	0x01ff01ff,
 	0x01ff01ff,
 	0x01ff01ff,
@@ -104,7 +107,7 @@ static const u32 am57xx_phycore_rdk_ddr3_ext_phy_ctrl_const_regs[] = {
 
 	0x00000000,
 	0x00600020,
-	0x40010080,
+	0x40011080,
 	0x08102040,
 
 	0x00400040,
