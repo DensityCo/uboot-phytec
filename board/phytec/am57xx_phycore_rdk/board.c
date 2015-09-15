@@ -50,7 +50,7 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 	*dmm_lisa_regs = &am57xx_phycore_rdk_lisa_regs;
 }
 
-static const struct emif_regs am57xx_phycore_rdk_ddr3_532mhz_emif_regs = {
+static const struct emif_regs am57xx_phycore_rdk_emif1_532mhz_emif_regs = {
 	.sdram_config_init	= 0x61851B32,
 	.sdram_config		= 0x61851B32,
 	.sdram_config2		= 0x00000000,
@@ -75,12 +75,8 @@ static const struct emif_regs am57xx_phycore_rdk_ddr3_532mhz_emif_regs = {
 	.emif_rd_wr_exec_thresh	= 0x00000305
 };
 
-void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
-{
-	*regs = &am57xx_phycore_rdk_ddr3_532mhz_emif_regs;
-}
-
-static const u32 am57xx_phycore_rdk_ddr3_ext_phy_ctrl_const_regs[] = {
+/* Ext phy ctrl regs 1-35 */
+static const u32 am57xx_phycore_rdk_emif1_ext_phy_ctrl_const_regs[] = {
 	0x10040100,
 	0x00740074,
 	0x00780078,
@@ -122,10 +118,97 @@ static const u32 am57xx_phycore_rdk_ddr3_ext_phy_ctrl_const_regs[] = {
 	0x0
 };
 
+static const struct emif_regs am57xx_phycore_rdk_emif2_532mhz_emif_regs = {
+	.sdram_config_init	= 0x61851b32,
+	.sdram_config		= 0x61851b32,
+	.sdram_config2		= 0x00000000,
+	.ref_ctrl		= 0x000040F1,
+	.ref_ctrl_final		= 0x00001035,
+	.sdram_tim1		= 0xceef266b,
+	.sdram_tim2		= 0x328f7fda,
+	.sdram_tim3		= 0x027f88a8,
+	.read_idle_ctrl		= 0x00050001,
+	.zq_config		= 0x0007190b,
+	.temp_alert_config	= 0x00000000,
+	.emif_ddr_phy_ctlr_1_init = 0x0024400b,
+	.emif_ddr_phy_ctlr_1	= 0x0e24400b,
+	.emif_ddr_ext_phy_ctrl_1 = 0x10040100,
+	.emif_ddr_ext_phy_ctrl_2 = 0x00820082,
+	.emif_ddr_ext_phy_ctrl_3 = 0x008b008b,
+	.emif_ddr_ext_phy_ctrl_4 = 0x00800080,
+	.emif_ddr_ext_phy_ctrl_5 = 0x007e007e,
+	.emif_rd_wr_lvl_rmp_win	= 0x00000000,
+	.emif_rd_wr_lvl_rmp_ctl	= 0x80000000,
+	.emif_rd_wr_lvl_ctl	= 0x00000000,
+	.emif_rd_wr_exec_thresh	= 0x00000305
+};
+
+/* Ext phy ctrl regs 1-35 */
+static const u32 am57xx_phycore_rdk_emif2_ext_phy_ctrl_const_regs[] = {
+	0x10040100,
+	0x00820082,
+	0x008b008b,
+	0x00800080,
+	0x007e007e,
+	0x00800080,
+	0x00370037,
+	0x00390039,
+	0x00360036,
+	0x00370037,
+	0x00350035,
+
+	0x01ff01ff,
+	0x01ff01ff,
+	0x01ff01ff,
+	0x01ff01ff,
+	0x01ff01ff,
+	0x00540054,
+	0x00540054,
+	0x004e004e,
+	0x004c004c,
+	0x00400040,
+
+	0x00000000,
+	0x00600020,
+	0x40011080,
+	0x08102040,
+
+	0x00400040,
+	0x00400040,
+	0x00400040,
+	0x00400040,
+	0x00400040,
+	0x0,
+	0x0,
+	0x0,
+	0x0,
+	0x0
+};
+
+void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
+{
+	switch (emif_nr) {
+	case 1:
+		*regs = &am57xx_phycore_rdk_emif1_532mhz_emif_regs;
+		break;
+	case 2:
+		*regs = &am57xx_phycore_rdk_emif2_532mhz_emif_regs;
+		break;
+	}
+}
+
 void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 {
-	*regs = am57xx_phycore_rdk_ddr3_ext_phy_ctrl_const_regs;
-	*size = ARRAY_SIZE(am57xx_phycore_rdk_ddr3_ext_phy_ctrl_const_regs);
+	switch (emif_nr) {
+	case 1:
+		*regs = am57xx_phycore_rdk_emif1_ext_phy_ctrl_const_regs;
+		*size = ARRAY_SIZE(am57xx_phycore_rdk_emif1_ext_phy_ctrl_const_regs);
+		break;
+	case 2:
+		*regs = am57xx_phycore_rdk_emif2_ext_phy_ctrl_const_regs;
+		*size = ARRAY_SIZE(am57xx_phycore_rdk_emif2_ext_phy_ctrl_const_regs);
+		break;
+	}
 }
 
 struct vcores_data am57xx_phycore_rdk_volts = {
