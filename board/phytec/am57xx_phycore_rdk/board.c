@@ -51,7 +51,7 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 }
 
 static const struct emif_regs am57xx_phycore_rdk_ddr3_532mhz_emif_regs = {
-	.sdram_config_init	= 0x61851B32, /* dont know what to do about this */
+	.sdram_config_init	= 0x61851B32,
 	.sdram_config		= 0x61851B32,
 	.sdram_config2		= 0x00000000,
 	.ref_ctrl		= 0x000040F1,
@@ -59,19 +59,19 @@ static const struct emif_regs am57xx_phycore_rdk_ddr3_532mhz_emif_regs = {
 	.sdram_tim1		= 0xCEEF266B,
 	.sdram_tim2		= 0x328F7FDA,
 	.sdram_tim3		= 0x027F88A8,
-	.read_idle_ctrl		= 0x00050001, /* not sure where in gel file */
+	.read_idle_ctrl		= 0x00050001,
 	.zq_config		= 0x0007190B,
 	.temp_alert_config	= 0x00000000,
-	.emif_ddr_phy_ctlr_1_init = 0x0E24400A, /* not sure what to do about this */
-	.emif_ddr_phy_ctlr_1	= 0x0E24400A, /* based on non hw level enabled */
-	.emif_ddr_ext_phy_ctrl_1 = 0x10040100, /* not sure wherein gel file */
+	.emif_ddr_phy_ctlr_1_init = 0x0024400B,
+	.emif_ddr_phy_ctlr_1	= 0x0E24400B,
+	.emif_ddr_ext_phy_ctrl_1 = 0x10040100,
 	.emif_ddr_ext_phy_ctrl_2 = 0x00740074,
 	.emif_ddr_ext_phy_ctrl_3 = 0x00780078,
 	.emif_ddr_ext_phy_ctrl_4 = 0x007c007c,
 	.emif_ddr_ext_phy_ctrl_5 = 0x007b007b,
 	.emif_rd_wr_lvl_rmp_win	= 0x00000000,
-	.emif_rd_wr_lvl_rmp_ctl	= 0x00000000, /* based on non hw level enabled */
-	.emif_rd_wr_lvl_ctl	= 0x00000000, /* not sure where based in gel file */
+	.emif_rd_wr_lvl_rmp_ctl	= 0x80000000,
+	.emif_rd_wr_lvl_ctl	= 0x00000000,
 	.emif_rd_wr_exec_thresh	= 0x00000305
 };
 
@@ -114,7 +114,12 @@ static const u32 am57xx_phycore_rdk_ddr3_ext_phy_ctrl_const_regs[] = {
 	0x00400040,
 	0x00400040,
 	0x00400040,
-	0x00400040
+	0x00400040,
+	0x0,
+	0x0,
+	0x0,
+	0x0,
+	0x0
 };
 
 void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
