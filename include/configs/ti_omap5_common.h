@@ -171,6 +171,14 @@
 	"importbootenv=echo Importing environment from mmc${mmcdev} ...; " \
 		"env import -t ${loadaddr} ${filesize}\0" \
 	"loadimage=load mmc ${bootpart} ${loadaddr} ${bootdir}/${bootfile}\0" \
+	"boot_mmc=run findfdt; " \
+		"run mmcboot;" \
+		"setenv mmcdev 1; " \
+		"setenv bootpart 1:2; " \
+		"setenv mmcroot /dev/mmcblk0p2 rw; " \
+		"run mmcboot;\0" \
+	"boot_net=run findfdt; " \
+		"run netboot;\0" \
 	"mmcboot=mmc dev ${mmcdev}; " \
 		"if mmc rescan; then " \
 			"echo SD/MMC found on device ${mmcdev};" \
@@ -190,10 +198,8 @@
 			"fi;" \
 		"fi;\0" \
 	"netboot=echo Booting from network ...; " \
-		"set env autoload no; " \
-		"dhcp; " \
-		"tftp ${loadaddr} ${bootfile}; " \
-		"tftp ${fdtaddr} ${fdtfile}; " \
+		"tftp ${loadaddr} ${tftploc}${bootfile}; " \
+		"tftp ${fdtaddr} ${tftploc}${fdtfile}; " \
 		"run netargs; " \
 		"bootz ${loadaddr} - ${fdtaddr}\0" \
 	"findfdt="\
@@ -214,12 +220,7 @@
 	DFUARGS \
 
 #define CONFIG_BOOTCOMMAND \
-	"run findfdt; " \
-	"run mmcboot;" \
-	"setenv mmcdev 1; " \
-	"setenv bootpart 1:2; " \
-	"setenv mmcroot /dev/mmcblk0p2 rw; " \
-	"run mmcboot;" \
+	"run boot_mmc;" \
 	NANDBOOT \
 
 
