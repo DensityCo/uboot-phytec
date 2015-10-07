@@ -84,6 +84,14 @@
 	"bootscript=echo Running bootscript from mmc${mmcdev} ...; " \
 		"source ${loadaddr}\0" \
 	"loadimage=load mmc ${bootpart} ${loadaddr} ${bootdir}/${bootfile}\0" \
+	"boot_mmc=run findfdt; " \
+		"run mmcboot;" \
+		"setenv mmcdev 1; " \
+		"setenv bootpart 1:2; " \
+		"setenv mmcroot /dev/mmcblk0p2 rw; " \
+		"run mmcboot;\0" \
+	"boot_net=run findfdt; " \
+		"run netboot;\0" \
 	"mmcboot=mmc dev ${mmcdev}; " \
 		"if mmc rescan; then " \
 			"echo SD/MMC found on device ${mmcdev};" \
@@ -94,6 +102,11 @@
 				"bootz ${loadaddr} - ${fdtaddr}; " \
 			"fi;" \
 		"fi;\0" \
+	"netboot=echo Booting from network ...; " \
+		"tftp ${loadaddr} ${tftploc}${bootfile}; " \
+		"tftp ${fdtaddr} ${tftploc}${fdtfile}; " \
+		"run netargs; " \
+		"bootz ${loadaddr} - ${fdtaddr}\0" \
 	"findfdt="\
 		"if test $board_name = omap5_uevm; then " \
 			"setenv fdtfile omap5-uevm.dtb; fi; " \
@@ -132,15 +145,8 @@
 		"echo Boot fastboot requested, resetting dofastboot ...;" \
 		"setenv dofastboot 0; saveenv;" \
 		"echo Booting into fastboot ...; fastboot 0;" \
-	"fi;" \
-	"run findfdt; " \
-	"run envboot; " \
-	"run mmcboot;" \
-	"setenv mmcdev 1; " \
-	"setenv bootpart 1:2; " \
-	"setenv mmcroot /dev/mmcblk0p2 rw; " \
-	"run mmcboot;" \
-	""
+	"run boot_mmc;" \
+	NANDBOOT \
 
 /*
  * SPL related defines.  The Public RAM memory map the ROM defines the
