@@ -212,7 +212,7 @@
 		"if test $board_name = beagle_x15; then " \
 			"setenv fdtfile am57xx-beagle-x15.dtb; fi;" \
 		"if test $board_name = am57xx_phycore_rdk; then " \
-			"setenv fdtfile zImage-am57xx-phycore-rdk.dtb; fi;" \
+			"setenv fdtfile am57xx-phycore-rdk.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
 	"loadfdt=load mmc ${bootpart} ${fdtaddr} ${bootdir}/${fdtfile};\0" \
