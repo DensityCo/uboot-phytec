@@ -564,6 +564,10 @@ config TARGET_MX7DSABRESD
 	bool "Support mx7dsabresd"
 	select CPU_V7
 
+config TARGET_MX7D_PHYBOARD
+	bool "Support mx7d_phyboard"
+	select CPU_V7
+
 config TARGET_MX6UL_14X14_EVK
         bool "Support mx6ul_14x14_evk"
         select CPU_V7
@@ -906,6 +910,7 @@ source "board/palmld/Kconfig"
 source "board/palmtc/Kconfig"
 source "board/palmtreo680/Kconfig"
 source "board/phytec/pcm051/Kconfig"
+source "board/phytec/mx7d_phyboard/Kconfig"
 source "board/ppcag/bg0900/Kconfig"
 source "board/pxa255_idp/Kconfig"
 source "board/samsung/smdk2410/Kconfig"
