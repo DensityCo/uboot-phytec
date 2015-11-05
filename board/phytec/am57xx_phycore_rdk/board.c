@@ -321,7 +321,7 @@ int spl_start_uboot(void)
 static struct dwc3_device usb_otg_ss1 = {
 	.maximum_speed = USB_SPEED_SUPER,
 	.base = DRA7_USB_OTG_SS1_BASE,
-	.needs_fifo_resize = false,
+	.tx_fifo_resize = false,
 	.index = 0,
 };
 
@@ -341,7 +341,7 @@ static struct ti_usb_phy_device usb_phy1_device = {
 static struct dwc3_device usb_otg_ss2 = {
 	.maximum_speed = USB_SPEED_HIGH,
 	.base = DRA7_USB_OTG_SS2_BASE,
-	.needs_fifo_resize = false,
+	.tx_fifo_resize = false,
 	.index = 1,
 };
 
@@ -455,7 +455,7 @@ int board_eth_init(bd_t *bis)
 	if (!getenv("ethaddr")) {
 		printf("<ethaddr> not set. Validating first E-fuse MAC\n");
 
-		if (is_valid_ether_addr(mac_addr))
+		if (is_valid_ethaddr(mac_addr))
 			eth_setenv_enetaddr("ethaddr", mac_addr);
 	}
 
@@ -469,7 +469,7 @@ int board_eth_init(bd_t *bis)
 	mac_addr[5] = mac_lo & 0xFF;
 
 	if (!getenv("eth1addr")) {
-		if (is_valid_ether_addr(mac_addr))
+		if (is_valid_ethaddr(mac_addr))
 			eth_setenv_enetaddr("eth1addr", mac_addr);
 	}
 
