@@ -146,7 +146,7 @@
 		"setenv dofastboot 0; saveenv;" \
 		"echo Booting into fastboot ...; fastboot 0;" \
 	"run boot_mmc;" \
-	NANDBOOT \
+	""
 
 /*
  * SPL related defines.  The Public RAM memory map the ROM defines the
