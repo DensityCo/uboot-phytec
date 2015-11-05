@@ -51,8 +51,6 @@
 
 #endif
 
-#define CONFIG_CMD_SAVEENV
-
 #define CONSOLEDEV			"ttyO2"
 #define CONFIG_SYS_NS16550_COM1		UART1_BASE	/* Base EVM has UART0 */
 #define CONFIG_SYS_NS16550_COM2		UART2_BASE	/* UART2 */
@@ -75,7 +73,6 @@
 #define CONFIG_CMD_PART
 
 /* CPSW Ethernet */
-#define CONFIG_CMD_NET			/* 'bootp' and 'tftp' */
 #define CONFIG_CMD_DHCP
 #define CONFIG_BOOTP_DNS		/* Configurable parts of CMD_DHCP */
 #define CONFIG_BOOTP_DNS2

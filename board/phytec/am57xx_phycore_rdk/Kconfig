@@ -1,0 +1,12 @@
+if TARGET_AM57XX_PHYCORE_RDK
+
+config SYS_BOARD
+	default "am57xx_phycore_rdk"
+
+config SYS_VENDOR
+	default "phytec"
+
+config SYS_CONFIG_NAME
+	default "am57xx_phycore_rdk"
+
+endif

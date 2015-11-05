@@ -204,7 +204,7 @@
 
 #define CONFIG_BOOTCOMMAND \
 	"run boot_mmc;" \
-	NANDBOOT \
+	""
 #endif
 
 /*
