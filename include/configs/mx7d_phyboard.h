@@ -64,6 +64,16 @@
 #define CONFIG_DOS_PARTITION
 #define CONFIG_SUPPORT_EMMC_BOOT /* eMMC specific */
 
+#define CONFIG_CMD_GPT
+#define CONFIG_EFI_PARTITION
+#define CONFIG_PARTITION_UUIDS
+#define CONFIG_CMD_PART
+
+/* Define the default GPT table for eMMC */
+#define PARTS_DEFAULT \
+	"uuid_disk=${uuid_gpt_disk};" \
+	"name=rootfs,start=2MiB,size=-,uuid=${uuid_gpt_rootfs}"
+
 #define PHYS_SDRAM_SIZE			SZ_1G
 
 #define CONFIG_CMD_PING
@@ -190,6 +200,7 @@
 	"fdt_addr=0x83000000\0" \
 	"boot_fdt=try\0" \
 	"ip_dyn=yes\0" \
+	"partitions=" PARTS_DEFAULT "\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
 	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
