@@ -85,6 +85,7 @@
 		"source ${loadaddr}\0" \
 	"loadimage=load mmc ${bootpart} ${loadaddr} ${bootdir}/${bootfile}\0" \
 	"boot_mmc=run findfdt; " \
+		"run envboot;" \
 		"run mmcboot;" \
 		"setenv mmcdev 1; " \
 		"setenv bootpart 1:2; " \
@@ -145,6 +146,7 @@
 		"echo Boot fastboot requested, resetting dofastboot ...;" \
 		"setenv dofastboot 0; saveenv;" \
 		"echo Booting into fastboot ...; fastboot 0;" \
+	"fi;" \
 	"run boot_mmc;" \
 	""
 
