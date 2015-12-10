@@ -69,8 +69,6 @@
 /* Enhance our eMMC support / experience. */
 #define CONFIG_CMD_GPT
 #define CONFIG_EFI_PARTITION
-#define CONFIG_PARTITION_UUIDS
-#define CONFIG_CMD_PART
 
 /* CPSW Ethernet */
 #define CONFIG_CMD_DHCP
@@ -86,6 +84,7 @@
 #define CONFIG_MII			/* Required in net/eth.c */
 #define CONFIG_PHY_GIGE			/* per-board part of CPSW */
 #define CONFIG_PHYLIB
+#define PHY_ANEG_TIMEOUT	8000	/* PHY needs longer aneg time at 1G */
 
 /* SPI */
 #undef CONFIG_OMAP3_SPI
