@@ -149,8 +149,8 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 
 const struct pad_conf_entry early_padconf[] = {
 	/* RS232 (UART3) */
-	{UART3_RXD, (M0 | PIN_INPUT_PULLUP | SLEWCONTROL)}, /* UART3_RXD */
-	{UART3_TXD, (M0 | PIN_INPUT_PULLUP | SLEWCONTROL)}, /* UART3_TXD */
+	{UART3_RXD, (M0 | PIN_INPUT_SLEW)}, /* UART3_RXD */
+	{UART3_TXD, (M0 | PIN_INPUT_SLEW)}, /* UART3_TXD */
 
 	/* I2C1 */
 	{I2C1_SDA, (M0 | PIN_INPUT_PULLUP)},	/* I2C1_SDA */
