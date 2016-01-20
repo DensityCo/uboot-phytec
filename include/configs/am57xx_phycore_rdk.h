@@ -26,10 +26,16 @@
 #ifndef CONFIG_QSPI_BOOT
 
 #define CONFIG_ENV_SIZE			(64 << 10)
+#define CONFIG_ENV_IS_IN_MMC
+#define CONFIG_SYS_MMC_ENV_DEV		1
+#define CONFIG_ENV_OFFSET		0xDAC00
+
+/*
 #define CONFIG_ENV_IS_IN_FAT
 #define FAT_ENV_INTERFACE		"mmc"
 #define FAT_ENV_DEVICE_AND_PART		"0:1"
 #define FAT_ENV_FILE			"uboot.env"
+*/
 
 #else
 
