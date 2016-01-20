@@ -85,11 +85,13 @@
 		"source ${loadaddr}\0" \
 	"loadimage=load mmc ${bootpart} ${loadaddr} ${bootdir}/${bootfile}\0" \
 	"boot_mmc=run findfdt; " \
+		"setenv mmcdev 1;" \
+		"setenv bootpart 1:2;" \
+		"setenv finduuid 'part uuid mmc 1:2 uuid';" \
 		"run envboot;" \
 		"run mmcboot;" \
-		"setenv mmcdev 1; " \
-		"setenv bootpart 1:2; " \
-		"setenv mmcroot /dev/mmcblk0p2 rw; " \
+		"setenv mmcdev 0; " \
+		"setenv bootpart 0:2; " \
 		"run mmcboot;\0" \
 	"boot_net=run findfdt; " \
 		"run netboot;\0" \
