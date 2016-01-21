@@ -92,6 +92,7 @@
 		"run mmcboot;" \
 		"setenv mmcdev 0; " \
 		"setenv bootpart 0:2; " \
+		"setenv finduuid 'part uuid mmc 0:2 uuid';" \
 		"run mmcboot;\0" \
 	"boot_net=run findfdt; " \
 		"run netboot;\0" \
