@@ -25,10 +25,12 @@
 
 #ifndef CONFIG_QSPI_BOOT
 
+/* Store environment in eMMC by default */
 #define CONFIG_ENV_SIZE			(64 << 10)
 #define CONFIG_ENV_IS_IN_MMC
 #define CONFIG_SYS_MMC_ENV_DEV		1
-#define CONFIG_ENV_OFFSET		0xDAC00
+#define CONFIG_ENV_OFFSET		0x100000
+#define CONFIG_ENV_OFFSET_REDUND	0x110000
 
 /*
 #define CONFIG_ENV_IS_IN_FAT
