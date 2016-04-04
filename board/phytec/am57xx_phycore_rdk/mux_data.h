@@ -139,6 +139,11 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	/* EDT Touch IRQ */
 	{VOUT1_D22, (M14 | PIN_INPUT_PULLUP)},		/* vout1_d22.gpio8_22 */
 
+	/* PCIe PERSTn/PWRGD */
+	{VOUT1_D4, (M14 | PIN_INPUT_PULLDOWN)},	/* vout1_d4.gpio8_4 */
+	/* PCIe (U28-OE) */
+	{VOUT1_D7, (M14 | PIN_INPUT_PULLUP)},	/* vout1_d7.gpio8_7 */
+
 	/* VTT_EN */
 	{VIN2A_D7, (M14 | PIN_OUTPUT)},		/* vin2a_d7.gpio4_8 */
 
