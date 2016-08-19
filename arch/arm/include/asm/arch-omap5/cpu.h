@@ -63,6 +63,13 @@ struct watchdog {
 #define TCLR_AR			(0x1 << 1)
 #define TCLR_PRE		(0x1 << 5)
 
+/* device type */
+#define DEVICE_MASK         (BIT(8) | BIT(9) | BIT(10))
+#define TST_DEVICE          0x0
+#define EMU_DEVICE          0x1
+#define HS_DEVICE           0x2
+#define GP_DEVICE           0x3
+
 /* I2C base */
 #define I2C_BASE1		(OMAP54XX_L4_PER_BASE + 0x70000)
 #define I2C_BASE2		(OMAP54XX_L4_PER_BASE + 0x72000)
@@ -115,5 +122,20 @@ struct watchdog {
 /* DRA7XX CPSW Config space */
 #define CPSW_BASE			0x48484000
 #define CPSW_MDIO_BASE			0x48485000
+
+/* gmii_sel register defines */
+#define GMII1_SEL_MII		0x0
+#define GMII1_SEL_RMII		0x1
+#define GMII1_SEL_RGMII		0x2
+#define GMII2_SEL_MII		(GMII1_SEL_MII << 4)
+#define GMII2_SEL_RMII		(GMII1_SEL_RMII << 4)
+#define GMII2_SEL_RGMII		(GMII1_SEL_RGMII << 4)
+#define RMII1_IO_CLK_EN		BIT(6)
+#define RMII2_IO_CLK_EN		BIT(7)
+
+#define MII_MODE_ENABLE		(GMII1_SEL_MII | GMII2_SEL_MII)
+#define RMII_MODE_ENABLE        (GMII1_SEL_RMII | GMII2_SEL_RMII)
+#define RGMII_MODE_ENABLE	(GMII1_SEL_RGMII | GMII2_SEL_RGMII)
+#define RMII_CHIPCKL_ENABLE     (RMII1_IO_CLK_EN | RMII2_IO_CLK_EN)
 
 #endif /* _CPU_H */

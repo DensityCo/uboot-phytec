@@ -89,6 +89,10 @@
 #define CONFIG_SYS_SPI2
 #define CONFIG_SYS_SPI2_BASE		KS2_SPI2_BASE
 #define CONFIG_SYS_SPI2_NUM_CS		4
+#ifdef CONFIG_SPL_BUILD
+#undef CONFIG_DM_SPI
+#undef CONFIG_DM_SPI_FLASH
+#endif
 
 /* Network Configuration */
 #define CONFIG_PHYLIB
@@ -165,16 +169,7 @@
 #define CONFIG_ENV_EEPROM_IS_ON_I2C
 
 /* NAND Configuration */
-#define CONFIG_NAND_DAVINCI
-#define CONFIG_KEYSTONE_RBL_NAND
-#define CONFIG_KEYSTONE_NAND_MAX_RBL_SIZE	CONFIG_ENV_OFFSET
-#define CONFIG_SYS_NAND_MASK_CLE		0x4000
-#define CONFIG_SYS_NAND_MASK_ALE		0x2000
-#define CONFIG_SYS_NAND_CS			2
 #define CONFIG_SYS_NAND_USE_FLASH_BBT
-#define CONFIG_SYS_NAND_4BIT_HW_ECC_OOBFIRST
-
-#define CONFIG_SYS_NAND_LARGEPAGE
 #define CONFIG_SYS_NAND_BASE_LIST		{ 0x30000000, }
 #define CONFIG_SYS_MAX_NAND_DEVICE		1
 #define CONFIG_SYS_NAND_MAX_CHIPS		1
@@ -268,7 +263,7 @@
 	"get_mon_ubi=ubifsload ${addr_mon} ${bootdir}/${name_mon}\0"		\
 	"get_uboot_net=dhcp ${loadaddr} ${tftp_root}/${name_uboot}\0"	\
 	"get_uboot_nfs=nfs ${loadaddr} ${nfs_root}/boot/${name_uboot}\0" \
-	"burn_uboot_spi=sf probe; sf erase 0 0x80000; "		\
+	"burn_uboot_spi=sf probe; sf erase 0 0x90000; "		\
 		"sf write ${loadaddr} 0 ${filesize}\0"		\
 	"burn_uboot_nand=nand erase 0 0x100000; "			\
 		"nand write ${loadaddr} 0 ${filesize}\0"		\

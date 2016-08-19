@@ -21,7 +21,7 @@ int nand_curr_device = -1;
 
 nand_info_t nand_info[CONFIG_SYS_MAX_NAND_DEVICE];
 
-#ifndef CONFIG_SYS_NAND_SELF_INIT
+#if !defined(CONFIG_SYS_NAND_SELF_INIT) && !defined(CONFIG_DM_NAND)
 static struct nand_chip nand_chip[CONFIG_SYS_MAX_NAND_DEVICE];
 static ulong base_address[CONFIG_SYS_MAX_NAND_DEVICE] = CONFIG_SYS_NAND_BASE_LIST;
 #endif
@@ -29,6 +29,19 @@ static ulong base_address[CONFIG_SYS_MAX_NAND_DEVICE] = CONFIG_SYS_NAND_BASE_LIS
 static char dev_name[CONFIG_SYS_MAX_NAND_DEVICE][8];
 
 static unsigned long total_nand_size; /* in kiB */
+
+#ifndef CONFIG_DM_NAND
+nand_info_t *get_nand_dev_by_index(int dev)
+{
+	if (dev < 0 || dev >= CONFIG_SYS_MAX_NAND_DEVICE ||
+	    !nand_info[dev].name) {
+		puts("No such device\n");
+		return NULL;
+	}
+
+	return &nand_info[dev];
+}
+#endif
 
 /* Register an initialized NAND mtd device with the U-Boot NAND command. */
 int nand_register(int devnum)
@@ -38,7 +51,7 @@ int nand_register(int devnum)
 	if (devnum >= CONFIG_SYS_MAX_NAND_DEVICE)
 		return -EINVAL;
 
-	mtd = &nand_info[devnum];
+	mtd = get_nand_dev_by_index(devnum);
 
 	sprintf(dev_name[devnum], "nand%d", devnum);
 	mtd->name = dev_name[devnum];
@@ -62,19 +75,31 @@ int nand_register(int devnum)
 #ifndef CONFIG_SYS_NAND_SELF_INIT
 static void nand_init_chip(int i)
 {
-	struct mtd_info *mtd = &nand_info[i];
+	struct mtd_info *mtd;
+#ifndef CONFIG_DM_NAND
 	struct nand_chip *nand = &nand_chip[i];
 	ulong base_addr = base_address[i];
+#endif
 	int maxchips = CONFIG_SYS_NAND_MAX_CHIPS;
 
 	if (maxchips < 1)
 		maxchips = 1;
 
+#ifdef CONFIG_DM_NAND
+	mtd = get_nand_dev_by_index(i);
+	if (!mtd)
+		return;
+#else
+	mtd = &nand_info[i];
+#endif
+
+#ifndef CONFIG_DM_NAND
 	mtd->priv = nand;
 	nand->IO_ADDR_R = nand->IO_ADDR_W = (void  __iomem *)base_addr;
 
 	if (board_nand_init(nand))
 		return;
+#endif
 
 	if (nand_scan(mtd, maxchips))
 		return;

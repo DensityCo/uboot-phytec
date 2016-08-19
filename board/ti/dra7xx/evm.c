@@ -28,16 +28,17 @@
 #include <dwc3-omap-uboot.h>
 #include <ti-usb-phy-uboot.h>
 #include <miiphy.h>
+#include <pcf8575.h>
 
 #include "mux_data.h"
 #include "../common/board_detect.h"
 
 #define board_is_dra74x_evm()		board_ti_is("5777xCPU")
 #define board_is_dra72x_evm()		board_ti_is("DRA72x-T")
-#define board_is_dra74x_revh_or_later() board_is_dra74x_evm() &&	\
-				(strncmp("H", board_ti_get_rev(), 1) <= 0)
-#define board_is_dra72x_revc_or_later() board_is_dra72x_evm() &&	\
-				(strncmp("C", board_ti_get_rev(), 1) <= 0)
+#define board_is_dra74x_revh_or_later() (board_is_dra74x_evm() &&	\
+				(strncmp("H", board_ti_get_rev(), 1) <= 0))
+#define board_is_dra72x_revc_or_later() (board_is_dra72x_evm() &&	\
+				(strncmp("C", board_ti_get_rev(), 1) <= 0))
 #define board_ti_get_emif_size()	board_ti_get_emif1_size() +	\
 					board_ti_get_emif2_size()
 
@@ -51,6 +52,10 @@ DECLARE_GLOBAL_DATA_PTR;
 #define GPIO_DDR_VTT_EN 203
 
 #define SYSINFO_BOARD_NAME_MAX_LEN	37
+
+/* pcf chip address enet_mux_s0 */
+#define PCF_ENET_MUX_ADDR	0x21
+#define PCF_SEL_ENET_MUX_S0	4
 
 const struct omap_sysinfo sysinfo = {
 	"Board: UNKNOWN(DRA7 EVM) REV UNKNOWN\n"
@@ -337,15 +342,25 @@ int board_late_init(void)
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 	char *name = "unknown";
 
-	if (is_dra72x())
-		name = "dra72x";
-	else
+	if (is_dra72x()) {
+		if (board_is_dra72x_revc_or_later())
+			name = "dra72x-revc";
+		else
+			name = "dra72x";
+	} else {
 		name = "dra7xx";
+	}
 
 	set_board_info_env(name);
 
 	omap_die_id_serial();
 #endif
+
+	if (is_dra72x() && !board_is_dra72x_revc_or_later()) {
+		pcf8575_output(PCF_ENET_MUX_ADDR, PCF_SEL_ENET_MUX_S0,
+			       PCF8575_OUT_LOW);
+	}
+
 	return 0;
 }
 
@@ -468,6 +483,13 @@ int board_mmc_init(bd_t *bis)
 	omap_mmc_init(0, 0, 0, -1, -1);
 	omap_mmc_init(1, 0, 0, -1, -1);
 	return 0;
+}
+#endif
+
+#ifdef CONFIG_OMAP_HSMMC
+int platform_fixup_disable_uhs_mode(void)
+{
+	return omap_revision() == DRA752_ES1_1;
 }
 #endif
 
@@ -677,8 +699,10 @@ int board_eth_init(bd_t *bis)
 	ctrl_val |= 0x22;
 	writel(ctrl_val, (*ctrl)->control_core_control_io1);
 
-	if (*omap_si_rev == DRA722_ES1_0)
-		cpsw_data.active_slave = 1;
+	if (*omap_si_rev == DRA722_ES1_0) {
+		cpsw_data.active_slave = 0;
+		cpsw_data.slave_data[0].phy_addr = 3;
+	}
 
 	if (board_is_dra72x_revc_or_later()) {
 		cpsw_slaves[0].phy_if = PHY_INTERFACE_MODE_RGMII_ID;
@@ -715,6 +739,33 @@ static inline void vtt_regulator_enable(void)
 int board_early_init_f(void)
 {
 	vtt_regulator_enable();
+	return 0;
+}
+#endif
+
+#ifdef CONFIG_SPL_LOAD_FIT
+int board_fit_config_name_match(const char *name)
+{
+	if (is_dra72x()) {
+		if(board_is_dra72x_revc_or_later()) {
+			if (!strcmp(name, "dra72-evm-revc"))
+				return 0;
+		} else if (!strcmp(name, "dra72-evm")) {
+			return 0;
+		}
+	} else if (!is_dra72x() && !strcmp(name, "dra7-evm")) {
+		return 0;
+	}
+
+	return -1;
+}
+#endif
+
+#if defined(CONFIG_OF_LIBFDT) && defined(CONFIG_OF_BOARD_SETUP)
+int ft_board_setup(void *blob, bd_t *bd)
+{
+	ft_cpu_setup(blob, bd);
+
 	return 0;
 }
 #endif

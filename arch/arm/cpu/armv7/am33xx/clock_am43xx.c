@@ -124,6 +124,27 @@ void enable_basic_clocks(void)
 	writel(0x4, &cmdpll->clkselmacclk);
 }
 
+void rtc_only_enable_basic_clocks(void)
+{
+	u32 *const clk_domains[] = {
+		&cmper->emifclkstctrl,
+		0
+	};
+
+	u32 *const clk_modules_explicit_en[] = {
+		&cmper->gpio5clkctrl,
+		&cmper->emiffwclkctrl,
+		&cmper->emifclkctrl,
+		&cmper->otfaemifclkctrl,
+		0
+	};
+
+	do_enable_clocks(clk_domains, clk_modules_explicit_en, 1);
+
+	/* Select the Master osc clk as Timer2 clock source */
+	writel(0x1, &cmdpll->clktimer2clk);
+}
+
 #ifdef CONFIG_TI_EDMA3
 void enable_edma3_clocks(void)
 {
@@ -160,7 +181,7 @@ void disable_edma3_clocks(void)
 }
 #endif
 
-#ifdef CONFIG_USB_DWC3
+#if defined(CONFIG_USB_DWC3) || defined(CONFIG_USB_XHCI_OMAP)
 void enable_usb_clocks(int index)
 {
 	u32 *usbclkctrl = 0;

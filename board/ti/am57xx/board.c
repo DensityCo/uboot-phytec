@@ -34,8 +34,14 @@
 #include "mux_data.h"
 
 #define board_is_x15()		board_ti_is("BBRDX15_")
+#define board_is_x15_revb1()	(board_ti_is("BBRDX15_") && \
+				 (strncmp("B.10", board_ti_get_rev(), 3) <= 0))
 #define board_is_am572x_evm()	board_ti_is("AM572PM_")
+#define board_is_am572x_evm_reva3()	\
+				(board_ti_is("AM572PM_") && \
+				 (strncmp("A.30", board_ti_get_rev(), 3) <= 0))
 #define board_is_am572x_idk()	board_ti_is("AM572IDK")
+#define board_is_am571x_idk()	board_ti_is("AM571IDK")
 
 #ifdef CONFIG_DRIVER_TI_CPSW
 #include <cpsw.h>
@@ -57,9 +63,17 @@ static const struct dmm_lisa_map_regs beagle_x15_lisa_regs = {
 	.is_ma_present  = 0x1
 };
 
+static const struct dmm_lisa_map_regs am571x_idk_lisa_regs = {
+	.dmm_lisa_map_3 = 0x80640100,
+	.is_ma_present  = 0x1
+};
+
 void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 {
-	*dmm_lisa_regs = &beagle_x15_lisa_regs;
+	if (board_is_am571x_idk())
+		*dmm_lisa_regs = &am571x_idk_lisa_regs;
+	else
+		*dmm_lisa_regs = &beagle_x15_lisa_regs;
 }
 
 static const struct emif_regs beagle_x15_emif1_ddr3_532mhz_emif_regs = {
@@ -216,37 +230,109 @@ void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 }
 
 struct vcores_data beagle_x15_volts = {
-	.mpu.value		= VDD_MPU_DRA752,
-	.mpu.efuse.reg		= STD_FUSE_OPP_VMIN_MPU_NOM,
+	.mpu.value		= VDD_MPU_DRA7,
+	.mpu.efuse.reg		= STD_FUSE_OPP_VMIN_MPU,
 	.mpu.efuse.reg_bits     = DRA752_EFUSE_REGBITS,
 	.mpu.addr		= TPS659038_REG_ADDR_SMPS12,
 	.mpu.pmic		= &tps659038,
 	.mpu.abb_tx_done_mask = OMAP_ABB_MPU_TXDONE_MASK,
 
-	.eve.value		= VDD_EVE_DRA752,
-	.eve.efuse.reg		= STD_FUSE_OPP_VMIN_DSPEVE_NOM,
+	.eve.value		= VDD_EVE_DRA7,
+	.eve.efuse.reg		= STD_FUSE_OPP_VMIN_DSPEVE,
 	.eve.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.eve.addr		= TPS659038_REG_ADDR_SMPS45,
 	.eve.pmic		= &tps659038,
 	.eve.abb_tx_done_mask	= OMAP_ABB_EVE_TXDONE_MASK,
 
-	.gpu.value		= VDD_GPU_DRA752,
-	.gpu.efuse.reg		= STD_FUSE_OPP_VMIN_GPU_NOM,
+	.gpu.value		= VDD_GPU_DRA7,
+	.gpu.efuse.reg		= STD_FUSE_OPP_VMIN_GPU,
 	.gpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.gpu.addr		= TPS659038_REG_ADDR_SMPS45,
 	.gpu.pmic		= &tps659038,
 	.gpu.abb_tx_done_mask	= OMAP_ABB_GPU_TXDONE_MASK,
 
-	.core.value		= VDD_CORE_DRA752,
-	.core.efuse.reg		= STD_FUSE_OPP_VMIN_CORE_NOM,
+	.core.value		= VDD_CORE_DRA7,
+	.core.efuse.reg		= STD_FUSE_OPP_VMIN_CORE,
 	.core.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.core.addr		= TPS659038_REG_ADDR_SMPS6,
 	.core.pmic		= &tps659038,
 
-	.iva.value		= VDD_IVA_DRA752,
-	.iva.efuse.reg		= STD_FUSE_OPP_VMIN_IVA_NOM,
+	.iva.value		= VDD_IVA_DRA7,
+	.iva.efuse.reg		= STD_FUSE_OPP_VMIN_IVA,
 	.iva.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.iva.addr		= TPS659038_REG_ADDR_SMPS45,
+	.iva.pmic		= &tps659038,
+	.iva.abb_tx_done_mask	= OMAP_ABB_IVA_TXDONE_MASK,
+};
+
+struct vcores_data am571x_idk_volts = {
+	.mpu.value		= VDD_MPU_DRA7,
+	.mpu.efuse.reg		= STD_FUSE_OPP_VMIN_MPU,
+	.mpu.efuse.reg_bits     = DRA752_EFUSE_REGBITS,
+	.mpu.addr		= TPS659038_REG_ADDR_SMPS12,
+	.mpu.pmic		= &tps659038,
+	.mpu.abb_tx_done_mask	= OMAP_ABB_MPU_TXDONE_MASK,
+
+	.eve.value		= VDD_EVE_DRA7,
+	.eve.efuse.reg		= STD_FUSE_OPP_VMIN_DSPEVE,
+	.eve.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.eve.addr		= TPS659038_REG_ADDR_SMPS45,
+	.eve.pmic		= &tps659038,
+	.eve.abb_tx_done_mask	= OMAP_ABB_EVE_TXDONE_MASK,
+
+	.gpu.value		= VDD_GPU_DRA7,
+	.gpu.efuse.reg		= STD_FUSE_OPP_VMIN_GPU,
+	.gpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.gpu.addr		= TPS659038_REG_ADDR_SMPS6,
+	.gpu.pmic		= &tps659038,
+	.gpu.abb_tx_done_mask	= OMAP_ABB_GPU_TXDONE_MASK,
+
+	.core.value		= VDD_CORE_DRA7,
+	.core.efuse.reg		= STD_FUSE_OPP_VMIN_CORE,
+	.core.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.core.addr		= TPS659038_REG_ADDR_SMPS7,
+	.core.pmic		= &tps659038,
+
+	.iva.value		= VDD_IVA_DRA7,
+	.iva.efuse.reg		= STD_FUSE_OPP_VMIN_IVA,
+	.iva.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.iva.addr		= TPS659038_REG_ADDR_SMPS45,
+	.iva.pmic		= &tps659038,
+	.iva.abb_tx_done_mask	= OMAP_ABB_IVA_TXDONE_MASK,
+};
+
+struct vcores_data am572x_idk_volts = {
+	.mpu.value		= VDD_MPU_DRA7,
+	.mpu.efuse.reg		= STD_FUSE_OPP_VMIN_MPU,
+	.mpu.efuse.reg_bits     = DRA752_EFUSE_REGBITS,
+	.mpu.addr		= TPS659038_REG_ADDR_SMPS12,
+	.mpu.pmic		= &tps659038,
+	.mpu.abb_tx_done_mask = OMAP_ABB_MPU_TXDONE_MASK,
+
+	.eve.value		= VDD_EVE_DRA7,
+	.eve.efuse.reg		= STD_FUSE_OPP_VMIN_DSPEVE,
+	.eve.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.eve.addr		= TPS659038_REG_ADDR_SMPS45,
+	.eve.pmic		= &tps659038,
+	.eve.abb_tx_done_mask	= OMAP_ABB_EVE_TXDONE_MASK,
+
+	.gpu.value		= VDD_GPU_DRA7,
+	.gpu.efuse.reg		= STD_FUSE_OPP_VMIN_GPU,
+	.gpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.gpu.addr		= TPS659038_REG_ADDR_SMPS6,
+	.gpu.pmic		= &tps659038,
+	.gpu.abb_tx_done_mask	= OMAP_ABB_GPU_TXDONE_MASK,
+
+	.core.value		= VDD_CORE_DRA7,
+	.core.efuse.reg		= STD_FUSE_OPP_VMIN_CORE,
+	.core.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.core.addr		= TPS659038_REG_ADDR_SMPS7,
+	.core.pmic		= &tps659038,
+
+	.iva.value		= VDD_IVA_DRA7,
+	.iva.efuse.reg		= STD_FUSE_OPP_VMIN_IVA,
+	.iva.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.iva.addr		= TPS659038_REG_ADDR_SMPS8,
 	.iva.pmic		= &tps659038,
 	.iva.abb_tx_done_mask	= OMAP_ABB_IVA_TXDONE_MASK,
 };
@@ -285,6 +371,8 @@ void do_board_detect(void)
 		bname = "AM572x EVM";
 	else if (board_is_am572x_idk())
 		bname = "AM572x IDK";
+	else if (board_is_am571x_idk())
+		bname = "AM571x IDK";
 
 	if (bname)
 		snprintf(sysinfo.board_string, SYSINFO_BOARD_NAME_MAX_LEN,
@@ -301,19 +389,38 @@ static void setup_board_eeprom_env(void)
 	if (rc)
 		goto invalid_eeprom;
 
-	if (board_is_am572x_evm())
-		name = "am57xx_evm";
-	else if (board_is_am572x_idk())
+	if (board_is_x15()) {
+		if (board_is_x15_revb1())
+			name = "beagle_x15_revb1";
+		else
+			name = "beagle_x15";
+	} else if (board_is_am572x_evm()) {
+		if (board_is_am572x_evm_reva3())
+			name = "am57xx_evm_reva3";
+		else
+			name = "am57xx_evm";
+	} else if (board_is_am572x_idk()) {
 		name = "am572x_idk";
-	else
+	} else if (board_is_am571x_idk()) {
+		name = "am571x_idk";
+	} else {
 		printf("Unidentified board claims %s in eeprom header\n",
 		       board_ti_get_name());
+	}
 
 invalid_eeprom:
 	set_board_info_env(name);
 }
 
 #endif	/* CONFIG_SPL_BUILD */
+
+void vcores_update(void)
+{
+	if (board_is_am572x_idk())
+		*omap_vcores = &am572x_idk_volts;
+	else if (board_is_am571x_idk())
+		*omap_vcores = &am571x_idk_volts;
+}
 
 void hw_data_init(void)
 {
@@ -331,6 +438,65 @@ int board_init(void)
 	return 0;
 }
 
+#if !defined(CONFIG_SPL_BUILD)
+static u64 mac_to_u64(u8 mac[6])
+{
+	int i;
+	u64 addr = 0;
+
+	for (i = 0; i < 6; i++) {
+		addr <<= 8;
+		addr |= mac[i];
+	}
+
+	return addr;
+}
+
+static void u64_to_mac(u64 addr, u8 mac[6])
+{
+	mac[5] = addr;
+	mac[4] = addr >> 8;
+	mac[3] = addr >> 16;
+	mac[2] = addr >> 24;
+	mac[1] = addr >> 32;
+	mac[0] = addr >> 40;
+}
+
+void board_set_ethaddr(void)
+{
+	uint8_t mac_addr[6];
+	int i;
+	u64 mac1, mac2;
+	u8 mac_addr1[6], mac_addr2[6];
+	int num_macs;
+	/*
+	 * Export any Ethernet MAC addresses from EEPROM.
+	 * On AM57xx the 2 MAC addresses define the address range
+	 */
+	board_ti_get_eth_mac_addr(0, mac_addr1);
+	board_ti_get_eth_mac_addr(1, mac_addr2);
+
+	if (is_valid_ethaddr(mac_addr1) && is_valid_ethaddr(mac_addr2)) {
+		mac1 = mac_to_u64(mac_addr1);
+		mac2 = mac_to_u64(mac_addr2);
+
+		/* must contain an address range */
+		num_macs = mac2 - mac1 + 1;
+		/* <= 50 to protect against user programming error */
+		if (num_macs > 0 && num_macs <= 50) {
+			for (i = 0; i < num_macs; i++) {
+				u64_to_mac(mac1 + i, mac_addr);
+				if (is_valid_ethaddr(mac_addr)) {
+					eth_setenv_enetaddr_by_index("eth",
+								     i + 2,
+								     mac_addr);
+				}
+			}
+		}
+	}
+}
+#endif
+
 int board_late_init(void)
 {
 	setup_board_eeprom_env();
@@ -340,6 +506,11 @@ int board_late_init(void)
 	 * This is the POWERHOLD-in-Low behavior.
 	 */
 	palmas_i2c_write_u8(TPS65903X_CHIP_P1, 0xA0, 0x1);
+
+#if !defined(CONFIG_SPL_BUILD)
+	board_set_ethaddr();
+#endif
+
 	return 0;
 }
 
@@ -355,21 +526,58 @@ void recalibrate_iodelay(void)
 	const struct pad_conf_entry *pconf;
 	const struct iodelay_cfg_entry *iod;
 	int pconf_sz, iod_sz;
+	int ret;
 
 	if (board_is_am572x_idk()) {
 		pconf = core_padconf_array_essential_am572x_idk;
 		pconf_sz = ARRAY_SIZE(core_padconf_array_essential_am572x_idk);
 		iod = iodelay_cfg_array_am572x_idk;
 		iod_sz = ARRAY_SIZE(iodelay_cfg_array_am572x_idk);
+	} else if (board_is_am571x_idk()) {
+		pconf = core_padconf_array_essential_am571x_idk;
+		pconf_sz = ARRAY_SIZE(core_padconf_array_essential_am571x_idk);
+		iod = iodelay_cfg_array_am571x_idk;
+		iod_sz = ARRAY_SIZE(iodelay_cfg_array_am571x_idk);
 	} else {
 		/* Common for X15/GPEVM */
 		pconf = core_padconf_array_essential_x15;
 		pconf_sz = ARRAY_SIZE(core_padconf_array_essential_x15);
-		iod = iodelay_cfg_array_x15;
-		iod_sz = ARRAY_SIZE(iodelay_cfg_array_x15);
+		/* There never was an SR1.0 X15.. So.. */
+		if (omap_revision() == DRA752_ES1_1) {
+			iod = iodelay_cfg_array_x15_sr1_1;
+			iod_sz = ARRAY_SIZE(iodelay_cfg_array_x15_sr1_1);
+		} else {
+			/* Since full production should switch to SR2.0  */
+			iod = iodelay_cfg_array_x15_sr2_0;
+			iod_sz = ARRAY_SIZE(iodelay_cfg_array_x15_sr2_0);
+		}
 	}
 
-	__recalibrate_iodelay(pconf, pconf_sz, iod, iod_sz);
+	/* Setup I/O isolation */
+	ret = __recalibrate_iodelay_start();
+	if (ret)
+		goto err;
+
+	/* Do the muxing here */
+	do_set_mux32((*ctrl)->control_padconf_core_base, pconf, pconf_sz);
+
+	/* Now do the weird minor deltas that should be safe */
+	if (board_is_x15() || board_is_am572x_evm()) {
+		if (board_is_x15_revb1() || board_is_am572x_evm_reva3()) {
+			pconf = core_padconf_array_delta_x15_sr2_0;
+			pconf_sz = ARRAY_SIZE(core_padconf_array_delta_x15_sr2_0);
+		} else {
+			pconf = core_padconf_array_delta_x15_sr1_1;
+			pconf_sz = ARRAY_SIZE(core_padconf_array_delta_x15_sr1_1);
+		}
+		do_set_mux32((*ctrl)->control_padconf_core_base, pconf, pconf_sz);
+	}
+
+	/* Setup IOdelay configuration */
+	ret = do_set_iodelay((*ctrl)->iodelay_config_base, iod, iod_sz);
+err:
+	/* Closeup.. remove isolation */
+	__recalibrate_iodelay_end(ret);
 }
 #endif
 
@@ -379,6 +587,13 @@ int board_mmc_init(bd_t *bis)
 	omap_mmc_init(0, 0, 0, -1, -1);
 	omap_mmc_init(1, 0, 0, -1, -1);
 	return 0;
+}
+#endif
+
+#ifdef CONFIG_OMAP_HSMMC
+int platform_fixup_disable_uhs_mode(void)
+{
+	return omap_revision() == DRA752_ES1_1;
 }
 #endif
 
@@ -439,64 +654,6 @@ static struct ti_usb_phy_device usb_phy2_device = {
 	.index = 1,
 };
 
-int board_usb_init(int index, enum usb_init_type init)
-{
-	enable_usb_clocks(index);
-	switch (index) {
-	case 0:
-		if (init == USB_INIT_DEVICE) {
-			printf("port %d can't be used as device\n", index);
-			disable_usb_clocks(index);
-			return -EINVAL;
-		} else {
-			usb_otg_ss1.dr_mode = USB_DR_MODE_HOST;
-			usb_otg_ss1_glue.vbus_id_status = OMAP_DWC3_ID_GROUND;
-			setbits_le32((*prcm)->cm_l3init_usb_otg_ss1_clkctrl,
-				     OTG_SS_CLKCTRL_MODULEMODE_HW |
-				     OPTFCLKEN_REFCLK960M);
-		}
-
-		ti_usb_phy_uboot_init(&usb_phy1_device);
-		dwc3_omap_uboot_init(&usb_otg_ss1_glue);
-		dwc3_uboot_init(&usb_otg_ss1);
-		break;
-	case 1:
-		if (init == USB_INIT_DEVICE) {
-			usb_otg_ss2.dr_mode = USB_DR_MODE_PERIPHERAL;
-			usb_otg_ss2_glue.vbus_id_status = OMAP_DWC3_VBUS_VALID;
-		} else {
-			printf("port %d can't be used as host\n", index);
-			disable_usb_clocks(index);
-			return -EINVAL;
-		}
-
-		ti_usb_phy_uboot_init(&usb_phy2_device);
-		dwc3_omap_uboot_init(&usb_otg_ss2_glue);
-		dwc3_uboot_init(&usb_otg_ss2);
-		break;
-	default:
-		printf("Invalid Controller Index\n");
-	}
-
-	return 0;
-}
-
-int board_usb_cleanup(int index, enum usb_init_type init)
-{
-	switch (index) {
-	case 0:
-	case 1:
-		ti_usb_phy_uboot_exit(index);
-		dwc3_uboot_exit(index);
-		dwc3_omap_uboot_exit(index);
-		break;
-	default:
-		printf("Invalid Controller Index\n");
-	}
-	disable_usb_clocks(index);
-	return 0;
-}
-
 int usb_gadget_handle_interrupts(int index)
 {
 	u32 status;
@@ -507,7 +664,63 @@ int usb_gadget_handle_interrupts(int index)
 
 	return 0;
 }
+#endif /* CONFIG_USB_DWC3 */
+
+#if defined(CONFIG_USB_DWC3) || defined(CONFIG_USB_XHCI_OMAP)
+int board_usb_init(int index, enum usb_init_type init)
+{
+	enable_usb_clocks(index);
+	switch (index) {
+	case 0:
+		if (init == USB_INIT_DEVICE) {
+			printf("port %d can't be used as device\n", index);
+			disable_usb_clocks(index);
+			return -EINVAL;
+		}
+		break;
+	case 1:
+		if (init == USB_INIT_DEVICE) {
+#ifdef CONFIG_USB_DWC3
+			usb_otg_ss2.dr_mode = USB_DR_MODE_PERIPHERAL;
+			usb_otg_ss2_glue.vbus_id_status = OMAP_DWC3_VBUS_VALID;
+			ti_usb_phy_uboot_init(&usb_phy2_device);
+			dwc3_omap_uboot_init(&usb_otg_ss2_glue);
+			dwc3_uboot_init(&usb_otg_ss2);
 #endif
+		} else {
+			printf("port %d can't be used as host\n", index);
+			disable_usb_clocks(index);
+			return -EINVAL;
+		}
+
+		break;
+	default:
+		printf("Invalid Controller Index\n");
+	}
+
+	return 0;
+}
+
+int board_usb_cleanup(int index, enum usb_init_type init)
+{
+#ifdef CONFIG_USB_DWC3
+	switch (index) {
+	case 0:
+	case 1:
+		if (init == USB_INIT_DEVICE) {
+			ti_usb_phy_uboot_exit(index);
+			dwc3_uboot_exit(index);
+			dwc3_omap_uboot_exit(index);
+		}
+		break;
+	default:
+		printf("Invalid Controller Index\n");
+	}
+#endif
+	disable_usb_clocks(index);
+	return 0;
+}
+#endif /* defined(CONFIG_USB_DWC3) || defined(CONFIG_USB_XHCI_OMAP) */
 
 #ifdef CONFIG_DRIVER_TI_CPSW
 
@@ -560,39 +773,12 @@ static struct cpsw_platform_data cpsw_data = {
 	.version		= CPSW_CTRL_VERSION_2,
 };
 
-static u64 mac_to_u64(u8 mac[6])
-{
-	int i;
-	u64 addr = 0;
-
-	for (i = 0; i < 6; i++) {
-		addr <<= 8;
-		addr |= mac[i];
-	}
-
-	return addr;
-}
-
-static void u64_to_mac(u64 addr, u8 mac[6])
-{
-	mac[5] = addr;
-	mac[4] = addr >> 8;
-	mac[3] = addr >> 16;
-	mac[2] = addr >> 24;
-	mac[1] = addr >> 32;
-	mac[0] = addr >> 40;
-}
-
 int board_eth_init(bd_t *bis)
 {
 	int ret;
 	uint8_t mac_addr[6];
 	uint32_t mac_hi, mac_lo;
 	uint32_t ctrl_val;
-	int i;
-	u64 mac1, mac2;
-	u8 mac_addr1[6], mac_addr2[6];
-	int num_macs;
 
 	/* try reading mac address from efuse */
 	mac_lo = readl((*ctrl)->control_core_mac_id_0_lo);
@@ -629,8 +815,8 @@ int board_eth_init(bd_t *bis)
 	ctrl_val |= 0x22;
 	writel(ctrl_val, (*ctrl)->control_core_control_io1);
 
-	/* The phy address for the AM572x IDK are different than x15 */
-	if (board_is_am572x_idk()) {
+	/* The phy address for the AM57xx IDK are different than x15 */
+	if (board_is_am572x_idk() || board_is_am571x_idk()) {
 		cpsw_data.slave_data[0].phy_addr = 0;
 		cpsw_data.slave_data[1].phy_addr = 1;
 	}
@@ -638,32 +824,6 @@ int board_eth_init(bd_t *bis)
 	ret = cpsw_register(&cpsw_data);
 	if (ret < 0)
 		printf("Error %d registering CPSW switch\n", ret);
-
-	/*
-	 * Export any Ethernet MAC addresses from EEPROM.
-	 * On AM57xx the 2 MAC addresses define the address range
-	 */
-	board_ti_get_eth_mac_addr(0, mac_addr1);
-	board_ti_get_eth_mac_addr(1, mac_addr2);
-
-	if (is_valid_ethaddr(mac_addr1) && is_valid_ethaddr(mac_addr2)) {
-		mac1 = mac_to_u64(mac_addr1);
-		mac2 = mac_to_u64(mac_addr2);
-
-		/* must contain an address range */
-		num_macs = mac2 - mac1 + 1;
-		/* <= 50 to protect against user programming error */
-		if (num_macs > 0 && num_macs <= 50) {
-			for (i = 0; i < num_macs; i++) {
-				u64_to_mac(mac1 + i, mac_addr);
-				if (is_valid_ethaddr(mac_addr)) {
-					eth_setenv_enetaddr_by_index("eth",
-								     i + 2,
-								     mac_addr);
-				}
-			}
-		}
-	}
 
 	return ret;
 }
@@ -683,6 +843,31 @@ static inline void vtt_regulator_enable(void)
 int board_early_init_f(void)
 {
 	vtt_regulator_enable();
+	return 0;
+}
+#endif
+
+#ifdef CONFIG_SPL_LOAD_FIT
+int board_fit_config_name_match(const char *name)
+{
+	if (board_is_x15() && !strcmp(name, "am57xx-beagle-x15"))
+		return 0;
+	else if (board_is_am572x_evm() && !strcmp(name, "am57xx-beagle-x15"))
+		return 0;
+	else if (board_is_am572x_idk() && !strcmp(name, "am572x-idk"))
+		return 0;
+	else if (board_is_am571x_idk() && !strcmp(name, "am571x-idk"))
+		return 0;
+	else
+		return -1;
+}
+#endif
+
+#if defined(CONFIG_OF_LIBFDT) && defined(CONFIG_OF_BOARD_SETUP)
+int ft_board_setup(void *blob, bd_t *bd)
+{
+	ft_cpu_setup(blob, bd);
+
 	return 0;
 }
 #endif

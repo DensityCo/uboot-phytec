@@ -9,8 +9,6 @@
 #ifndef __CONFIG_AM43XX_EVM_H
 #define __CONFIG_AM43XX_EVM_H
 
-#define CONFIG_AM43XX
-
 #define CONFIG_BOARD_LATE_INIT
 #define CONFIG_ARCH_CPU_INIT
 #define CONFIG_SYS_CACHELINE_SIZE       32
@@ -39,17 +37,10 @@
 #define CONFIG_POWER_TPS62362
 
 /* SPL defines. */
-#ifdef CONFIG_SPL_USB_HOST_SUPPORT
-/*
- * For USB host boot, ROM uses DMA for copying MLO from USB storage
- * and ARM internal ram is not accessible for DMA, so SPL text base
- * should be in OCMC ram
- */
-#define CONFIG_SPL_TEXT_BASE		0x40300350
-#else
-#define CONFIG_SPL_TEXT_BASE		0x402F4000
-#endif
-#define CONFIG_SPL_MAX_SIZE		(220 << 10)	/* 220KB */
+#define CONFIG_SPL_TEXT_BASE		CONFIG_ISW_ENTRY_ADDR
+#define CONFIG_SPL_MAX_SIZE		(NON_SECURE_SRAM_END - \
+					CONFIG_PUB_ROM_DATA_SIZE - \
+					CONFIG_SPL_TEXT_BASE)
 #define CONFIG_SYS_SPL_ARGS_ADDR	(CONFIG_SYS_SDRAM_BASE + \
 					 (128 << 20))
 #define CONFIG_SPL_POWER_SUPPORT
@@ -141,6 +132,7 @@
 #undef CONFIG_DM_SPI
 #undef CONFIG_DM_SPI_FLASH
 #undef CONFIG_TIMER
+#undef CONFIG_DM_NAND
 #endif
 
 #ifndef CONFIG_SPL_BUILD
@@ -192,7 +184,9 @@
 #endif
 
 #ifdef CONFIG_QSPI_BOOT
-#define CONFIG_SYS_TEXT_BASE           0x30000000
+#ifndef CONFIG_SYS_TEXT_BASE
+#define CONFIG_SYS_TEXT_BASE		CONFIG_ISW_ENTRY_ADDR
+#endif
 #undef CONFIG_ENV_IS_IN_FAT
 #define CONFIG_ENV_IS_IN_SPI_FLASH
 #define CONFIG_SYS_REDUNDAND_ENVIRONMENT
@@ -295,6 +289,8 @@
 		"if test $board_name = AM43EPOS; then " \
 			"setenv fdtfile am43x-epos-evm.dtb; fi; " \
 		"if test $board_name = AM43__GP; then " \
+			"setenv fdtfile am437x-gp-evm.dtb; fi; " \
+		"if test $board_name = AM43XXHS; then " \
 			"setenv fdtfile am437x-gp-evm.dtb; fi; " \
 		"if test $board_name = AM43__SK; then " \
 			"setenv fdtfile am437x-sk-evm.dtb; fi; " \

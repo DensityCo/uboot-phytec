@@ -89,8 +89,13 @@ dtb-$(CONFIG_ARCH_ZYNQMP) += \
 	zynqmp-zc1751-xm015-dc1.dtb		\
 	zynqmp-zc1751-xm016-dc2.dtb		\
 	zynqmp-zc1751-xm019-dc5.dtb
-dtb-$(CONFIG_AM33XX) += am335x-boneblack.dtb am335x-evm.dtb
-dtb-$(CONFIG_AM43XX) += am437x-gp-evm.dtb am437x-sk-evm.dtb
+dtb-$(CONFIG_AM33XX) += am335x-boneblack.dtb am335x-bone.dtb am335x-evm.dtb \
+	am335x-evmsk.dtb \
+	am335x-bonegreen.dtb \
+	am335x-icev2.dtb
+dtb-$(CONFIG_AM43XX) += am437x-gp-evm.dtb am437x-sk-evm.dtb	\
+	am43x-epos-evm.dtb \
+	am437x-idk-evm.dtb
 dtb-$(CONFIG_THUNDERX) += thunderx-88xx.dtb
 
 dtb-$(CONFIG_ARCH_SOCFPGA) +=				\
@@ -102,8 +107,11 @@ dtb-$(CONFIG_ARCH_SOCFPGA) +=				\
 	socfpga_cyclone5_socrates.dtb			\
 	socfpga_cyclone5_sr1500.dtb
 
-dtb-$(CONFIG_TARGET_DRA7XX_EVM) += dra72-evm.dtb dra7-evm.dtb
-dtb-$(CONFIG_TARGET_BEAGLE_X15) += am57xx-beagle-x15.dtb
+dtb-$(CONFIG_TARGET_DRA7XX_EVM) += dra72-evm.dtb dra7-evm.dtb	\
+	dra72-evm-revc.dtb
+dtb-$(CONFIG_TARGET_AM57XX_EVM) += am57xx-beagle-x15.dtb \
+	am572x-idk.dtb	\
+	am571x-idk.dtb
 dtb-$(CONFIG_TARGET_STV0991) += stv0991.dtb
 
 dtb-$(CONFIG_LS102XA) += ls1021a-qds-duart.dtb \

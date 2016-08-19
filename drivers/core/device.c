@@ -10,6 +10,7 @@
  */
 
 #include <common.h>
+#include <asm/io.h>
 #include <fdtdec.h>
 #include <fdt_support.h>
 #include <malloc.h>
@@ -678,6 +679,11 @@ void *dev_get_addr_ptr(struct udevice *dev)
 	return (void *)(uintptr_t)dev_get_addr_index(dev, 0);
 }
 
+void *dev_map_physmem(struct udevice *dev, unsigned long size)
+{
+	return map_physmem(dev_get_addr(dev), size, MAP_NOCACHE);
+}
+
 bool device_has_children(struct udevice *dev)
 {
 	return !list_empty(&dev->child_head);
@@ -714,4 +720,18 @@ int device_set_name(struct udevice *dev, const char *name)
 	dev->name = name;
 
 	return 0;
+}
+
+bool of_device_is_compatible(struct udevice *dev, const char *compat)
+{
+	const void *fdt = gd->fdt_blob;
+
+	return !fdt_node_check_compatible(fdt, dev->of_offset, compat);
+}
+
+bool of_machine_is_compatible(const char *compat)
+{
+	const void *fdt = gd->fdt_blob;
+
+	return !fdt_node_check_compatible(fdt, 0, compat);
 }

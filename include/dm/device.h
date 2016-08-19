@@ -463,6 +463,15 @@ fdt_addr_t dev_get_addr(struct udevice *dev);
  */
 void *dev_get_addr_ptr(struct udevice *dev);
 
+/* * dev_map_physmem() - Map bus memory into CPU space
+ *
+ * @dev: Pointer to device
+ * @size: size of the memory to map
+ *
+ * @return addr
+ */
+void *dev_map_physmem(struct udevice *dev, unsigned long size);
+
 /**
  * dev_get_addr_index() - Get the indexed reg property of a device
  *
@@ -530,6 +539,29 @@ bool device_is_last_sibling(struct udevice *dev);
  * string
  */
 int device_set_name(struct udevice *dev, const char *name);
+
+/**
+ * of_device_is_compatible() - check if the device is compatible with the compat
+ *
+ * This allows to check whether the device is comaptible with the compat.
+ *
+ * @dev:	udevice pointer for which compatible needs to be verified.
+ * @compat:	Compatible string which needs to verified in the given
+ *		device
+ * @return true if OK, false if the compatible is not found
+ */
+bool of_device_is_compatible(struct udevice *dev, const char *compat);
+
+/**
+ * of_machine_is_compatible() - check if the machine is compatible with
+ *				the compat
+ *
+ * This allows to check whether the machine is comaptible with the compat.
+ *
+ * @compat:	Compatible string which needs to verified
+ * @return true if OK, false if the compatible is not found
+ */
+bool of_machine_is_compatible(const char *compat);
 
 /**
  * device_is_on_pci_bus - Test if a device is on a PCI bus

@@ -239,3 +239,13 @@ void prcm_init()
 	setup_dplls();
 	timer_init();
 }
+
+void rtc_only_prcm_init(void)
+{
+	const struct dpll_params *params;
+
+	rtc_only_enable_basic_clocks();
+
+	params = get_dpll_ddr_params();
+	do_setup_dpll(&dpll_ddr_regs, params);
+}
