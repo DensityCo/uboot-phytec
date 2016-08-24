@@ -77,32 +77,8 @@
 	"partitions=" PARTS_DEFAULT "\0" \
 	"optargs=\0" \
 	"dofastboot=0\0" \
-	"loadbootscript=fatload mmc ${mmcdev} ${loadaddr} boot.scr\0" \
-	"bootscript=echo Running bootscript from mmc${mmcdev} ...; " \
-		"source ${loadaddr}\0" \
-	"loadimage=load mmc ${bootpart} ${loadaddr} ${bootdir}/${bootfile}\0" \
-	"boot_mmc=run findfdt; " \
-		"setenv mmcdev 1;" \
-		"setenv bootpart 1:2;" \
-		"setenv finduuid 'part uuid mmc 1:2 uuid';" \
-		"run envboot;" \
-		"run mmcboot;" \
-		"setenv mmcdev 0; " \
-		"setenv bootpart 0:2; " \
-		"setenv finduuid 'part uuid mmc 0:2 uuid';" \
-		"run mmcboot;\0" \
 	"boot_net=run findfdt; " \
 		"run netboot;\0" \
-	"mmcboot=mmc dev ${mmcdev}; " \
-		"if mmc rescan; then " \
-			"echo SD/MMC found on device ${mmcdev};" \
-			"if run loadimage; then " \
-				"run loadfdt; " \
-				"echo Booting from mmc${mmcdev} ...; " \
-				"run args_mmc; " \
-				"bootz ${loadaddr} - ${fdtaddr}; " \
-			"fi;" \
-		"fi;\0" \
 	"netboot=echo Booting from network ...; " \
 		"tftp ${loadaddr} ${tftploc}${bootfile}; " \
 		"tftp ${fdtaddr} ${tftploc}${fdtfile}; " \
@@ -137,7 +113,6 @@
 			"setenv fdtfile am57xx-phycore-rdk.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
-	"loadfdt=load mmc ${bootpart} ${fdtaddr} ${bootdir}/${fdtfile};\0" \
 	DFUARGS \
 	NETARGS \
 
