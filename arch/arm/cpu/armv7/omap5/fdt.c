@@ -172,7 +172,8 @@ static void ft_hs_fixups(void *fdt, bd_t *bd)
 }
 #endif
 
-#if defined(CONFIG_TARGET_DRA7XX_EVM) || defined(CONFIG_TARGET_AM57XX_EVM)
+#if defined(CONFIG_TARGET_DRA7XX_EVM) || defined(CONFIG_TARGET_AM57XX_EVM) \
+	|| defined(CONFIG_TARGET_AM57XX_PHYCORE_RDK)
 #define OPP_DSP_CLK_NUM	3
 #define OPP_IVA_CLK_NUM	2
 #define OPP_GPU_CLK_NUM	2
@@ -326,7 +327,8 @@ static void ft_opp_clock_fixups(void *fdt, bd_t *bd)
 }
 #else
 static void ft_opp_clock_fixups(void *fdt, bd_t *bd) { }
-#endif /* CONFIG_TARGET_DRA7XX_EVM || CONFIG_TARGET_AM57XX_EVM */
+#endif /* CONFIG_TARGET_DRA7XX_EVM || CONFIG_TARGET_AM57XX_EVM 
+			|| CONFIG_TARGET_AM57XX_PHYCORE_RDK */
 
 /*
  * Place for general cpu/SoC FDT fixups. Board specific

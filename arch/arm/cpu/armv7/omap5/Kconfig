@@ -32,7 +32,7 @@ source "board/ti/dra7xx/Kconfig"
 source "board/ti/am57xx/Kconfig"
 source "board/phytec/am57xx_phycore_rdk/Kconfig"
 
-if TARGET_DRA7XX_EVM || TARGET_AM57XX_EVM
+if TARGET_DRA7XX_EVM || TARGET_AM57XX_EVM \
 	|| TARGET_AM57XX_PHYCORE_RDK
 menu "Voltage Domain OPP selections"
 
