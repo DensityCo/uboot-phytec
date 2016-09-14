@@ -1,0 +1,411 @@
+/*
+ * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/ {
+	model = "PHYTEC AM57xx PCM-948";
+	compatible = "phytec,am57xx-pcm-948", "phytec,am57xx-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+
+	hdmi0: connector {
+		compatible = "hdmi-connector";
+		status = "disabled";
+		label = "hdmi";
+
+		type = "a";
+
+		port {
+			hdmi_connector_in: endpoint {
+				remote-endpoint = <&tpd12s521_out>;
+			};
+		};
+	};
+
+	tpd12s521: encoder {
+		compatible = "ti,tpd12s521";
+		status = "disabled";
+
+		gpios = <&gpio7 12 GPIO_ACTIVE_HIGH>;	/* gpio7_12/sp1_cs2, HPD */
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+
+				tpd12s521_in: endpoint {
+					remote-endpoint = <&hdmi_out>;
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+
+				tpd12s521_out: endpoint {
+					remote-endpoint = <&hdmi_connector_in>;
+				};
+			};
+		};
+	};
+
+	gpio_fan: gpio_fan {
+		compatible = "gpio-fan";
+		pinctrl-names = "default";
+		pinctrl-0 = <&fan_pins_default>;
+
+		gpios =  <&gpio7 5 GPIO_ACTIVE_HIGH>;
+		gpio-fan,speed-map = <0    0
+				      13000 1>;
+		cooling-min-state = <0>;
+		cooling-max-state = <1>;
+		#cooling-cells = <2>;
+	};
+
+};
+
+&dra7_pmx_core {
+	leds_cb_pins_default: leds_cb_pins_default {
+		pinctrl-single,pins = <
+			0x58 (PIN_OUTPUT | MUX_MODE14)	/* gpmc_a6.gpio1_28 */
+			0x5c (PIN_OUTPUT | MUX_MODE14)	/* gpmc_a7.gpio1_29 */
+		>;
+	};
+
+	leds_cb_pins_sleep: leds_cb_pins_sleep {
+		pinctrl-single,pins = <
+			0x58 (PIN_INPUT_PULLDOWN | MUX_MODE15)
+			0x5c (PIN_INPUT_PULLDOWN | MUX_MODE15)
+		>;
+	};
+
+	fan_pins_default: fan_pins_default {
+		pinctrl-single,pins = <
+			0x48 (PIN_OUTPUT | MUX_MODE14)	/* gpmc_a2.gpio7_5 */
+		>;
+	};
+
+	i2c2_pins: pinmux_i2c2_pins {
+		pinctrl-single,pins = <
+			0x408 (PIN_INPUT | MUX_MODE1)	/* hdmi1_ddc_scl */
+			0x40c (PIN_INPUT | MUX_MODE1)	/* hdmi1_ddc_sda */
+		>;
+	};
+
+	i2c4_pins_default: i2c4_pins_default {
+		pinctrl-single,pins = <
+			0x40 (PIN_INPUT_PULLUP | MUX_MODE7)	/* gpmc_a0.i2c4_scl */
+			0x44 (PIN_INPUT_PULLUP | MUX_MODE7)	/* gpmc_a1.i2c4_sda */
+		>;
+	};
+
+	i2c4_pins_sleep: i2c4_pins_sleep {
+		pinctrl-single,pins = <
+			0x40 (PIN_INPUT | MUX_MODE15)
+			0x44 (PIN_INPUT | MUX_MODE15)
+		>;
+	};
+
+	uart3_pins_default: uart3_pins_default {
+		pinctrl-single,pins = <
+			0x248 (PIN_INPUT_SLEW | MUX_MODE0) /* uart3_rxd.rxd */
+			0x24c (PIN_INPUT_SLEW | MUX_MODE0) /* uart3_txd.txd */
+		>;
+	};
+
+	uart3_pins_sleep: uart3_pins_sleep{
+		pinctrl-single,pins = <
+			0x248 (PIN_INPUT | MUX_MODE15)
+			0x24c (PIN_INPUT | MUX_MODE15)
+		>;
+	};
+
+	uart5_pins_default: uart5_pins_default {
+		pinctrl-single,pins = <
+			0x1dc (PIN_INPUT_SLEW | MUX_MODE2) /* vout1_d0.uart5_rxd */
+			0x1e0 (PIN_INPUT_SLEW | MUX_MODE2) /* vout1_d1.uart5_txd */
+		>;
+	};
+
+	uart5_pins_sleep: uart5_pins_sleep{
+		pinctrl-single,pins = <
+			0x1dc (PIN_INPUT | MUX_MODE15)
+			0x1e0 (PIN_INPUT | MUX_MODE15)
+		>;
+	};
+
+
+	mmc1_pins_default: mmc1_pins_default {
+		pinctrl-single,pins = <
+			0x36c (PIN_INPUT | MUX_MODE14)	/* mmc1sdcd.gpio6_27 */
+			0x354 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_clk.clk */
+			0x358 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_cmd.cmd */
+			0x35c (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat0.dat0 */
+			0x360 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat1.dat1 */
+			0x364 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat2.dat2 */
+			0x368 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat3.dat3 */
+		>;
+	};
+
+	wlan_pins_default: wlan_pins_default {
+		pinctrl-single,pins = <
+			0x39c (PIN_OUTPUT_PULLDOWN | MUX_MODE14) /* mmc3_dat6.gpio1_24 */
+			0x3a0 (PIN_INPUT_PULLDOWN | MUX_MODE14)  /* mmc3_dat7.gpio1_25 */
+		>;
+	};
+
+	bt_pins_default: bt_pins_default {
+		pinctrl-single,pins = <
+			0x170 (PIN_INPUT_SLEW | MUX_MODE8) /* vin2a_d2.uart10.rxd */
+			0x174 (PIN_INPUT_SLEW | MUX_MODE8) /* vin2a_d3.uart10.txd */
+			0x178 (PIN_INPUT_SLEW | MUX_MODE8) /* vin2a_d4.uart10.ctsn */
+			0x17c (PIN_INPUT_SLEW | MUX_MODE8) /* vin2a_d5.uart10.rtsn */
+			0x394 (PIN_OUTPUT_PULLDOWN | MUX_MODE14) /* mmc3_dat4.gpio1_22 */
+		>;
+	};
+
+	bt_pins_sleep: bt_pins_sleep {
+		pinctrl-single,pins = <
+			0x170 (PIN_INPUT | MUX_MODE15)
+			0x174 (PIN_INPUT | MUX_MODE15)
+			0x178 (PIN_INPUT | MUX_MODE15)
+			0x17c (PIN_INPUT | MUX_MODE15)
+			0x394 (PIN_OUTPUT_PULLUP | MUX_MODE14)
+		>;
+	};
+
+	emac1_pins_default: emac1_pins_default {
+		pinctrl-single,pins = <
+			/* Slave 2 */
+			0x198 (PIN_OUTPUT | MUX_MODE3)	/* rgmii2_tclk */
+			0x19c (PIN_OUTPUT | MUX_MODE3)	/* rgmii2_tctl */
+			0x1a0 (PIN_OUTPUT | MUX_MODE3)	/* rgmii2_td3 */
+			0x1a4 (PIN_OUTPUT | MUX_MODE3)	/* rgmii2_td2 */
+			0x1a8 (PIN_OUTPUT | MUX_MODE3)	/* rgmii2_td1 */
+			0x1ac (PIN_OUTPUT | MUX_MODE3)	/* rgmii2_td0 */
+			0x1b0 (PIN_INPUT | MUX_MODE3)	/* rgmii2_rclk */
+			0x1b4 (PIN_INPUT | MUX_MODE3)	/* rgmii2_rctl */
+			0x1b8 (PIN_INPUT | MUX_MODE3)	/* rgmii2_rd3 */
+			0x1bc (PIN_INPUT | MUX_MODE3)	/* rgmii2_rd2 */
+			0x1c0 (PIN_INPUT | MUX_MODE3)	/* rgmii2_rd1 */
+			0x1c4 (PIN_INPUT | MUX_MODE3)	/* rgmii2_rd0 */
+		>;
+
+	};
+
+	emac1_pins_sleep: emac1_pins_sleep {
+		pinctrl-single,pins = <
+			/* Slave 2 */
+			0x198 (PIN_INPUT | MUX_MODE15)
+			0x19c (PIN_INPUT | MUX_MODE15)
+			0x1a0 (PIN_INPUT | MUX_MODE15)
+			0x1a4 (PIN_INPUT | MUX_MODE15)
+			0x1a8 (PIN_INPUT | MUX_MODE15)
+			0x1ac (PIN_INPUT | MUX_MODE15)
+			0x1b0 (PIN_INPUT | MUX_MODE15)
+			0x1b4 (PIN_INPUT | MUX_MODE15)
+			0x1b8 (PIN_INPUT | MUX_MODE15)
+			0x1bc (PIN_INPUT | MUX_MODE15)
+			0x1c0 (PIN_INPUT | MUX_MODE15)
+			0x1c4 (PIN_INPUT | MUX_MODE15)
+		>;
+	};
+
+	hdmi_pins: pinmux_hdmi_pins {
+		pinctrl-single,pins = <
+			0x3b8 (PIN_INPUT_PULLDOWN | MUX_MODE14) /* spi1_cs2.gpio7_12 */
+			0x3bc (PIN_INPUT_SLEW | MUX_MODE6)      /* spi1_cs3.hdmi1_cec */
+		>;
+	};
+
+	usb1_pins: pinmux_usb1_pins {
+		pinctrl-single,pins = <
+			0x280 (PIN_INPUT_SLEW | MUX_MODE0) /* usb1_drvvbus */
+			0x22c (PIN_INPUT | MUX_MODE14)     /* vout1_d20.gpio8_20 */
+		>;
+	};
+
+	usb2_pins_default: pinmux_usb2_pins_default {
+		pinctrl-single,pins = <
+			0x1d0 (PIN_INPUT | MUX_MODE14)	   /* vout1_fld.gpio4_21 */
+			0x284 (PIN_INPUT_SLEW | MUX_MODE0) /* usb2_drvvbus */
+			0x230 (PIN_INPUT | MUX_MODE14)     /* vout1_d21.gpio8_21 */
+		>;
+	};
+
+	usb2_pins_sleep: pinmux_usb2_pins_sleep {
+		pinctrl-single,pins = <
+			0x1d0 (PIN_INPUT | MUX_MODE14)	   /* vout1_fld.gpio4_21 */
+			0x284 (PIN_INPUT_SLEW | MUX_MODE15) /* usb2_drvvbus */
+			0x230 (PIN_INPUT | MUX_MODE14)     /* vout1_d21.gpio8_21 */
+		>;
+	};
+
+	extcon_pins_default:  extcon_pins_default {
+		pinctrl-single,pins = <
+			0x1f4 (PIN_INPUT | MUX_MODE14) /* vout1_d6.gpio8_6 */
+		>;
+	};
+
+	clkout2_pins_default: clkout2_pins_default {
+		pinctrl-single,pins = <
+			0x294 (PIN_INPUT_PULLDOWN | MUX_MODE9)	/* xref_clk0.clkout2 */
+		>;
+	};
+
+	clkout2_pins_sleep: clkout2_pins_sleep {
+		pinctrl-single,pins = <
+			0x294 (PIN_INPUT | MUX_MODE15)	/* xref_clk0.clkout2 */
+		>;
+	};
+};
+
+&phytec_leds {
+		pinctrl-0 = <&leds_som_pins_default &leds_cb_pins_default>;
+
+		led@2 {
+			label = "am57xx-pcm-948:usr1";
+			gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "gpio";
+			default-state = "off";
+		};
+
+		led@3 {
+			label = "am57xx-pcm-948:usr2";
+			gpios = <&gpio1 29 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "gpio";
+			default-state = "off";
+		};
+};
+
+&tps659038 {
+	tps659038_usb: tps659038_usb {
+		status = "disabled";
+		compatible = "ti,palmas-usb-vid";
+		pinctrl-names = "default";
+		pinctrl-0 = <&extcon_pins_default>;
+		id-gpios = <&gpio8 6 GPIO_ACTIVE_HIGH>;
+
+		ti,enable-vbus-detection;
+		ti,enable-id-detection;
+	};
+};
+
+&i2c4 {
+	status = "okay";
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&i2c4_pins_default>;
+	pinctrl-1 = <&i2c4_pins_sleep>;
+	clock-frequency = <400000>;
+};
+
+&uart3 {
+        status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart3_pins_default>;
+
+	interrupts-extended = <&crossbar_mpu GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH
+			       &dra7_pmx_core 0x248>;
+};
+
+&uart5 {
+        status = "disabled";
+        pinctrl-names = "default", "sleep";
+        pinctrl-0 = <&uart5_pins_default>;
+        pinctrl-1 = <&uart5_pins_sleep>;
+
+	interrupts-extended = <&crossbar_mpu GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH
+			       &dra7_pmx_core 0x1dc>;
+};
+
+&mac {
+	slaves = <2>;
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&emac0_pins_default &emac1_pins_default>;
+	pinctrl-1 = <&emac0_pins_sleep &emac1_pins_sleep>;
+	dual_emac;
+};
+
+&cpsw_emac1 {
+	phy_id = <&davinci_mdio>, <2>;
+	phy-mode = "rgmii";
+	dual_emac_res_vlan = <2>;
+	status = "disabled";
+};
+
+&mmc1 {
+	status = "disabled";
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc1_pins_default>;
+
+	vmmc-supply = <&ldo1_reg>;
+	vmmc_aux-supply = <&vdd_3v3>;
+	pbias-supply = <&pbias_mmc_reg>;
+	bus-width = <4>;
+
+	cd-gpios = <&gpio6 27 GPIO_ACTIVE_LOW>; /* gpio 219 */
+};
+
+&dss {
+	vdda_video-supply = <&ldoln_reg>;
+};
+
+&hdmi {
+	status = "disabled";
+	pinctrl-names = "default";
+	pinctrl-0 = <&hdmi_pins &i2c2_pins>;
+
+	vdda-supply = <&ldo4_reg>;
+
+	port {
+		hdmi_out: endpoint {
+			remote-endpoint = <&tpd12s521_in>;
+		};
+	};
+};
+
+&usb2_phy1 {
+       phy-supply = <&ldousb_reg>;
+};
+
+&usb2_phy2 {
+       phy-supply = <&ldousb_reg>;
+};
+
+&usb1 {
+	status = "disabled";
+	pinctrl-names = "default";
+	pinctrl-0 = <&usb1_pins>;
+
+	dr_mode = "host";
+};
+
+&omap_dwc3_2 {
+	status = "disabled";
+	extcon = <&tps659038_usb>;
+};
+
+&usb2 {
+	status = "disabled";
+	pinctrl-0 = <&usb2_pins_default>;
+	pinctrl-1 = <&usb2_pins_sleep>;
+
+	pinctrl-names = "default", "sleep";
+};
+
+&cpu_trips {
+	cpu_alert1: cpu_alert1 {
+		temperature = <75000>; /* millicelsius */
+		hysteresis = <2000>; /* millicelsius */
+		type = "active";
+	};
+};
+
+&cpu_cooling_maps {
+	map1 {
+		trip = <&cpu_alert1>;
+		cooling-device = <&gpio_fan THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+	};
+};

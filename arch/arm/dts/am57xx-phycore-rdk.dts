@@ -1,0 +1,111 @@
+/*
+ * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+#include "am57xx-phycore-som.dtsi"
+#include "am57xx-pcm-948.dtsi"
+
+/ {
+	chosen {
+		stdout-path = &uart3;
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x80000000 0x80000000>; /* 2GiB */
+	};
+
+	aliases {
+		display0 = &hdmi0;
+		sound0 = &hdmi;
+	};
+};
+
+/**** SOM - pcm057 ****/
+
+&mmc2 {
+	status = "okay";
+};
+
+&cpsw_emac0 {
+	status = "okay";
+};
+
+&davinci_mdio {
+	status = "okay";
+};
+
+&i2c_eeprom {
+	status = "disabled";
+};
+
+&i2c_rtc {
+	status = "disabled";
+};
+
+&tps659038_rtc {
+	status = "okay";
+};
+
+
+/**** Carrier Board - pcm948 ****/
+
+&uart3 {
+	status = "okay";
+};
+
+&uart5 {
+	status = "okay";
+};
+
+&cpsw_emac1 {
+	status = "okay";
+};
+
+&mmc1 {
+	status = "okay";
+};
+
+&gpio_fan {
+	status = "disabled";
+};
+
+&dss {
+	status = "disabled";
+};
+
+/* HDMI: enable hdmi, hdmi0 and tpd12s521 */
+&tpd12s521 {
+	status = "disabled";
+};
+&hdmi {
+	status = "disabled";
+};
+&hdmi0 {
+	status = "disabled";
+};
+
+&sata {
+	status = "disabled";
+};
+
+/* USB3.0 host: enable usb1 */
+&usb1 {
+	status = "disabled";
+};
+/* USB2.0: enable tps659038_usb, omap_dwc3_2, and usb2 */
+&tps659038_usb {
+	status = "disabled";
+};
+&omap_dwc3_2 {
+	status = "disabled";
+};
+&usb2 {
+	status = "disabled";
+	dr_mode = "otg"; /* peripheral, host, or otg */
+};
