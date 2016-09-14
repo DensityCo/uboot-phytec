@@ -56,10 +56,10 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 static const struct emif_regs am57xx_phycore_rdk_emif1_532mhz_emif_regs = {
 	.sdram_config_init	= 0x61851b32,
 	.sdram_config		= 0x61851b32,
-	.sdram_config2		= 0x8000000,
+	.sdram_config2		= 0x08000000,
 	.ref_ctrl		= 0x000040f1,
 	.ref_ctrl_final		= 0x00001035,
-	.sdram_tim1		= 0xcccf266b,
+	.sdram_tim1		= 0xeeef265b,
 	.sdram_tim2		= 0x308f7fda,
 	.sdram_tim3		= 0x409f88a8,
 	.read_idle_ctrl		= 0x00090000,
@@ -120,10 +120,10 @@ static const u32 am57xx_phycore_rdk_emif1_ext_phy_ctrl_const_regs[] = {
 static const struct emif_regs am57xx_phycore_rdk_emif2_532mhz_emif_regs = {
 	.sdram_config_init	= 0x61851b32,
 	.sdram_config		= 0x61851b32,
-	.sdram_config2		= 0x8000000,
-	.ref_ctrl		= 0x000040F1,
+	.sdram_config2		= 0x08000000,
+	.ref_ctrl		= 0x000040f1,
 	.ref_ctrl_final		= 0x00001035,
-	.sdram_tim1		= 0xcccf36ab,
+	.sdram_tim1		= 0xeeef265b,
 	.sdram_tim2		= 0x308f7fda,
 	.sdram_tim3		= 0x409f88a8,
 	.read_idle_ctrl		= 0x00090000,
@@ -207,35 +207,39 @@ void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 }
 
 struct vcores_data am57xx_phycore_rdk_volts = {
-	.mpu.value		= VDD_MPU_DRA752,
-	.mpu.efuse.reg		= STD_FUSE_OPP_VMIN_MPU_NOM,
+	.mpu.value		= VDD_MPU_DRA7,
+	.mpu.efuse.reg		= STD_FUSE_OPP_VMIN_MPU,
 	.mpu.efuse.reg_bits     = DRA752_EFUSE_REGBITS,
 	.mpu.addr		= TPS659038_REG_ADDR_SMPS12,
 	.mpu.pmic		= &tps659038,
+	.mpu.abb_tx_done_mask	= OMAP_ABB_MPU_TXDONE_MASK,
 
-	.eve.value		= VDD_EVE_DRA752,
-	.eve.efuse.reg		= STD_FUSE_OPP_VMIN_DSPEVE_NOM,
+	.eve.value		= VDD_EVE_DRA7,
+	.eve.efuse.reg		= STD_FUSE_OPP_VMIN_DSPEVE,
 	.eve.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.eve.addr		= TPS659038_REG_ADDR_SMPS45,
 	.eve.pmic		= &tps659038,
+	.eve.abb_tx_done_mask	= OMAP_ABB_EVE_TXDONE_MASK,
 
-	.gpu.value		= VDD_GPU_DRA752,
-	.gpu.efuse.reg		= STD_FUSE_OPP_VMIN_GPU_NOM,
+	.gpu.value		= VDD_GPU_DRA7,
+	.gpu.efuse.reg		= STD_FUSE_OPP_VMIN_GPU,
 	.gpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.gpu.addr		= TPS659038_REG_ADDR_SMPS45,
 	.gpu.pmic		= &tps659038,
+	.gpu.abb_tx_done_mask	= OMAP_ABB_GPU_TXDONE_MASK,
 
-	.core.value		= VDD_CORE_DRA752,
-	.core.efuse.reg		= STD_FUSE_OPP_VMIN_CORE_NOM,
+	.core.value		= VDD_CORE_DRA7,
+	.core.efuse.reg		= STD_FUSE_OPP_VMIN_CORE,
 	.core.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.core.addr		= TPS659038_REG_ADDR_SMPS6,
 	.core.pmic		= &tps659038,
 
-	.iva.value		= VDD_IVA_DRA752,
-	.iva.efuse.reg		= STD_FUSE_OPP_VMIN_IVA_NOM,
+	.iva.value		= VDD_IVA_DRA7,
+	.iva.efuse.reg		= STD_FUSE_OPP_VMIN_IVA,
 	.iva.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.iva.addr		= TPS659038_REG_ADDR_SMPS45,
 	.iva.pmic		= &tps659038,
+	.iva.abb_tx_done_mask	= OMAP_ABB_IVA_TXDONE_MASK,
 };
 
 void hw_data_init(void)
@@ -256,7 +260,6 @@ int board_init(void)
 
 int board_late_init(void)
 {
-	init_sata(0);
 	/*
 	 * DEV_CTRL.DEV_ON = 1 please - else palmas switches off in 8 seconds
 	 * This is the POWERHOLD-in-Low behavior.
@@ -265,18 +268,43 @@ int board_late_init(void)
 	return 0;
 }
 
-void set_muxconf_regs_essential(void)
+void set_muxconf_regs(void)
 {
 	do_set_mux32((*ctrl)->control_padconf_core_base,
-		early_padconf, ARRAY_SIZE(early_padconf));
+			early_padconf, ARRAY_SIZE(early_padconf));
 }
 
 #ifdef CONFIG_IODELAY_RECALIBRATION
 void recalibrate_iodelay(void)
 {
-        __recalibrate_iodelay(core_padconf_array_essential,
-                              ARRAY_SIZE(core_padconf_array_essential),
-                              iodelay_cfg_array, ARRAY_SIZE(iodelay_cfg_array));
+	const struct iodelay_cfg_entry *iod;
+	int iod_sz;
+	int ret;
+
+	/* Setup I/O isolation */
+	ret = __recalibrate_iodelay_start();
+	if (ret)
+		goto err;
+
+	/* Do the muxing here */
+	do_set_mux32((*ctrl)->control_padconf_core_base,
+			core_padconf_array_essential,
+			ARRAY_SIZE(core_padconf_array_essential));
+
+	if (omap_revision() == DRA752_ES1_1) {
+		iod = iodelay_cfg_array_sr1_1;
+		iod_sz = ARRAY_SIZE(iodelay_cfg_array_sr1_1);
+	} else {
+		iod = iodelay_cfg_array_sr2_0;
+		iod_sz = ARRAY_SIZE(iodelay_cfg_array_sr2_0);
+	}
+
+	/* Setup IOdelay configuration */
+	ret = do_set_iodelay((*ctrl)->iodelay_config_base, iod, iod_sz);
+
+err:
+	/* Closeup.. remove isolation */
+	__recalibrate_iodelay_end(ret);
 }
 #endif
 
@@ -285,9 +313,15 @@ int board_mmc_init(bd_t *bis)
 {
 	omap_mmc_init(0, 0, 0, -1, -1);
 	omap_mmc_init(1, 0, 0, -1, -1);
-	omap_mmc_init(2, 0, 0, -1, -1);
 
 	return 0;
+}
+#endif
+
+#ifdef CONFIG_OMAP_HSMMC
+int platform_fixup_disable_uhs_mode(void)
+{
+	return omap_revision() == DRA752_ES1_1;
 }
 #endif
 
@@ -348,6 +382,17 @@ static struct ti_usb_phy_device usb_phy2_device = {
 	.index = 1,
 };
 
+int usb_gadget_handle_interrupts(int index)
+{
+	u32 status;
+
+	status = dwc3_omap_uboot_interrupt_status(index);
+	if (status)
+		dwc3_uboot_handle_interrupt(index);
+
+	return 0;
+}
+
 int board_usb_init(int index, enum usb_init_type init)
 {
 	enable_usb_clocks(index);
@@ -407,18 +452,7 @@ int board_usb_cleanup(int index, enum usb_init_type init)
 	disable_usb_clocks(index);
 	return 0;
 }
-
-int usb_gadget_handle_interrupts(int index)
-{
-	u32 status;
-
-	status = dwc3_omap_uboot_interrupt_status(index);
-	if (status)
-		dwc3_uboot_handle_interrupt(index);
-
-	return 0;
-}
-#endif
+#endif /* CONFIG_USB_DWC3 */
 
 #ifdef CONFIG_DRIVER_TI_CPSW
 
@@ -535,6 +569,25 @@ static inline void vtt_regulator_enable(void)
 int board_early_init_f(void)
 {
 	vtt_regulator_enable();
+	return 0;
+}
+#endif
+
+#ifdef CONFIG_SPL_LOAD_FIT
+int board_fit_config_name_match(const char *name)
+{
+	if (!strcmp(name, "am57xx-phycore-rdk"))
+		return 0;
+	else
+		return -1;
+}
+#endif
+
+#if defined(CONFIG_OF_LIBFDT) && defined(CONFIG_OF_BOARD_SETUP)
+int ft_board_setup(void *blob, bd_t *bd)
+{
+	ft_cpu_setup(blob, bd);
+
 	return 0;
 }
 #endif
