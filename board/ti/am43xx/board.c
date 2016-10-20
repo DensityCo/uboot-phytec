@@ -13,6 +13,7 @@
 #include <asm/errno.h>
 #include <spl.h>
 #include <usb.h>
+#include <asm/omap_sec_common.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/arch/mux.h>
@@ -800,8 +801,9 @@ int board_usb_cleanup(int index, enum usb_init_type init)
 }
 #endif /* defined(CONFIG_USB_DWC3) || defined(CONFIG_USB_XHCI_OMAP) */
 
-#ifdef CONFIG_DRIVER_TI_CPSW
-
+#ifndef CONFIG_DM_ETH
+#if (defined(CONFIG_DRIVER_TI_CPSW) && !defined(CONFIG_SPL_BUILD)) || \
+	(defined(CONFIG_SPL_ETH_SUPPORT) && defined(CONFIG_SPL_BUILD))
 static void cpsw_control(int enabled)
 {
 	/* Additional controls can be added here */
@@ -839,7 +841,24 @@ static struct cpsw_platform_data cpsw_data = {
 	.host_port_num		= 0,
 	.version		= CPSW_CTRL_VERSION_2,
 };
+#endif
 
+/*
+ * This function will:
+ * Read the eFuse for MAC addresses, and set ethaddr/eth1addr/usbnet_devaddr
+ * in the environment
+ * Perform fixups to the PHY present on certain boards.  We only need this
+ * function in:
+ * - SPL with either CPSW or USB ethernet support
+ * - Full U-Boot, with either CPSW or USB ethernet
+ * Build in only these cases to avoid warnings about unused variables
+ * when we build an SPL that has neither option but full U-Boot will.
+ */
+#if ((defined(CONFIG_SPL_ETH_SUPPORT) || \
+	defined(CONFIG_SPL_USBETH_SUPPORT)) && \
+	defined(CONFIG_SPL_BUILD)) || \
+	((defined(CONFIG_DRIVER_TI_CPSW) || \
+	  defined(CONFIG_USB_ETHER)) && !defined(CONFIG_SPL_BUILD))
 int board_eth_init(bd_t *bis)
 {
 	int rv;
@@ -856,12 +875,15 @@ int board_eth_init(bd_t *bis)
 	mac_addr[4] = mac_lo & 0xFF;
 	mac_addr[5] = (mac_lo & 0xFF00) >> 8;
 
+#if (defined(CONFIG_DRIVER_TI_CPSW) && !defined(CONFIG_SPL_BUILD)) || \
+	(defined(CONFIG_SPL_ETH_SUPPORT) && defined(CONFIG_SPL_BUILD))
 	if (!getenv("ethaddr")) {
 		puts("<ethaddr> not set. Validating first E-fuse MAC\n");
 		if (is_valid_ethaddr(mac_addr))
 			eth_setenv_enetaddr("ethaddr", mac_addr);
 	}
 
+#ifndef CONFIG_SPL_BUILD
 	mac_lo = readl(&cdev->macid1l);
 	mac_hi = readl(&cdev->macid1h);
 	mac_addr[0] = mac_hi & 0xFF;
@@ -876,6 +898,7 @@ int board_eth_init(bd_t *bis)
 			eth_setenv_enetaddr("eth1addr", mac_addr);
 	}
 
+#endif
 	if (board_is_eposevm()) {
 		writel(RMII_MODE_ENABLE | RMII_CHIPCKL_ENABLE, &cdev->miisel);
 		cpsw_slaves[0].phy_if = PHY_INTERFACE_MODE_RMII;
@@ -896,17 +919,30 @@ int board_eth_init(bd_t *bis)
 	}
 
 	rv = cpsw_register(&cpsw_data);
-	if (rv < 0)
+	if (rv < 0) {
 		printf("Error %d registering CPSW switch\n", rv);
+		return rv;
+	}
+#endif
+#if defined(CONFIG_USB_ETHER) && \
+	(!defined(CONFIG_SPL_BUILD) || defined(CONFIG_SPL_USBETH_SUPPORT))
+	if (is_valid_ethaddr(mac_addr))
+		eth_setenv_enetaddr("usbnet_devaddr", mac_addr);
+
+	rv = usb_eth_initialize(bis);
+	if (rv < 0)
+		printf("Error %d registering USB_ETHER\n", rv);
+#endif
 
 	return rv;
 }
+#endif
 #endif
 
 #ifdef CONFIG_SPL_LOAD_FIT
 int board_fit_config_name_match(const char *name)
 {
-	if (board_is_gpevm() && !strcmp(name, "am437x-gp-evm"))
+	if (board_is_evm() && !strcmp(name, "am437x-gp-evm"))
 		return 0;
 	else if (board_is_sk() && !strcmp(name, "am437x-sk-evm"))
 		return 0;
@@ -916,5 +952,12 @@ int board_fit_config_name_match(const char *name)
 		return 0;
 	else
 		return -1;
+}
+#endif
+
+#ifdef CONFIG_TI_SECURE_DEVICE
+void board_fit_image_post_process(void **p_image, size_t *p_size)
+{
+	secure_boot_verify_image(p_image, p_size);
 }
 #endif

@@ -66,7 +66,6 @@
 #define DFUARGS
 #endif
 
-#ifndef CONFIG_SPL_BUILD
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	DEFAULT_LINUX_BOOT_ENV \
@@ -112,10 +111,18 @@
 			"setenv fdtfile am57xx-evm.dtb; fi;" \
 		"if test $board_name = am57xx_evm_reva3; then " \
 			"setenv fdtfile am57xx-evm-reva3.dtb; fi;" \
-		"if test $board_name = am572x_idk; then " \
+		"if test $board_name = am572x_idk && test $idk_lcd = no; then " \
 			"setenv fdtfile am572x-idk.dtb; fi;" \
-		"if test $board_name = am571x_idk; then " \
+		"if test $board_name = am572x_idk && test $idk_lcd = osd101t2045; then " \
+			"setenv fdtfile am572x-idk-lcd-osd.dtb; fi;" \
+		"if test $board_name = am572x_idk && test $idk_lcd = osd101t2587; then " \
+			"setenv fdtfile am572x-idk-lcd-osd101t2587.dtb; fi;" \
+		"if test $board_name = am571x_idk && test $idk_lcd = no; then " \
 			"setenv fdtfile am571x-idk.dtb; fi;" \
+		"if test $board_name = am571x_idk && test $idk_lcd = osd101t2045; then " \
+			"setenv fdtfile am571x-idk-lcd-osd.dtb; fi;" \
+		"if test $board_name = am571x_idk && test $idk_lcd = osd101t2587; then " \
+			"setenv fdtfile am571x-idk-lcd-osd101t2587.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
 	"loadfdt=load mmc ${bootpart} ${fdtaddr} ${bootdir}/${fdtfile};\0" \
@@ -136,7 +143,6 @@
 	"setenv mmcroot /dev/mmcblk0p2 rw; " \
 	"run mmcboot;" \
 	""
-#endif
 
 /*
  * SPL related defines.  The Public RAM memory map the ROM defines the

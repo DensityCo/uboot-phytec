@@ -17,6 +17,8 @@
 #include <asm/gpio.h>
 #include <usb.h>
 #include <linux/usb/gadget.h>
+#include <asm/omap_common.h>
+#include <asm/omap_sec_common.h>
 #include <asm/arch/gpio.h>
 #include <asm/arch/dra7xx_iodelay.h>
 #include <asm/emif.h>
@@ -28,7 +30,6 @@
 #include <dwc3-omap-uboot.h>
 #include <ti-usb-phy-uboot.h>
 #include <miiphy.h>
-#include <pcf8575.h>
 
 #include "mux_data.h"
 #include "../common/board_detect.h"
@@ -52,10 +53,6 @@ DECLARE_GLOBAL_DATA_PTR;
 #define GPIO_DDR_VTT_EN 203
 
 #define SYSINFO_BOARD_NAME_MAX_LEN	37
-
-/* pcf chip address enet_mux_s0 */
-#define PCF_ENET_MUX_ADDR	0x21
-#define PCF_SEL_ENET_MUX_S0	4
 
 const struct omap_sysinfo sysinfo = {
 	"Board: UNKNOWN(DRA7 EVM) REV UNKNOWN\n"
@@ -310,6 +307,82 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 	}
 }
 
+struct vcores_data dra752_volts = {
+	.mpu.value	= VDD_MPU_DRA7,
+	.mpu.efuse.reg	= STD_FUSE_OPP_VMIN_MPU,
+	.mpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.mpu.addr	= TPS659038_REG_ADDR_SMPS12,
+	.mpu.pmic	= &tps659038,
+	.mpu.abb_tx_done_mask = OMAP_ABB_MPU_TXDONE_MASK,
+
+	.eve.value	= VDD_EVE_DRA7,
+	.eve.efuse.reg	= STD_FUSE_OPP_VMIN_DSPEVE,
+	.eve.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.eve.addr	= TPS659038_REG_ADDR_SMPS45,
+	.eve.pmic	= &tps659038,
+	.eve.abb_tx_done_mask = OMAP_ABB_EVE_TXDONE_MASK,
+
+	.gpu.value	= VDD_GPU_DRA7,
+	.gpu.efuse.reg	= STD_FUSE_OPP_VMIN_GPU,
+	.gpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.gpu.addr	= TPS659038_REG_ADDR_SMPS6,
+	.gpu.pmic	= &tps659038,
+	.gpu.abb_tx_done_mask = OMAP_ABB_GPU_TXDONE_MASK,
+
+	.core.value	= VDD_CORE_DRA7,
+	.core.efuse.reg	= STD_FUSE_OPP_VMIN_CORE,
+	.core.efuse.reg_bits = DRA752_EFUSE_REGBITS,
+	.core.addr	= TPS659038_REG_ADDR_SMPS7,
+	.core.pmic	= &tps659038,
+
+	.iva.value	= VDD_IVA_DRA7,
+	.iva.efuse.reg	= STD_FUSE_OPP_VMIN_IVA,
+	.iva.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
+	.iva.addr	= TPS659038_REG_ADDR_SMPS8,
+	.iva.pmic	= &tps659038,
+	.iva.abb_tx_done_mask = OMAP_ABB_IVA_TXDONE_MASK,
+};
+
+struct vcores_data dra722_volts = {
+	.mpu.value	= VDD_MPU_DRA7,
+	.mpu.efuse.reg	= STD_FUSE_OPP_VMIN_MPU,
+	.mpu.efuse.reg_bits = DRA752_EFUSE_REGBITS,
+	.mpu.addr	= TPS65917_REG_ADDR_SMPS1,
+	.mpu.pmic	= &tps659038,
+	.mpu.abb_tx_done_mask = OMAP_ABB_MPU_TXDONE_MASK,
+
+	.core.value	= VDD_CORE_DRA7,
+	.core.efuse.reg	= STD_FUSE_OPP_VMIN_CORE,
+	.core.efuse.reg_bits = DRA752_EFUSE_REGBITS,
+	.core.addr	= TPS65917_REG_ADDR_SMPS2,
+	.core.pmic	= &tps659038,
+
+	/*
+	 * The DSPEVE, GPU and IVA rails are usually grouped on DRA72x
+	 * designs and powered by TPS65917 SMPS3, as on the J6Eco EVM.
+	 */
+	.gpu.value	= VDD_GPU_DRA7,
+	.gpu.efuse.reg	= STD_FUSE_OPP_VMIN_GPU,
+	.gpu.efuse.reg_bits = DRA752_EFUSE_REGBITS,
+	.gpu.addr	= TPS65917_REG_ADDR_SMPS3,
+	.gpu.pmic	= &tps659038,
+	.gpu.abb_tx_done_mask = OMAP_ABB_GPU_TXDONE_MASK,
+
+	.eve.value	= VDD_EVE_DRA7,
+	.eve.efuse.reg	= STD_FUSE_OPP_VMIN_DSPEVE,
+	.eve.efuse.reg_bits = DRA752_EFUSE_REGBITS,
+	.eve.addr	= TPS65917_REG_ADDR_SMPS3,
+	.eve.pmic	= &tps659038,
+	.eve.abb_tx_done_mask = OMAP_ABB_EVE_TXDONE_MASK,
+
+	.iva.value	= VDD_IVA_DRA7,
+	.iva.efuse.reg	= STD_FUSE_OPP_VMIN_IVA,
+	.iva.efuse.reg_bits = DRA752_EFUSE_REGBITS,
+	.iva.addr	= TPS65917_REG_ADDR_SMPS3,
+	.iva.pmic	= &tps659038,
+	.iva.abb_tx_done_mask = OMAP_ABB_IVA_TXDONE_MASK,
+};
+
 /**
  * @brief board_init
  *
@@ -355,12 +428,6 @@ int board_late_init(void)
 
 	omap_die_id_serial();
 #endif
-
-	if (is_dra72x() && !board_is_dra72x_revc_or_later()) {
-		pcf8575_output(PCF_ENET_MUX_ADDR, PCF_SEL_ENET_MUX_S0,
-			       PCF8575_OUT_LOW);
-	}
-
 	return 0;
 }
 
@@ -404,6 +471,21 @@ void do_board_detect(void)
 			 "Board: %s REV %s\n", bname, board_ti_get_rev());
 }
 #endif	/* CONFIG_SPL_BUILD */
+
+void vcores_update(void)
+{
+	if (board_is_dra74x_evm()) {
+		*omap_vcores = &dra752_volts;
+	} else if (board_is_dra72x_evm()) {
+		*omap_vcores = &dra722_volts;
+	} else {
+		/* If EEPROM is not populated */
+		if (is_dra72x())
+			*omap_vcores = &dra722_volts;
+		else
+			*omap_vcores = &dra752_volts;
+	}
+}
 
 void set_muxconf_regs(void)
 {
@@ -699,10 +781,8 @@ int board_eth_init(bd_t *bis)
 	ctrl_val |= 0x22;
 	writel(ctrl_val, (*ctrl)->control_core_control_io1);
 
-	if (*omap_si_rev == DRA722_ES1_0) {
-		cpsw_data.active_slave = 0;
-		cpsw_data.slave_data[0].phy_addr = 3;
-	}
+	if (*omap_si_rev == DRA722_ES1_0)
+		cpsw_data.active_slave = 1;
 
 	if (board_is_dra72x_revc_or_later()) {
 		cpsw_slaves[0].phy_if = PHY_INTERFACE_MODE_RGMII_ID;
@@ -767,5 +847,12 @@ int ft_board_setup(void *blob, bd_t *bd)
 	ft_cpu_setup(blob, bd);
 
 	return 0;
+}
+#endif
+
+#ifdef CONFIG_TI_SECURE_DEVICE
+void board_fit_image_post_process(void **p_image, size_t *p_size)
+{
+	secure_boot_verify_image(p_image, p_size);
 }
 #endif

@@ -27,11 +27,6 @@ struct spl_image_info {
 	u32 entry_point;
 	u32 size;
 	u32 flags;
-#ifdef CONFIG_SPL_LOAD_FIT
-	int data_offset;
-	int data_size;
-	int images;
-#endif
 };
 
 /*
@@ -40,17 +35,16 @@ struct spl_image_info {
  * @dev: Pointer to the device, e.g. struct mmc *
  * @priv: Private data for the device
  * @bl_len: Block length for reading in bytes
+ * @filename: Name of the fit image file.
  * @read: Function to call to read from the device
- * @fs_read: Function to call to read from a fs
  */
 struct spl_load_info {
 	void *dev;
 	void *priv;
 	int bl_len;
+	const char *filename;
 	ulong (*read)(struct spl_load_info *load, ulong sector, ulong count,
 		      void *buf);
-	int (*fs_read)(struct spl_load_info *load, const char *filename,
-		      void *buf, ulong file_offset, ulong size);
 };
 
 /**
@@ -65,19 +59,6 @@ struct spl_load_info {
  */
 int spl_load_simple_fit(struct spl_load_info *info, ulong sector, void *fdt);
 
-/**
- * spl_fs_load_simple_fit() - Loads a fit image from a file system.
- * @info:	Structure containing the information required to load data.
- * @filename:	Name of the FIT image in the file system.
- * @fit:	Pointer to the copied FIT header.
- *
- * Reads the FIT image in the filesystem. Loads u-boot image to
- * specified load address and copies the dtb to end of u-boot image.
- * Returns 1 on success.
- */
-int spl_fs_load_simple_fit(struct spl_load_info *info, const char *filename,
-			   void *fit);
-
 #define SPL_COPY_PAYLOAD_ONLY	1
 
 extern struct spl_image_info spl_image;
@@ -89,6 +70,7 @@ u32 spl_boot_mode(void);
 void spl_set_header_raw_uboot(void);
 void spl_parse_image_header(const struct image_header *header);
 void spl_board_prepare_for_linux(void);
+void spl_board_prepare_for_boot(void);
 void __noreturn jump_to_image_linux(void *arg);
 int spl_start_uboot(void);
 void spl_display_print(void);
@@ -158,4 +140,12 @@ void spl_board_init(void);
  */
 bool spl_was_boot_source(void);
 
+/**
+ * spl_dfu_cmd- run dfu command with chosen mmc device interface
+ * @param usb_index - usb controller number
+ * @param mmc_dev -  mmc device nubmer
+ *
+ * @return 0 on success, otherwise error code
+ */
+int spl_dfu_cmd(int usbctrl, char *dfu_alt_info, char *interface, char *devstr);
 #endif

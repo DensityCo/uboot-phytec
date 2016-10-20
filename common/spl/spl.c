@@ -64,6 +64,11 @@ __weak void spl_board_prepare_for_linux(void)
 	/* Nothing to do! */
 }
 
+__weak void spl_board_prepare_for_boot(void)
+{
+	/* Nothing to do! */
+}
+
 void spl_set_header_raw_uboot(void)
 {
 	spl_image.size = CONFIG_SYS_MONITOR_LEN;
@@ -75,6 +80,9 @@ void spl_set_header_raw_uboot(void)
 
 void spl_parse_image_header(const struct image_header *header)
 {
+#ifdef CONFIG_SPL_PANIC_ON_NON_FIT_IMAGE
+	panic("** non-FIT images are not supported");
+#else
 	u32 header_size = sizeof(struct image_header);
 
 	if (image_get_magic(header) == IH_MAGIC) {
@@ -118,6 +126,7 @@ void spl_parse_image_header(const struct image_header *header)
 		spl_set_header_raw_uboot();
 #endif
 	}
+#endif
 }
 
 __weak void __noreturn jump_to_image_no_args(struct spl_image_info *spl_image)
@@ -131,20 +140,47 @@ __weak void __noreturn jump_to_image_no_args(struct spl_image_info *spl_image)
 	image_entry();
 }
 
-#ifdef CONFIG_SPL_RAM_DEVICE
+#ifndef CONFIG_SPL_LOAD_FIT_ADDRESS
+# define CONFIG_SPL_LOAD_FIT_ADDRESS	0
+#endif
+
+#if defined(CONFIG_SPL_RAM_DEVICE) || defined(CONFIG_SPL_DFU_SUPPORT)
+static ulong spl_ram_load_read(struct spl_load_info *load, ulong sector,
+			       ulong count, void *buf)
+{
+	debug("%s: sector %lx, count %lx, buf %lx\n",
+	      __func__, sector, count, (ulong)buf);
+	memcpy(buf, (void *)(CONFIG_SPL_LOAD_FIT_ADDRESS + sector), count);
+	return count;
+}
+
 static int spl_ram_load_image(void)
 {
-	const struct image_header *header;
+	struct image_header *header;
 
-	/*
-	 * Get the header.  It will point to an address defined by handoff
-	 * which will tell where the image located inside the flash. For
-	 * now, it will temporary fixed to address pointed by U-Boot.
-	 */
-	header = (struct image_header *)
-		(CONFIG_SYS_TEXT_BASE -	sizeof(struct image_header));
+	header = (struct image_header *)CONFIG_SPL_LOAD_FIT_ADDRESS;
 
-	spl_parse_image_header(header);
+	if (IS_ENABLED(CONFIG_SPL_LOAD_FIT) &&
+	    image_get_magic(header) == FDT_MAGIC) {
+		struct spl_load_info load;
+
+		debug("Found FIT\n");
+		load.bl_len = 1;
+		load.read = spl_ram_load_read;
+		spl_load_simple_fit(&load, 0, header);
+	} else {
+		debug("Legacy image\n");
+		/*
+		 * Get the header.  It will point to an address defined by
+		 * handoff which will tell where the image located inside
+		 * the flash. For now, it will temporary fixed to address
+		 * pointed by U-Boot.
+		 */
+		header = (struct image_header *)
+			(CONFIG_SYS_TEXT_BASE -	sizeof(struct image_header));
+
+		spl_parse_image_header(header);
+	}
 
 	return 0;
 }
@@ -242,6 +278,9 @@ struct boot_device_name boot_name_table[] = {
 #ifdef CONFIG_SPL_USB_SUPPORT
 	{ BOOT_DEVICE_USB, "USB" },
 #endif
+#ifdef CONFIG_SPL_DFU_SUPPORT
+	{ BOOT_DEVICE_DFU, "USB DFU" },
+#endif
 #ifdef CONFIG_SPL_SATA_SUPPORT
 	{ BOOT_DEVICE_SATA, "SATA" },
 #endif
@@ -322,6 +361,11 @@ static int spl_load_image(u32 boot_device)
 	case BOOT_DEVICE_USB:
 		return spl_usb_load_image();
 #endif
+#ifdef CONFIG_SPL_DFU_SUPPORT
+	case BOOT_DEVICE_DFU:
+		spl_dfu_cmd(0, "dfu_alt_info_ram", "ram", "0");
+		return spl_ram_load_image();
+#endif
 #ifdef CONFIG_SPL_SATA_SUPPORT
 	case BOOT_DEVICE_SATA:
 		return spl_sata_load_image();
@@ -340,11 +384,47 @@ static int spl_load_image(u32 boot_device)
 	return -EINVAL;
 }
 
+#if !(defined(CONFIG_SYS_ICACHE_OFF) && defined(CONFIG_SYS_DCACHE_OFF)) && \
+		defined(CONFIG_ARM)
+static int reserve_mmu(void)
+{
+	phys_addr_t ram_top = 0;
+	/* reserve TLB table */
+	gd->arch.tlb_size = PGTABLE_SIZE;
+
+#ifdef CONFIG_SYS_SDRAM_BASE
+	ram_top = CONFIG_SYS_SDRAM_BASE;
+#endif
+	ram_top += get_effective_memsize();
+	gd->arch.tlb_addr = ram_top - gd->arch.tlb_size;
+	debug("TLB table from %08lx to %08lx\n", gd->arch.tlb_addr,
+	      gd->arch.tlb_addr + gd->arch.tlb_size);
+	return 0;
+}
+
+__weak void dram_init_banksize(void)
+{
+#if defined(CONFIG_NR_DRAM_BANKS) && defined(CONFIG_SYS_SDRAM_BASE)
+	gd->bd->bi_dram[0].start = CONFIG_SYS_SDRAM_BASE;
+	gd->bd->bi_dram[0].size = get_effective_memsize();
+#endif
+}
+
+#endif
+
 void board_init_r(gd_t *dummy1, ulong dummy2)
 {
 	int i;
 
 	debug(">>spl:board_init_r()\n");
+	gd->bd = &bdata;
+
+#if !(defined(CONFIG_SYS_ICACHE_OFF) && defined(CONFIG_SYS_DCACHE_OFF)) && \
+		defined(CONFIG_ARM)
+	dram_init_banksize();
+	reserve_mmu();
+	enable_caches();
+#endif
 
 #if defined(CONFIG_SYS_SPL_MALLOC_START)
 	mem_malloc_init(CONFIG_SYS_SPL_MALLOC_START,
@@ -381,6 +461,11 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 		hang();
 	}
 
+#if !(defined(CONFIG_SYS_ICACHE_OFF) && defined(CONFIG_SYS_DCACHE_OFF)) && \
+		defined(CONFIG_ARM)
+	cleanup_before_linux();
+#endif
+
 	switch (spl_image.os) {
 	case IH_OS_U_BOOT:
 		debug("Jumping to U-Boot\n");
@@ -400,6 +485,7 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 #endif
 
 	debug("loaded - jumping to U-Boot...");
+	spl_board_prepare_for_boot();
 	jump_to_image_no_args(&spl_image);
 }
 
@@ -409,7 +495,6 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
  */
 void preloader_console_init(void)
 {
-	gd->bd = &bdata;
 	gd->baudrate = CONFIG_BAUDRATE;
 
 	serial_init();		/* serial communications setup */

@@ -285,6 +285,69 @@ config SPL_LOAD_FIT
 	  particular it can handle selecting from multiple device tree
 	  and passing the correct one to U-Boot.
 
+config SPL_FIT_IMAGE_POST_PROCESS
+	bool "Enable post-processing of FIT artifacts after loading by the SPL"
+	depends on SPL_LOAD_FIT && TI_SECURE_DEVICE
+	help
+	  Allows doing any sort of manipulation to blobs after they got extracted
+	  from the U-Boot FIT image like stripping off headers or modifying the
+	  size of the blob, verification, authentication, decryption etc. in a
+	  platform or board specific way. In order to use this feature a platform
+	  or board-specific implementation of board_fit_image_post_process() must
+	  be provided. Also, anything done during this post-processing step would
+	  need to be comprehended in how the images were prepared before being
+	  injected into the FIT creation (i.e. the blobs would have been pre-
+	  processed before being added to the FIT image).
+
+config FIT_IMAGE_POST_PROCESS
+	bool "Enable post-processing of FIT artifacts after loading by U-Boot"
+	depends on FIT && TI_SECURE_DEVICE
+	help
+	  Allows doing any sort of manipulation to blobs after they got extracted
+	  from FIT images like stripping off headers or modifying the size of the
+	  blob, verification, authentication, decryption etc. in a platform or
+	  board specific way. In order to use this feature a platform or board-
+	  specific implementation of board_fit_image_post_process() must be
+	  provided. Also, anything done during this post-processing step would
+	  need to be comprehended in how the images were prepared before being
+	  injected into the FIT creation (i.e. the blobs would have been pre-
+	  processed before being added to the FIT image).
+
+config SPL_PANIC_ON_NON_FIT_IMAGE
+	bool "Disable SPL loading of non-FIT images"
+	help
+	  SPL will panic() if the image loaded is not a FIT image. This is
+	  useful for devices that only support authentication/encryption
+	  through SPL FIT loading paths and do not want SPL falling back
+	  to legacy image loading when a non-FIT image is present.
+
+config SPL_DFU_SUPPORT
+	bool "Enable SPL with DFU to load binaries to memory device"
+	depends on USB
+	help
+	  Currently the SPL does not have capability to load the
+	  binaries or boot images to boot devices like ram,eMMC,SPI,etc.
+	  This feature enables the DFU (Device Firmware Upgarde) in SPL with
+	  RAM memory device support. The ROM code will load and execute
+	  the SPL built with dfu. The user can load binaries (u-boot/kernel) to
+	  selected device partition from host-pc using dfu-utils.
+		This feature will be useful to flash the binaries to factory
+	  or bare-metal boards using USB interface.
+
+choice
+	bool "DFU device selection"
+	depends on SPL_DFU_SUPPORT
+
+config SPL_DFU_RAM
+	bool "RAM device"
+	depends on SPL_DFU_SUPPORT
+	help
+	 select RAM/DDR memory device for loading binary images
+	 (u-boot/kernel) to the selected device partition using
+	 DFU and execute the u-boot/kernel from RAM.
+
+endchoice
+
 config SYS_CLK_FREQ
 	depends on ARC || ARCH_SUNXI
 	int "CPU clock frequency"

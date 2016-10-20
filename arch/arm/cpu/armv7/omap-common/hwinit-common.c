@@ -147,8 +147,7 @@ void early_system_init(void)
 	hw_data_init();
 
 #ifdef CONFIG_SPL_BUILD
-	if (warm_reset() &&
-	    (is_omap44xx() || (omap_revision() == OMAP5430_ES1_0)))
+	if (warm_reset())
 		force_emif_self_refresh();
 #endif
 	watchdog_init();
@@ -172,6 +171,7 @@ void board_init_f(ulong dummy)
 #endif
 	/* For regular u-boot sdram_init() is called from dram_init() */
 	sdram_init();
+	gd->ram_size = omap_sdram_size();
 }
 #endif
 

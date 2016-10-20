@@ -59,7 +59,7 @@
 #define DEFAULT_MMC_TI_ARGS \
 	"mmcdev=0\0" \
 	"mmcrootfstype=ext4 rootwait\0" \
-	"finduuid=part uuid mmc 0:2 uuid\0" \
+	"finduuid=part uuid mmc ${bootpart} uuid\0" \
 	"args_mmc=run finduuid;setenv bootargs console=${console} " \
 		"${optargs} " \
 		"root=PARTUUID=${uuid} rw " \
@@ -108,9 +108,25 @@
 /* Timer information. */
 #define CONFIG_SYS_PTV			2	/* Divisor: 2^(PTV+1) => 8 */
 
+/*
+ * Disable DM_* for SPL build and can be re-enabled after adding
+ * DM support in SPL
+ */
+#ifdef CONFIG_SPL_BUILD
+#undef CONFIG_DM_I2C
+#endif
+
 /* I2C IP block */
 #define CONFIG_I2C
+#ifndef CONFIG_DM_I2C
 #define CONFIG_SYS_I2C
+#else
+/*
+ * Enable CONFIG_DM_I2C_COMPAT temporarily until all the i2c client
+ * devices are adopted to DM
+ */
+#define CONFIG_DM_I2C_COMPAT
+#endif
 
 /* MMC/SD IP block */
 #define CONFIG_MMC
@@ -150,7 +166,7 @@
 #define CONFIG_SYS_MAXARGS		64
 
 /* Console I/O Buffer Size */
-#define CONFIG_SYS_CBSIZE		512
+#define CONFIG_SYS_CBSIZE		1024
 /* Print Buffer Size */
 #define CONFIG_SYS_PBSIZE		(CONFIG_SYS_CBSIZE \
 					+ sizeof(CONFIG_SYS_PROMPT) + 16)
@@ -182,16 +198,21 @@
 
 /*
  * Our platforms make use of SPL to initalize the hardware (primarily
- * memory) enough for full U-Boot to be loaded.  We also support Falcon
- * Mode so that the Linux kernel can be booted directly from SPL
- * instead, if desired.  We make use of the general SPL framework found
- * under common/spl/.  Given our generally common memory map, we set a
- * number of related defaults and sizes here.
+ * memory) enough for full U-Boot to be loaded. We make use of the general
+ * SPL framework found under common/spl/.  Given our generally common memory
+ * map, we set a number of related defaults and sizes here.
  */
 #if !defined(CONFIG_NOR_BOOT) && \
 	!(defined(CONFIG_QSPI_BOOT) && defined(CONFIG_AM43XX))
 #define CONFIG_SPL_FRAMEWORK
+
+/*
+ * We also support Falcon Mode so that the Linux kernel can be booted
+ * directly from SPL. This is not currently available on HS devices.
+ */
+#if !defined(CONFIG_TI_SECURE_DEVICE)
 #define CONFIG_SPL_OS_BOOT
+#endif
 
 /*
  * Place the image at the start of the ROM defined image space (per

@@ -104,10 +104,7 @@
 
 #define DFU_ALT_INFO_QSPI \
 	"dfu_alt_info_qspi=" \
-	"MLO raw 0x0 0x010000;" \
-	"MLO.backup1 raw 0x010000 0x010000;" \
-	"MLO.backup2 raw 0x020000 0x010000;" \
-	"MLO.backup3 raw 0x030000 0x010000;" \
+	"MLO raw 0x0 0x040000;" \
 	"u-boot.img raw 0x040000 0x0100000;" \
 	"u-boot-spl-os raw 0x140000 0x080000;" \
 	"u-boot-env raw 0x1C0000 0x010000;" \
@@ -129,6 +126,23 @@
 #define CONFIG_FASTBOOT_BUF_SIZE    0x2F000000
 #define CONFIG_FASTBOOT_FLASH
 #define CONFIG_FASTBOOT_FLASH_MMC_DEV   1
+#endif
+
+#ifdef CONFIG_SPL_BUILD
+#undef CONFIG_CMD_BOOTD
+#ifdef CONFIG_SPL_DFU_SUPPORT
+#define CONFIG_SPL_LOAD_FIT_ADDRESS 0x80200000
+#define CONFIG_SPL_ENV_SUPPORT
+#define CONFIG_SPL_HASH_SUPPORT
+#define DFU_ALT_INFO_RAM \
+	"dfu_alt_info_ram=" \
+	"kernel ram 0x80200000 0x4000000;" \
+	"fdt ram 0x80f80000 0x80000;" \
+	"ramdisk ram 0x81000000 0x4000000\0"
+#define DFUARGS \
+	"dfu_bufsiz=0x10000\0" \
+	DFU_ALT_INFO_RAM
+#endif
 #endif
 
 #include <configs/ti_omap5_common.h>
@@ -155,7 +169,7 @@
 /* SPI */
 #undef	CONFIG_OMAP3_SPI
 #define CONFIG_TI_SPI_MMAP
-#define CONFIG_SF_DEFAULT_SPEED                64000000
+#define CONFIG_SF_DEFAULT_SPEED                76800000
 #define CONFIG_SF_DEFAULT_MODE                 SPI_MODE_0
 #define CONFIG_QSPI_QUAD_SUPPORT
 
@@ -166,10 +180,7 @@
 
 /*
  * Default to using SPI for environment, etc.
- * 0x000000 - 0x010000 : QSPI.SPL (64KiB)
- * 0x010000 - 0x020000 : QSPI.SPL.backup1 (64KiB)
- * 0x020000 - 0x030000 : QSPI.SPL.backup2 (64KiB)
- * 0x030000 - 0x040000 : QSPI.SPL.backup3 (64KiB)
+ * 0x000000 - 0x040000 : QSPI.SPL (256KiB)
  * 0x040000 - 0x140000 : QSPI.u-boot (1MiB)
  * 0x140000 - 0x1C0000 : QSPI.u-boot-spl-os (512KiB)
  * 0x1C0000 - 0x1D0000 : QSPI.u-boot-env (64KiB)
@@ -185,7 +196,7 @@
 #ifdef CONFIG_SPL_BUILD
 #undef CONFIG_SPL_MMC_SUPPORT
 #undef CONFIG_SPL_MAX_SIZE
-#define CONFIG_SPL_MAX_SIZE             (64 << 10) /* 64 KiB */
+#define CONFIG_SPL_MAX_SIZE             (256 << 10) /* 256 KiB */
 #endif
 #define CONFIG_SPL_ENV_SUPPORT
 #define CONFIG_ENV_IS_IN_SPI_FLASH
@@ -222,9 +233,10 @@
 #define CONFIG_USB_FUNCTION_DFU
 #define CONFIG_DFU_RAM
 
+#ifndef CONFIG_SPL_BUILD
 #define CONFIG_DFU_MMC
-#define CONFIG_DFU_RAM
 #define CONFIG_DFU_SF
+#endif
 
 /* SATA */
 #define CONFIG_BOARD_LATE_INIT
@@ -328,8 +340,9 @@
 #define CONFIG_EEPROM_CHIP_ADDRESS 0x50
 #define CONFIG_EEPROM_BUS_ADDRESS 0
 
-/* pcf support */
-#define CONFIG_PCF8575
-#define CONFIG_SYS_I2C_PCF8575_CHIP { {0x21, 0xeaf7} }
+/* PCF Support */
+#if defined(CONFIG_DM_GPIO) && defined(CONFIG_DM_I2C)
+#define CONFIG_PCF8575_GPIO
+#endif
 
 #endif /* __CONFIG_DRA7XX_EVM_H */
