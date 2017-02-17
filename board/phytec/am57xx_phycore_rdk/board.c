@@ -12,6 +12,7 @@
 #include <sata.h>
 #include <usb.h>
 #include <asm/omap_common.h>
+#include <asm/omap_sec_common.h>
 #include <asm/emif.h>
 #include <asm/gpio.h>
 #include <asm/arch/clock.h>
@@ -207,35 +208,47 @@ void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 }
 
 struct vcores_data am57xx_phycore_rdk_volts = {
-	.mpu.value		= VDD_MPU_DRA7,
-	.mpu.efuse.reg		= STD_FUSE_OPP_VMIN_MPU,
-	.mpu.efuse.reg_bits     = DRA752_EFUSE_REGBITS,
+	.mpu.value[OPP_NOM]	= VDD_MPU_DRA7_NOM,
+	.mpu.efuse.reg[OPP_NOM]	= STD_FUSE_OPP_VMIN_MPU_NOM,
+	.mpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.mpu.addr		= TPS659038_REG_ADDR_SMPS12,
 	.mpu.pmic		= &tps659038,
 	.mpu.abb_tx_done_mask	= OMAP_ABB_MPU_TXDONE_MASK,
 
-	.eve.value		= VDD_EVE_DRA7,
-	.eve.efuse.reg		= STD_FUSE_OPP_VMIN_DSPEVE,
+	.eve.value[OPP_NOM]	= VDD_EVE_DRA7_NOM,
+	.eve.value[OPP_OD]	= VDD_EVE_DRA7_OD,
+	.eve.value[OPP_HIGH]	= VDD_EVE_DRA7_HIGH,
+	.eve.efuse.reg[OPP_NOM]	= STD_FUSE_OPP_VMIN_DSPEVE_NOM,
+	.eve.efuse.reg[OPP_OD]	= STD_FUSE_OPP_VMIN_DSPEVE_OD,
+	.eve.efuse.reg[OPP_HIGH]	= STD_FUSE_OPP_VMIN_DSPEVE_HIGH,
 	.eve.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.eve.addr		= TPS659038_REG_ADDR_SMPS45,
 	.eve.pmic		= &tps659038,
 	.eve.abb_tx_done_mask	= OMAP_ABB_EVE_TXDONE_MASK,
 
-	.gpu.value		= VDD_GPU_DRA7,
-	.gpu.efuse.reg		= STD_FUSE_OPP_VMIN_GPU,
+	.gpu.value[OPP_NOM]	= VDD_GPU_DRA7_NOM,
+	.gpu.value[OPP_OD]	= VDD_GPU_DRA7_OD,
+	.gpu.value[OPP_HIGH]	= VDD_GPU_DRA7_HIGH,
+	.gpu.efuse.reg[OPP_NOM]	= STD_FUSE_OPP_VMIN_GPU_NOM,
+	.gpu.efuse.reg[OPP_OD]	= STD_FUSE_OPP_VMIN_GPU_OD,
+	.gpu.efuse.reg[OPP_HIGH]	= STD_FUSE_OPP_VMIN_GPU_HIGH,
 	.gpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.gpu.addr		= TPS659038_REG_ADDR_SMPS45,
 	.gpu.pmic		= &tps659038,
 	.gpu.abb_tx_done_mask	= OMAP_ABB_GPU_TXDONE_MASK,
 
-	.core.value		= VDD_CORE_DRA7,
-	.core.efuse.reg		= STD_FUSE_OPP_VMIN_CORE,
+	.core.value[OPP_NOM]	= VDD_CORE_DRA7_NOM,
+	.core.efuse.reg[OPP_NOM]	= STD_FUSE_OPP_VMIN_CORE_NOM,
 	.core.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.core.addr		= TPS659038_REG_ADDR_SMPS6,
 	.core.pmic		= &tps659038,
 
-	.iva.value		= VDD_IVA_DRA7,
-	.iva.efuse.reg		= STD_FUSE_OPP_VMIN_IVA,
+	.iva.value[OPP_NOM]	= VDD_IVA_DRA7_NOM,
+	.iva.value[OPP_OD]	= VDD_IVA_DRA7_OD,
+	.iva.value[OPP_HIGH]	= VDD_IVA_DRA7_HIGH,
+	.iva.efuse.reg[OPP_NOM]	= STD_FUSE_OPP_VMIN_IVA_NOM,
+	.iva.efuse.reg[OPP_OD]	= STD_FUSE_OPP_VMIN_IVA_OD,
+	.iva.efuse.reg[OPP_HIGH]	= STD_FUSE_OPP_VMIN_IVA_HIGH,
 	.iva.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
 	.iva.addr		= TPS659038_REG_ADDR_SMPS45,
 	.iva.pmic		= &tps659038,
@@ -405,9 +418,6 @@ int board_usb_init(int index, enum usb_init_type init)
 		} else {
 			usb_otg_ss1.dr_mode = USB_DR_MODE_HOST;
 			usb_otg_ss1_glue.vbus_id_status = OMAP_DWC3_ID_GROUND;
-			setbits_le32((*prcm)->cm_l3init_usb_otg_ss1_clkctrl,
-				     OTG_SS_CLKCTRL_MODULEMODE_HW |
-				     OPTFCLKEN_REFCLK960M);
 		}
 
 		ti_usb_phy_uboot_init(&usb_phy1_device);
@@ -421,9 +431,6 @@ int board_usb_init(int index, enum usb_init_type init)
 		} else {
 			usb_otg_ss2.dr_mode = USB_DR_MODE_HOST;
 			usb_otg_ss2_glue.vbus_id_status = OMAP_DWC3_ID_GROUND;
-			setbits_le32((*prcm)->cm_l3init_usb_otg_ss2_clkctrl,
-				     OTG_SS_CLKCTRL_MODULEMODE_HW |
-				     OPTFCLKEN_REFCLK960M);
 		}
 
 		ti_usb_phy_uboot_init(&usb_phy2_device);
