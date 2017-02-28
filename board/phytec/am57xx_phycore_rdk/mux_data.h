@@ -13,7 +13,7 @@
 
 const struct pad_conf_entry core_padconf_array_essential[] = {
 	/* SD Card Slot (MMC1) */
-	{MMC1_CLK, (M0 | PIN_OUTPUT_PULLUP)},	/* mmc1_clk.clk */
+	{MMC1_CLK, (M0 | PIN_INPUT_PULLUP)},	/* mmc1_clk.clk */
 	{MMC1_CMD, (M0 | PIN_INPUT_PULLUP)},	/* mmc1_cmd.cmd */
 	{MMC1_DAT0, (M0 | PIN_INPUT_PULLUP)},	/* mmc1_dat0.dat0 */
 	{MMC1_DAT1, (M0 | PIN_INPUT_PULLUP)},	/* mmc1_dat1.dat1 */
@@ -27,7 +27,7 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	{GPMC_A20, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_a20.mmc2_dat5 */
 	{GPMC_A21, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_a21.mmc2_dat6 */
 	{GPMC_A22, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_a22.mmc2_dat7 */
-	{GPMC_A23, (M1 | PIN_OUTPUT_PULLUP)},	/* gpmc_a23.mmc2_clk */
+	{GPMC_A23, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_a23.mmc2_clk */
 	{GPMC_A24, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_a24.mmc2_dat0 */
 	{GPMC_A25, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_a25.mmc2_dat1 */
 	{GPMC_A26, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_a26.mmc2_dat2 */
@@ -35,7 +35,7 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	{GPMC_CS1, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_cs1.mmc2_cmd */
 
 	/* SDIO (MMC3) */
-	{MMC3_CLK, (M0 | PIN_OUTPUT_PULLUP)},	/* mmc3_clk.clk */
+	{MMC3_CLK, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_clk.clk */
 	{MMC3_CMD, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_cmd.cmd */
 	{MMC3_DAT0, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_dat0.dat0 */
 	{MMC3_DAT1, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_dat1.dat1 */
