@@ -47,7 +47,8 @@
 /* Define the default GPT table for eMMC */
 #define PARTS_DEFAULT \
 	"uuid_disk=${uuid_gpt_disk};" \
-	"name=rootfs,start=2MiB,size=-,uuid=${uuid_gpt_rootfs}"
+	"name=env,start=1MiB,size=1MiB,uuid=${uuid_gpt_env};" \
+	"name=rootfs,start=3MiB,size=-,uuid=${uuid_gpt_rootfs}"
 
 #include <configs/ti_omap5_common.h>
 
