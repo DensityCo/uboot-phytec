@@ -191,6 +191,19 @@
 			0x418 (PIN_INPUT_PULLUP | MUX_MODE14)	/* wakeup0.gpio1_0 */
 		>;
 	};
+
+	qspi1_pins_default: qspi1_pins_default {
+		pinctrl-single,pins = <
+			0x74 (PIN_INPUT | MANUAL_MODE | MUX_MODE1)  /* gpmc_a13.qspi1_rtclk */
+			0x78 (PIN_INPUT | MANUAL_MODE | MUX_MODE1)  /* gpmc_a14.qspi1_d3 */
+			0x7c (PIN_INPUT | MANUAL_MODE | MUX_MODE1)  /* gpmc_a15.qspi1_d2 */
+			0x80 (PIN_INPUT | MANUAL_MODE | MUX_MODE1)  /* gpmc_a16.qspi1_d0 */
+			0x84 (PIN_INPUT | MANUAL_MODE | MUX_MODE1)  /* gpmc_a17.qspi1_d1 */
+			0x88 (PIN_INPUT | MANUAL_MODE | MUX_MODE1) /* gpmc_a18.qspi1_sclk */
+			0x4c (PIN_OUTPUT | MANUAL_MODE | MUX_MODE1) /* gpmc_a3.qspi1_cs2 */
+		>;
+	};
+
 };
 
 &dra7_iodelay_core {
@@ -227,6 +240,20 @@
 			0x368 (A_DELAY(11) | G_DELAY(0))	/* CFG_GPMC_CS1_OUT */
 		>;
 	};
+
+	qspi1_iodelay_conf: qspi1_iodelay_conf {
+		pinctrl-single,pins = <
+			0x144 (A_DELAY(0) | G_DELAY(0))         /* CFG_GPMC_A13_IN */
+			0x150 (A_DELAY(2575) | G_DELAY(966))    /* CFG_GPMC_A14_IN */
+			0x15c (A_DELAY(2503) | G_DELAY(889))    /* CFG_GPMC_A15_IN */
+			0x168 (A_DELAY(2528) | G_DELAY(1007))   /* CFG_GPMC_A16_IN */
+			0x170 (A_DELAY(0) | G_DELAY(0))         /* CFG_GPMC_A16_OUT */
+			0x174 (A_DELAY(2533) | G_DELAY(980))    /* CFG_GPMC_A17_IN */
+			0x188 (A_DELAY(590) | G_DELAY(0))       /* CFG_GPMC_A18_OUT */
+			0x218 (A_DELAY(114) | G_DELAY(0))       /* CFG_GPMC_A3_OUT */
+		>;
+	};
+
 };
 
 &i2c1 {
@@ -456,6 +483,59 @@
 	cap-mmc-dual-data-rate;
 	max-frequency = <96000000>;
 	/delete-property/ mmc-hs200-1_8v;
+};
+
+&qspi {
+	pinctrl-names = "default";
+	pinctrl-0 = <&qspi1_pins_default &qspi1_iodelay_conf>;
+
+	spi-max-frequency = <76800000>;
+
+	qspi_nor: m25p80@2 {
+		status = "disabled";
+		compatible = "n25q128a13", "jedec,spi-flash";
+
+		reg = <2>;
+		spi-max-frequency = <76800000>;
+		spi-tx-bus-width = <1>;
+		spi-rx-bus-width = <4>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* MTD partition table.
+		 * The ROM checks the first four physical blocks
+		 * for a valid file to boot and the flash here is
+		 * 64KiB block size.
+		 */
+		partition@0 {
+			label = "QSPI.SPL";
+			reg = <0x00000000 0x000040000>;
+		};
+		partition@1 {
+			label = "QSPI.u-boot";
+			reg = <0x00040000 0x00100000>;
+		};
+		partition@2 {
+			label = "QSPI.u-boot-spl-os";
+			reg = <0x00140000 0x00080000>;
+		};
+		partition@3 {
+			label = "QSPI.u-boot-env";
+			reg = <0x001c0000 0x00010000>;
+		};
+		partition@4 {
+			label = "QSPI.u-boot-env.backup1";
+			reg = <0x001d0000 0x0010000>;
+		};
+		partition@5 {
+			label = "QSPI.kernel";
+			reg = <0x001e0000 0x0800000>;
+		};
+		partition@6 {
+			label = "QSPI.file-system";
+			reg = <0x009e0000 0x0>;
+		};
+	};
 };
 
 &rtc {
