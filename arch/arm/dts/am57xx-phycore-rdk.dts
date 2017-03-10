@@ -109,3 +109,11 @@
 	status = "disabled";
 	dr_mode = "otg"; /* peripheral, host, or otg */
 };
+
+/* QSPI1: enable qspi and qspi_nor for N25Q128A13 SPI NOR */
+&qspi {
+	status = "okay";
+};
+&qspi_nor {
+	status = "okay";
+};
