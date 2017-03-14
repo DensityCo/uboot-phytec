@@ -51,11 +51,58 @@
 
 #define CONFIG_SYS_OMAP_ABE_SYSCK
 
+/*
+ * Environment setup
+ */
 /* Define the default GPT table for eMMC */
 #define PARTS_DEFAULT \
 	"uuid_disk=${uuid_gpt_disk};" \
 	"name=env,start=1MiB,size=1MiB,uuid=${uuid_gpt_env};" \
 	"name=rootfs,start=3MiB,size=-,uuid=${uuid_gpt_rootfs}"
+
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	DEFAULT_LINUX_BOOT_ENV \
+	DEFAULT_MMC_TI_ARGS \
+	DEFAULT_FIT_TI_ARGS \
+	"console=" CONSOLEDEV ",115200n8\0" \
+	"fdtfile=undefined\0" \
+	"bootpart=0:2\0" \
+	"bootdir=/boot\0" \
+	"bootfile=zImage\0" \
+	"usbtty=cdc_acm\0" \
+	"vram=16M\0" \
+	"partitions=" PARTS_DEFAULT "\0" \
+	"optargs=\0" \
+	"dofastboot=0\0" \
+	"boot_net=run findfdt; " \
+		"run netboot;\0" \
+	"netboot=echo Booting from network ...; " \
+		"tftp ${loadaddr} ${tftploc}${bootfile}; " \
+		"tftp ${fdtaddr} ${tftploc}${fdtfile}; " \
+		"run netargs; " \
+		"bootz ${loadaddr} - ${fdtaddr}\0" \
+	"findfdt="\
+		"if test $board_name = am57xx_phycore_rdk; then " \
+			"setenv fdtfile am57xx-phycore-rdk.dtb; fi;" \
+		"if test $fdtfile = undefined; then " \
+			"echo WARNING: Could not determine device tree to use; fi; \0" \
+	DFUARGS \
+	NETARGS \
+
+#define CONFIG_BOOTCOMMAND \
+	"if test ${dofastboot} -eq 1; then " \
+		"echo Boot fastboot requested, resetting dofastboot ...;" \
+		"setenv dofastboot 0; saveenv;" \
+		"echo Booting into fastboot ...; fastboot 0;" \
+	"fi;" \
+	"if test ${boot_fit} -eq 1; then " \
+		"run update_to_fit;" \
+	"fi;" \
+	"run findfdt; " \
+	"run envboot; " \
+	"run mmcboot;" \
+	"setenv mmcdev 1; setenv bootpart 1:2; run mmcboot" \
+	""
 
 #include <configs/ti_omap5_common.h>
 
