@@ -20,21 +20,28 @@
 #define CONFIG_BOARD_EARLY_INIT_F
 #define CONFIG_NR_DRAM_BANKS		2
 
-/* Store environment in eMMC by default */
+/* Store environment on SD card by default
+ *
+ * To store the u-boot environment in eMMC instead of
+ * SD, uncomment the CONFIG_ENV_IS_IN_MMC line below
+ * and comment the CONFIG_ENV_IS_IN_FAT line instead
+ */
+/* #define CONFIG_ENV_IS_IN_MMC */
+#define CONFIG_ENV_IS_IN_FAT
 
 #define CONFIG_ENV_SIZE			(64 << 10)
 
-#define CONFIG_ENV_IS_IN_MMC
+#ifdef CONFIG_ENV_IS_IN_MMC
 #define CONFIG_SYS_MMC_ENV_DEV		1
 #define CONFIG_ENV_OFFSET		0x100000
 #define CONFIG_ENV_OFFSET_REDUND	0x110000
+#endif
 
-/*
-#define CONFIG_ENV_IS_IN_FAT
+#ifdef CONFIG_ENV_IS_IN_FAT
 #define FAT_ENV_INTERFACE		"mmc"
 #define FAT_ENV_DEVICE_AND_PART		"0:1"
 #define FAT_ENV_FILE			"uboot.env"
-*/
+#endif
 
 #define CONSOLEDEV			"ttyO2"
 #define CONFIG_SYS_NS16550_COM1		UART1_BASE	/* Base EVM has UART0 */
