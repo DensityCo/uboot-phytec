@@ -95,8 +95,8 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	{GPMC_A18, (M1 | PIN_INPUT)},  /* gpmc_a18.qspi1_sclk */
 	{GPMC_A16, (M1 | PIN_INPUT)},  /* gpmc_a16.qspi1_d0 */
 	{GPMC_A17, (M1 | PIN_INPUT)},  /* gpmc_a17.qspi1_d1 */
-	{GPMC_A15, (M1 | PIN_INPUT)},  /* gpmc_a15.qspi1_d2 */
-	{GPMC_A14, (M1 | PIN_INPUT)},  /* gpmc_a14.qspi1_d3 */
+	{GPMC_A15, (M1 | PIN_INPUT_PULLUP)},  /* gpmc_a15.qspi1_d2 */
+	{GPMC_A14, (M1 | PIN_INPUT_PULLUP)},  /* gpmc_a14.qspi1_d3 */
 	{GPMC_A13, (M1 | PIN_INPUT)},  /* gpmc_a13.qspi1_rtclk */
 	{GPMC_A3, (M1 | PIN_OUTPUT)},	/* gpmc_a3.qspi1_cs2 */
 
