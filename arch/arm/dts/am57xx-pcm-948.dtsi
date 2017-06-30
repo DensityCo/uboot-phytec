@@ -9,9 +9,18 @@
 	model = "PHYTEC AM57xx PCM-948";
 	compatible = "phytec,am57xx-pcm-948", "phytec,am57xx-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
 
+	chosen {
+		stdout-path = &uart3;
+	};
+
+	aliases {
+		display0 = &hdmi0;
+		sound0 = &hdmi;
+	};
+
 	hdmi0: connector {
 		compatible = "hdmi-connector";
-		status = "disabled";
+		status = "okay";
 		label = "hdmi";
 
 		type = "a";
@@ -25,7 +34,7 @@
 
 	tpd12s521: encoder {
 		compatible = "ti,tpd12s521";
-		status = "disabled";
+		status = "okay";
 
 		gpios = <&gpio7 12 GPIO_ACTIVE_HIGH>;	/* gpio7_12/sp1_cs2, HPD */
 
@@ -53,6 +62,7 @@
 
 	gpio_fan: gpio_fan {
 		compatible = "gpio-fan";
+		status = "okay";
 		pinctrl-names = "default";
 		pinctrl-0 = <&fan_pins_default>;
 
@@ -294,7 +304,7 @@
 
 &tps659038 {
 	tps659038_usb: tps659038_usb {
-		status = "disabled";
+		status = "okay";
 		compatible = "ti,palmas-usb-vid";
 		pinctrl-names = "default";
 		pinctrl-0 = <&extcon_pins_default>;
@@ -323,7 +333,7 @@
 };
 
 &uart5 {
-        status = "disabled";
+        status = "okay";
         pinctrl-names = "default", "sleep";
         pinctrl-0 = <&uart5_pins_default>;
         pinctrl-1 = <&uart5_pins_sleep>;
@@ -344,11 +354,11 @@
 	phy_id = <&davinci_mdio>, <2>;
 	phy-mode = "rgmii";
 	dual_emac_res_vlan = <2>;
-	status = "disabled";
+	status = "okay";
 };
 
 &mmc1 {
-	status = "disabled";
+	status = "okay";
 	pinctrl-names = "default", "hs";
 	pinctrl-0 = <&mmc1_pins_default>;
 	pinctrl-1 = <&mmc1_pins_hs>;
@@ -362,11 +372,14 @@
 };
 
 &dss {
+	status = "okay";
+
 	vdda_video-supply = <&ldoln_reg>;
 };
 
 &hdmi {
-	status = "disabled";
+	status = "okay";
+
 	pinctrl-names = "default";
 	pinctrl-0 = <&hdmi_pins &i2c2_pins>;
 
@@ -388,7 +401,7 @@
 };
 
 &usb1 {
-	status = "disabled";
+	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&usb1_pins>;
 
@@ -396,16 +409,17 @@
 };
 
 &omap_dwc3_2 {
-	status = "disabled";
+	status = "okay";
 	extcon = <&tps659038_usb>;
 };
 
 &usb2 {
-	status = "disabled";
+	status = "okay";
+	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&usb2_pins_default>;
 	pinctrl-1 = <&usb2_pins_sleep>;
 
-	pinctrl-names = "default", "sleep";
+	dr_mode = "otg";
 };
 
 &cpu_trips {
