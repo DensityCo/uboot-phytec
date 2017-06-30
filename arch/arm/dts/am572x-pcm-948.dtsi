@@ -6,8 +6,8 @@
  * published by the Free Software Foundation.
  */
 / {
-	model = "PHYTEC AM57xx PCM-948";
-	compatible = "phytec,am57xx-pcm-948", "phytec,am57xx-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+	model = "PHYTEC phyCORE-AM572x Carrier Board";
+	compatible = "phytec,am572x-pcm-948", "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
 
 	chosen {
 		stdout-path = &uart3;

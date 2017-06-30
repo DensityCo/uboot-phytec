@@ -10,8 +10,8 @@
 #include <dt-bindings/interrupt-controller/irq.h>
 
 / {
-	model = "Phytec AM57xx phyCORE";
-	compatible = "phytec,am57xx-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+	model = "Phytec phyCORE-AM572x";
+	compatible = "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
 
 	aliases {
 		rtc2 = &rtc;
