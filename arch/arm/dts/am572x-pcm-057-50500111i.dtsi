@@ -1,0 +1,28 @@
+/*
+ * Copyright (C) 2015 PHYTEC America, LLC. - www.phytec.com
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+
+ * TI AM5728 Processor
+ */
+
+/ {
+	model = "PHYTEC phyCORE-AM5728 with 4GiB DDR3, Industrial Temp";
+	compatible = "phytec,am572x-pcm-057-50500111i", "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+
+	memory {
+		device_type = "memory";
+		reg = <0x100000000 0x100000000>; /* 4GiB */
+	};
+};
+
+&qspi {
+	status = "disabled";
+};
+
+&qspi_nor {
+	status = "disabled";
+};
