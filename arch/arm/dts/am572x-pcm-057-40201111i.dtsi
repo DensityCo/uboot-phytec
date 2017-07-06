@@ -1,0 +1,32 @@
+/*
+ * Copyright (C) 2015 PHYTEC America, LLC. - www.phytec.com
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+
+ * TI AM5726 Processor
+ */
+
+/ {
+	model = "PHYTEC phyCORE-AM5726 with 2GiB DDR3, Industrial Temp";
+	compatible = "phytec,am572x-pcm-057-40201111i", "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+
+	memory {
+		device_type = "memory";
+		reg = <0x80000000 0x80000000>; /* 2GiB */
+	};
+};
+
+&qspi {
+	status = "disabled";
+};
+
+&qspi_nor {
+	status = "disabled";
+};
+
+&dss {
+	status = "disabled";
+};

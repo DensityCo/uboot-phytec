@@ -11,3 +11,5 @@
 
 #include "am572x-phycore-som.dtsi" /* Superset - enables all SOM features */
 #include "am572x-pcm-948.dtsi"     /* Carrier Board */
+
+#include "am572x-pcm-057-41300111i.dtsi" /* SOM variant */
