@@ -1,13 +1,13 @@
-if TARGET_AM57XX_PHYCORE_RDK
+if TARGET_AM572X_PHYCORE_RDK
 
 config SYS_BOARD
-	default "am57xx_phycore_rdk"
+	default "am572x_phycore_rdk"
 
 config SYS_VENDOR
 	default "phytec"
 
 config SYS_CONFIG_NAME
-	default "am57xx_phycore_rdk"
+	default "am572x_phycore_rdk"
 
 config CONS_INDEX
 	int "UART used for console"

@@ -40,10 +40,10 @@ DECLARE_GLOBAL_DATA_PTR;
 #define GPIO_DDR_VTT_EN 104 /* vin2a_d7.gpio4_8 */
 
 const struct omap_sysinfo sysinfo = {
-	"Board: phyCORE-AM57xx\n"
+	"Board: phyCORE-AM572x RDK\n"
 };
 
-static const struct dmm_lisa_map_regs am57xx_phycore_rdk_lisa_regs = {
+static const struct dmm_lisa_map_regs am572x_phycore_rdk_lisa_regs = {
 	.dmm_lisa_map_3 = 0x80600100,
 	.dmm_lisa_map_2 = 0xC0600200,
 	.is_ma_present  = 0x1
@@ -51,10 +51,10 @@ static const struct dmm_lisa_map_regs am57xx_phycore_rdk_lisa_regs = {
 
 void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 {
-	*dmm_lisa_regs = &am57xx_phycore_rdk_lisa_regs;
+	*dmm_lisa_regs = &am572x_phycore_rdk_lisa_regs;
 }
 
-static const struct emif_regs am57xx_phycore_rdk_emif1_532mhz_emif_regs = {
+static const struct emif_regs am572x_phycore_rdk_emif1_532mhz_emif_regs = {
 	.sdram_config_init	= 0x61851b32,
 	.sdram_config		= 0x61851b32,
 	.sdram_config2		= 0x08000000,
@@ -80,7 +80,7 @@ static const struct emif_regs am57xx_phycore_rdk_emif1_532mhz_emif_regs = {
 };
 
 /* Ext phy ctrl regs 1-35 */
-static const u32 am57xx_phycore_rdk_emif1_ext_phy_ctrl_const_regs[] = {
+static const u32 am572x_phycore_rdk_emif1_ext_phy_ctrl_const_regs[] = {
 	0x10040100,
 	0x00910091,
 	0x00950095,
@@ -118,7 +118,7 @@ static const u32 am57xx_phycore_rdk_emif1_ext_phy_ctrl_const_regs[] = {
 	0x0
 };
 
-static const struct emif_regs am57xx_phycore_rdk_emif2_532mhz_emif_regs = {
+static const struct emif_regs am572x_phycore_rdk_emif2_532mhz_emif_regs = {
 	.sdram_config_init	= 0x61851b32,
 	.sdram_config		= 0x61851b32,
 	.sdram_config2		= 0x08000000,
@@ -143,7 +143,7 @@ static const struct emif_regs am57xx_phycore_rdk_emif2_532mhz_emif_regs = {
 	.emif_rd_wr_exec_thresh	= 0x00000305
 };
 
-static const u32 am57xx_phycore_rdk_emif2_ext_phy_ctrl_const_regs[] = {
+static const u32 am572x_phycore_rdk_emif2_ext_phy_ctrl_const_regs[] = {
 	0x10040100,
 	0x00910091,
 	0x00950095,
@@ -185,10 +185,10 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 {
 	switch (emif_nr) {
 	case 1:
-		*regs = &am57xx_phycore_rdk_emif1_532mhz_emif_regs;
+		*regs = &am572x_phycore_rdk_emif1_532mhz_emif_regs;
 		break;
 	case 2:
-		*regs = &am57xx_phycore_rdk_emif2_532mhz_emif_regs;
+		*regs = &am572x_phycore_rdk_emif2_532mhz_emif_regs;
 		break;
 	}
 }
@@ -197,17 +197,17 @@ void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 {
 	switch (emif_nr) {
 	case 1:
-		*regs = am57xx_phycore_rdk_emif1_ext_phy_ctrl_const_regs;
-		*size = ARRAY_SIZE(am57xx_phycore_rdk_emif1_ext_phy_ctrl_const_regs);
+		*regs = am572x_phycore_rdk_emif1_ext_phy_ctrl_const_regs;
+		*size = ARRAY_SIZE(am572x_phycore_rdk_emif1_ext_phy_ctrl_const_regs);
 		break;
 	case 2:
-		*regs = am57xx_phycore_rdk_emif2_ext_phy_ctrl_const_regs;
-		*size = ARRAY_SIZE(am57xx_phycore_rdk_emif2_ext_phy_ctrl_const_regs);
+		*regs = am572x_phycore_rdk_emif2_ext_phy_ctrl_const_regs;
+		*size = ARRAY_SIZE(am572x_phycore_rdk_emif2_ext_phy_ctrl_const_regs);
 		break;
 	}
 }
 
-struct vcores_data am57xx_phycore_rdk_volts = {
+struct vcores_data am572x_phycore_rdk_volts = {
 	.mpu.value[OPP_NOM]	= VDD_MPU_DRA7_NOM,
 	.mpu.efuse.reg[OPP_NOM]	= STD_FUSE_OPP_VMIN_MPU_NOM,
 	.mpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
@@ -259,7 +259,7 @@ void hw_data_init(void)
 {
 	*prcm = &dra7xx_prcm;
 	*dplls_data = &dra7xx_dplls;
-	*omap_vcores = &am57xx_phycore_rdk_volts;
+	*omap_vcores = &am572x_phycore_rdk_volts;
 	*ctrl = &dra7xx_ctrl;
 }
 
@@ -583,7 +583,7 @@ int board_early_init_f(void)
 #ifdef CONFIG_SPL_LOAD_FIT
 int board_fit_config_name_match(const char *name)
 {
-	if (!strcmp(name, "am57xx-phycore-rdk"))
+	if (!strcmp(name, "am572x-phycore-rdk"))
 		return 0;
 	else
 		return -1;

@@ -2,7 +2,7 @@
  * (C) Copyright 2015 PHYTEC America, LLC
  * Author: Russell Robinson <rrobinson@phytec.com>
  *
- * Configuration settings for the PHYTEC phyCORE-AM57xx RDK.
+ * Configuration settings for the PHYTEC phyCORE-AM572x RDK.
  * See ti_omap5_common.h for omap5 common settings.
  *
  * Based on include/configs/beagle_x15.h
@@ -10,8 +10,8 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
-#ifndef __CONFIG_AM57XX_PHYCORE_RDKH
-#define __CONFIG_AM57XX_PHYCORE_RDKH
+#ifndef __CONFIG_AM572X_PHYCORE_RDKH
+#define __CONFIG_AM572X_PHYCORE_RDKH
 
 #define CONFIG_DRA7XX
 
@@ -123,8 +123,8 @@
 		"run netargs; " \
 		"bootz ${loadaddr} - ${fdtaddr}\0" \
 	"findfdt="\
-		"if test $board_name = am57xx_phycore_rdk; then " \
-			"setenv fdtfile am57xx-phycore-rdk.dtb; fi;" \
+		"if test $board_name = am572x_phycore_rdk; then " \
+			"setenv fdtfile am572x-phycore-rdk.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
 	DFUARGS \
@@ -202,4 +202,4 @@
 #define CONFIG_SYS_SCSI_MAX_DEVICE	(CONFIG_SYS_SCSI_MAX_SCSI_ID * \
 						CONFIG_SYS_SCSI_MAX_LUN)
 
-#endif /* __CONFIG_AM57XX_PHYCORE_RDK_H */
+#endif /* __CONFIG_AM572X_PHYCORE_RDK_H */
