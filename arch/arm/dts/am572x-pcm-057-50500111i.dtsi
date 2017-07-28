@@ -15,7 +15,7 @@
 
 	memory {
 		device_type = "memory";
-		reg = <0x100000000 0x100000000>; /* 4GiB */
+		reg = <0x0 0x80000000 0x0 0x80000000>; /* 4GiB */
 	};
 };
 
