@@ -18,6 +18,10 @@
 #define CONFIG_IODELAY_RECALIBRATION
 
 #define CONFIG_BOARD_EARLY_INIT_F
+
+#define CONFIG_VERY_BIG_RAM
+#define CONFIG_PHYS_64BIT
+#define CONFIG_MAX_MEM_MAPPED		0x80000000
 #define CONFIG_NR_DRAM_BANKS		2
 
 /* Store environment on SD card by default
