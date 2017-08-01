@@ -1,0 +1,15 @@
+/*
+ * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * DTS for PHYTEC kit KPCM-057-SYS with PCM-057-40201111I
+ */
+/dts-v1/;
+
+#include "am572x-phycore-som.dtsi" /* Superset - enables all SOM features */
+#include "am572x-pcm-948.dtsi"     /* Carrier Board */
+
+#include "am572x-pcm-057-40201111i.dtsi" /* SOM variant */

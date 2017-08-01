@@ -148,7 +148,12 @@ dtb-$(CONFIG_TARGET_AM57XX_EVM) += am57xx-beagle-x15.dtb \
 	am574x-idk.dtb	\
 	am572x-idk.dtb	\
 	am571x-idk.dtb
-dtb-$(CONFIG_TARGET_AM572X_PHYCORE_RDK) += am572x-phycore-rdk.dtb
+dtb-$(CONFIG_TARGET_AM572X_PHYCORE_RDK) += am572x-phycore-rdk.dtb \
+	am572x-phycore-rdk-41300111i.dtb \
+	am572x-phycore-rdk-41201111i.dtb \
+	am572x-phycore-rdk-40201111i.dtb \
+	am572x-phycore-rdk-50201111i.dtb \
+	am572x-phycore-rdk-50500111i.dtb
 
 dtb-$(CONFIG_TARGET_STV0991) += stv0991.dtb
 
