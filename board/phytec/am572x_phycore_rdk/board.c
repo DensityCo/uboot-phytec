@@ -155,7 +155,7 @@ void dram_init_banksize(void)
 	u64 ram_size;
 
 #if defined(CONFIG_PCM_057_256M16_x4_DDR)
-	ram_size = 0x800000000;
+	ram_size = 0x80000000;
 #elif defined(CONFIG_PCM_057_512M16_x4_DDR)
 	ram_size = 0x100000000;
 #endif
