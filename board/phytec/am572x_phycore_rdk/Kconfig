@@ -31,4 +31,6 @@ choice
 		bool "4GiB (4x 512M16)"
 endchoice
 
+source "board/phytec/common/Kconfig"
+
 endif
