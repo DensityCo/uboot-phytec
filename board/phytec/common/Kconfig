@@ -1,0 +1,3 @@
+config PHYTEC_EEPROM
+	bool "Support for EEPROM-based board detection for PHYTEC platforms"
+	default y
