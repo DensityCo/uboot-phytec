@@ -1,0 +1,13 @@
+/*
+ * Copyright (C) 2017 PHYTEC America, LLC
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/dts-v1/;
+
+#include "am572x-phycore-som.dtsi"		/* Superset - enables all SOM features */
+#include "am572x-ksp-5015.dtsi"			/* Carrier Board */
+#include "am572x-pcm-057-41300111i.dtsi"	/* SOM variant */
+
