@@ -1,0 +1,321 @@
+/*
+ * Copyright (C) 2017 PHYTEC America, LLC
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+/ {
+	model = "Density AM572x KSP-5015";
+	compatible = "phytec,am572x-ksp-5015", "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+
+	chosen {
+		stdout-path = &uart3;
+	};
+
+	button: gpio-keys {
+		status = "okay";
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&btn_pins>;
+
+		btn1@0 {
+			label = "button1";
+			gpios = <&gpio8 7 GPIO_ACTIVE_HIGH>;
+			linux,code = <0x100>;   /* BTN_MISC */
+		};
+	};
+
+	gpio_fan: gpio_fan {
+		status = "okay";
+		compatible = "gpio-fan";
+		pinctrl-names = "default";
+		pinctrl-0 = <&fan_pins>;
+
+		gpios = <&gpio2 2 GPIO_ACTIVE_LOW>;
+		gpio-fan,speed-map = <0	0
+				      1	1>;
+		cooling-min-state = <0>;
+		cooling-max-state = <1>;
+		#cooling-cells = <2>;
+	};
+};
+
+&dra7_pmx_core {
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&misc_gpios_pins &eepromwc_pins>;
+
+	i2c3_pins_default: i2c3_pins_default {
+		pinctrl-single,pins = <
+			0x378 (PIN_INPUT_PULLUP | MUX_MODE2)	/* gpio6_11.i2c3_scl */
+			0x374 (PIN_INPUT_PULLUP | MUX_MODE2)	/* gpio6_10.i2c3_sda */
+		>;
+	};
+
+	i2c3_pins_sleep: i2c3_pins_sleep {
+		pinctrl-single,pins = <
+			0x378 (PIN_INPUT | MUX_MODE15)
+			0x374 (PIN_INPUT | MUX_MODE15)
+		>;
+	};
+
+	i2c4_pins_default: i2c4_pins_default {
+		pinctrl-single,pins = <
+			0x40 (PIN_INPUT_PULLUP | MUX_MODE7)	/* gpmc_a0.i2c4_scl */
+			0x44 (PIN_INPUT_PULLUP | MUX_MODE7)	/* gpmc_a1.i2c4_sda */
+		>;
+	};
+
+	i2c4_pins_sleep: i2c4_pins_sleep {
+		pinctrl-single,pins = <
+			0x40 (PIN_INPUT | MUX_MODE15)
+			0x44 (PIN_INPUT | MUX_MODE15)
+		>;
+	};
+
+	i2c5_pins_default: i2c5_pins_default {
+		pinctrl-single,pins = <
+			0x2b4 (PIN_INPUT_PULLUP | MUX_MODE10)	/* mcasp1_axr0.i2c5_sda */
+			0x2b8 (PIN_INPUT_PULLUP | MUX_MODE10)	/* mcasp1_axr1.i2c5_scl */
+		>;
+	};
+
+	i2c5_pins_sleep: i2c5_pins_sleep {
+		pinctrl-single,pins = <
+			0x2b4 (PIN_INPUT | MUX_MODE15)
+			0x2b8 (PIN_INPUT | MUX_MODE15)
+		>;
+	};
+
+	uart3_pins_default: uart3_pins_default {
+		pinctrl-single,pins = <
+			0x248 (PIN_INPUT_SLEW | MUX_MODE0) /* uart3_rxd.rxd */
+			0x24c (PIN_INPUT_SLEW | MUX_MODE0) /* uart3_txd.txd */
+		>;
+	};
+
+	uart3_pins_sleep: uart3_pins_sleep {
+		pinctrl-single,pins = <
+			0x248 (PIN_INPUT | MUX_MODE15)
+			0x24c (PIN_INPUT | MUX_MODE15)
+		>;
+	};
+
+	usb1_pins: usb1_pins {
+		pinctrl-single,pins = <
+			0x280 (PIN_INPUT_SLEW | MUX_MODE0) /* usb1_drvvbus */
+			0x22c (PIN_INPUT | MUX_MODE14)     /* vout1_d20.gpio8_20 */
+		>;
+	};
+
+	usb2_pins_default: usb2_pins_default {
+		pinctrl-single,pins = <
+			0x284 (PIN_INPUT_SLEW | MUX_MODE0) /* usb2_drvvbus */
+			0x230 (PIN_INPUT | MUX_MODE14)     /* vout1_d21.gpio8_21 */
+		>;
+	};
+
+	usb2_pins_sleep: _usb2_pins_sleep {
+		pinctrl-single,pins = <
+			0x284 (PIN_INPUT_SLEW | MUX_MODE15) /* usb2_drvvbus */
+			0x230 (PIN_INPUT | MUX_MODE14)     /* vout1_d21.gpio8_21 */
+		>;
+	};
+
+	extcon_pins_default:  extcon_pins_default {
+		pinctrl-single,pins = <
+			0x1d0 (PIN_INPUT_PULLDOWN | MUX_MODE14)	/* vout1_fld.gpio4_21 */
+			0x1f4 (PIN_INPUT | MUX_MODE14)		/* vout1_d6.gpio8_6 */
+		>;
+	};
+
+	btn_pins: btn_pins {
+		pinctrl-single,pins = <
+			0x1f8 (PIN_INPUT | MUX_MODE14)	/* vout1_d7.gpio8_7 */
+		>;
+	};
+
+	misc_gpios_pins: spare_gpios_pins {
+		pinctrl-single,pins = <
+			0x1ec (PIN_OUTPUT | MUX_MODE14)	/* vout1.d4.gpio8_4 	spare*/
+			0x48  (PIN_OUTPUT | MUX_MODE14)	/* gpmc_a2.gpio7_5 	spare*/
+			0x2e8 (PIN_OUTPUT | MUX_MODE14)	/* mcasp1_axr13.gpio6_4 spare*/
+			0x1e4 (PIN_OUTPUT | MUX_MODE14)	/* vout1_d2.gpio8_2	spare*/
+
+			0x234 (PIN_INPUT | MUX_MODE14)	/* vout1_d22.gpio8_22	appsel0 */
+			0x238 (PIN_INPUT | MUX_MODE14)	/* vout1_d23.gpio8_23	appsel1 */
+
+			0x50  (PIN_INPUT | MUX_MODE14)	/* gpmc_a4.gpio1_26	id0 */
+			0x54  (PIN_INPUT | MUX_MODE14)	/* gpmc_a5.gpio1_27	id1 */
+			0x58  (PIN_INPUT | MUX_MODE14)	/* gpmc_a6.gpio1_28	id2 */
+			0x5c  (PIN_INPUT | MUX_MODE14)	/* gpmc_a7.gpio1_29	id3 */
+
+			0x1e8 (PIN_OUTPUT | MUX_MODE14) /* vout1_d3.gpio8_3	12v_tof */
+			0x178 (PIN_OUTPUT | MUX_MODE14)	/* vin2a_d4.gpio4_5	5v_tof */
+			0x174 (PIN_OUTPUT | MUX_MODE14) /* vin2a_d3.gpio4_4	eeprom ~wc*/
+
+		>;
+	};
+
+	tmp102_48_pins: tmp102_48_pins {
+		pinctrl-single,pins = <
+			0xe4 (PIN_INPUT | MUX_MODE14)	/* vin1a_de0.gpio3_0 */
+		>;
+	};
+
+	tmp102_49_pins: tmp102_49_pins {
+		pinctrl-single,pins = <
+			0xe8 (PIN_INPUT | MUX_MODE14)	/* vin1a_fld0.gpio3_1 */
+		>;
+	};
+
+	fan_pins: fan_pins {
+		pinctrl-single,pins = <
+			0x70 (PIN_OUTPUT | MUX_MODE14)	/* gpmc_a12.gpio2_2 */
+		>;
+	};
+
+	pwm1_pins: pwm1_pins {
+		pinctrl-single,pins = <
+			0xf4 (PIN_INPUT | MUX_MODE10)	/*vin1a_d0.ehrpwm1a */
+			0xf8 (PIN_INPUT | MUX_MODE10)	/*vin1a_d1.ehrpwm1b */
+		>;
+	};
+
+	pwm3_pins: pwm3_pins {
+		pinctrl-single,pins = <
+			0x394 (PIN_INPUT | MUX_MODE10)	/* mmc3_data4.ehrpwm3a */
+		>;
+	};
+
+	eepromwc_pins: eeprom_pins {
+		pinctrl-single,pins = <
+			0x174 (PIN_OUTPUT | MUX_MODE14)	/* vin2a_d3.gpio4_4 */
+		>;
+	};
+};
+
+&i2c1 {
+	cb_eeprom@51 {
+		status = "okay";
+		compatible = "at,24c32";
+		reg = <0x57>;
+		pagesize = <32>;
+		/* ~WC signal controlled via GPIO */
+	};
+};
+
+&i2c3 {
+	status = "okay";
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&i2c3_pins_default>;
+	pinctrl-1 = <&i2c3_pins_sleep>;
+	clock-frequency = <400000>;
+};
+
+&i2c4 {
+	status = "okay";
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&i2c4_pins_default>;
+	pinctrl-1 = <&i2c4_pins_sleep>;
+	clock-frequency = <400000>; /* Fast mode - HS mode also possible (max 2.56MHz) */
+
+	ina219@40 {
+		compatible = "ti,ina219";
+		reg = <0x40>;
+		shunt-resistor = <7000>; /* in micro-Ohm */
+	};
+
+	ina219@41 {
+		compatible = "ti,ina219";
+		reg = <0x41>;
+		shunt-resistor = <7000>;
+	};
+
+	ina219@44 {
+		compatible = "ti,ina219";
+		reg = <0x44>;
+		shunt-resistor = <7000>;
+	};
+};
+
+&i2c5 {
+	status = "okay";
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&i2c5_pins_default>;
+	pinctrl-1 = <&i2c5_pins_sleep>;
+	clock-frequency = <400000>; /* Fast mode - HS mode also possible (max 3.4MHz) */
+
+	tmpsensor48: tmp102@48 {
+		compatible = "ti,tmp102";
+		pinctrl-names = "default";
+		pinctrl-0 = <&tmp102_48_pins>;
+		reg = <0x48>;
+		interrupt-parent = <&gpio3>;
+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+		#thermal-sensor-cells = <0>;
+	};
+
+	tmpsensor49: tmp102@49 {
+		compatible = "ti,tmp102";
+		pinctrl-names = "default";
+		pinctrl-0 = <&tmp102_49_pins>;
+		reg = <0x49>;
+		interrupt-parent = <&gpio3>;
+		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
+		#thermal-sensor-cells = <0>;
+	};
+};
+
+&uart3 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart3_pins_default>;
+
+	interrupts-extended = <&crossbar_mpu GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH
+			       &dra7_pmx_core 0x248>;
+};
+
+
+&tps659038 {
+	tps659038_usb: tps659038_usb {
+		status = "okay";
+		compatible = "ti,palmas-usb-vid";
+		pinctrl-names = "default";
+		pinctrl-0 = <&extcon_pins_default>;
+		id-gpio = <&gpio8 6 GPIO_ACTIVE_HIGH>;
+		vbus-gpio = <&gpio4 21 GPIO_ACTIVE_HIGH>;
+
+		ti,enable-vbus-detection;
+		ti,enable-id-detection;
+	};
+};
+
+&usb2_phy1 {
+	phy-supply = <&ldousb_reg>;
+};
+
+&usb2_phy2 {
+	phy-supply = <&ldousb_reg>;
+};
+
+&usb1 {
+	status = "okay";
+	dr_mode = "host";
+	pinctrl-names = "default";
+	pinctrl-0 = <&usb1_pins>;
+};
+
+&omap_dwc3_2 {
+	status = "okay";
+	extcon = <&tps659038_usb>;
+};
+
+&usb2 {
+	status = "okay";
+	dr_mode = "host";
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&usb2_pins_default>;
+	pinctrl-1 = <&usb2_pins_sleep>;
+};
