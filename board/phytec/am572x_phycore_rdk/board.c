@@ -54,36 +54,17 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 
 void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 {
-	switch (emif_nr) {
-	case 1:
 #if defined(CONFIG_PCM_057_256M16_x4_DDR)
-		*regs = &am572x_phycore_rdk_emif1_532mhz_256M16_regs;
+	*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
 #elif defined(CONFIG_PCM_057_512M16_x4_DDR)
-		*regs = &am572x_phycore_rdk_emif1_532mhz_512M16_regs;
+	*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
 #endif
-		break;
-	case 2:
-#if defined(CONFIG_PCM_057_256M16_x4_DDR)
-		*regs = &am572x_phycore_rdk_emif2_532mhz_256M16_regs;
-#elif defined(CONFIG_PCM_057_512M16_x4_DDR)
-		*regs = &am572x_phycore_rdk_emif2_532mhz_512M16_regs;
-#endif
-		break;
-	}
 }
 
 void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 {
-	switch (emif_nr) {
-	case 1:
-		*regs = am572x_phycore_rdk_emif1_ext_phy_ctrl_const_regs;
-		*size = ARRAY_SIZE(am572x_phycore_rdk_emif1_ext_phy_ctrl_const_regs);
-		break;
-	case 2:
-		*regs = am572x_phycore_rdk_emif2_ext_phy_ctrl_const_regs;
-		*size = ARRAY_SIZE(am572x_phycore_rdk_emif2_ext_phy_ctrl_const_regs);
-		break;
-	}
+	*regs = am572x_phycore_rdk_emif_ext_phy_ctrl_const_regs;
+	*size = ARRAY_SIZE(am572x_phycore_rdk_emif_ext_phy_ctrl_const_regs);
 }
 
 struct vcores_data am572x_phycore_rdk_volts = {
