@@ -30,13 +30,13 @@
  * SD, uncomment the CONFIG_ENV_IS_IN_MMC line below
  * and comment the CONFIG_ENV_IS_IN_FAT line instead
  */
-/* #define CONFIG_ENV_IS_IN_MMC */
-#define CONFIG_ENV_IS_IN_FAT
+#define CONFIG_ENV_IS_IN_MMC
+/*#define CONFIG_ENV_IS_IN_FAT */
 
 #define CONFIG_ENV_SIZE			(64 << 10)
 
 #ifdef CONFIG_ENV_IS_IN_MMC
-#define CONFIG_SYS_MMC_ENV_DEV		1
+#define CONFIG_SYS_MMC_ENV_DEV		0
 #define CONFIG_ENV_OFFSET		0x100000
 #define CONFIG_ENV_OFFSET_REDUND	0x110000
 #endif
@@ -110,7 +110,7 @@
 	DEFAULT_MMC_TI_ARGS \
 	DEFAULT_FIT_TI_ARGS \
 	"console=" CONSOLEDEV ",115200n8\0" \
-	"fdtfile=undefined\0" \
+	"fdtfile=am572x-ksp-5015.dtb\0" \
 	"bootpart=0:2\0" \
 	"bootdir=/boot\0" \
 	"bootfile=zImage\0" \
@@ -131,23 +131,13 @@
 			"setenv fdtfile am572x-phycore-rdk.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
+	"boot_emmc=setenv mmcdev 0;setenv bootpart 0:2; "\
+		"setenv finduuid 'part uuid mmc 0:2 uuid'; "\
+		"run envboot;run mmcboot\0" \
 	DFUARGS \
 	NETARGS \
 
-#define CONFIG_BOOTCOMMAND \
-	"if test ${dofastboot} -eq 1; then " \
-		"echo Boot fastboot requested, resetting dofastboot ...;" \
-		"setenv dofastboot 0; saveenv;" \
-		"echo Booting into fastboot ...; fastboot 0;" \
-	"fi;" \
-	"if test ${boot_fit} -eq 1; then " \
-		"run update_to_fit;" \
-	"fi;" \
-	"run findfdt; " \
-	"run envboot; " \
-	"run mmcboot;" \
-	"setenv mmcdev 1; setenv bootpart 1:2; run mmcboot" \
-	""
+#define CONFIG_BOOTCOMMAND "run boot_emmc"
 
 #include <configs/ti_omap5_common.h>
 
