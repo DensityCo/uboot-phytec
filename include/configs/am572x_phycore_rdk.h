@@ -36,7 +36,7 @@
 #define CONFIG_ENV_SIZE			(64 << 10)
 
 #ifdef CONFIG_ENV_IS_IN_MMC
-#define CONFIG_SYS_MMC_ENV_DEV		0
+#define CONFIG_SYS_MMC_ENV_DEV		1
 #define CONFIG_ENV_OFFSET		0x100000
 #define CONFIG_ENV_OFFSET_REDUND	0x110000
 #endif
@@ -131,8 +131,8 @@
 			"setenv fdtfile am572x-phycore-rdk.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
-	"boot_emmc=setenv mmcdev 0;setenv bootpart 0:2; "\
-		"setenv finduuid 'part uuid mmc 0:2 uuid'; "\
+	"boot_emmc=setenv mmcdev 1;setenv bootpart 1:2; "\
+		"setenv finduuid 'part uuid mmc 1:2 uuid'; "\
 		"run envboot;run mmcboot\0" \
 	DFUARGS \
 	NETARGS \
