@@ -194,6 +194,31 @@
 			0x174 (PIN_OUTPUT | MUX_MODE14)	/* vin2a_d3.gpio4_4 */
 		>;
 	};
+
+	mmc1_pins_default: mmc1_pins_default {
+		pinctrl-single,pins = <
+			0x36c (PIN_INPUT | MUX_MODE14)	/* mmc1sdcd.gpio6_27 */
+			0x354 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_clk.clk */
+			0x358 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_cmd.cmd */
+			0x35c (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat0.dat0 */
+			0x360 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat1.dat1 */
+			0x364 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat2.dat2 */
+			0x368 (PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat3.dat3 */
+		>;
+	};
+
+	mmc1_pins_hs: mmc1_pins_hs {
+		pinctrl-single,pins = <
+			0x36c (PIN_INPUT | MUX_MODE14)  /* mmc1sdcd.gpio6_27 */
+			0x354 (PIN_INPUT_PULLUP | MUX_VIRTUAL_MODE11 | MUX_MODE0)       /* mmc1_clk.clk */
+			0x358 (PIN_INPUT_PULLUP | MUX_VIRTUAL_MODE11 | MUX_MODE0)       /* mmc1_cmd.cmd */
+			0x35c (PIN_INPUT_PULLUP | MUX_VIRTUAL_MODE11 | MUX_MODE0)       /* mmc1_dat0.dat0 */
+			0x360 (PIN_INPUT_PULLUP | MUX_VIRTUAL_MODE11 | MUX_MODE0)       /* mmc1_dat1.dat1 */
+			0x364 (PIN_INPUT_PULLUP | MUX_VIRTUAL_MODE11 | MUX_MODE0)       /* mmc1_dat2.dat2 */
+			0x368 (PIN_INPUT_PULLUP | MUX_VIRTUAL_MODE11 | MUX_MODE0)       /* mmc1_dat3.dat3 */
+		>;
+	};
+
 };
 
 &i2c1 {
@@ -318,4 +343,19 @@
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&usb2_pins_default>;
 	pinctrl-1 = <&usb2_pins_sleep>;
+};
+
+/* mmc1 not on KSP-5015 - Included for flashing with RDK */
+&mmc1 {
+	status = "okay";
+	pinctrl-names = "default", "hs";
+	pinctrl-0 = <&mmc1_pins_default>;
+	pinctrl-1 = <&mmc1_pins_hs>;
+
+	vmmc-supply = <&ldo1_reg>;
+	vmmc_aux-supply = <&vdd_3v3>;
+	pbias-supply = <&pbias_mmc_reg>;
+	bus-width = <4>;
+
+	cd-gpios = <&gpio6 27 GPIO_ACTIVE_LOW>; /* gpio 219 */
 };
