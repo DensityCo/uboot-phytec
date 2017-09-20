@@ -34,21 +34,6 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	{GPMC_A27, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_a27.mmc2_dat3 */
 	{GPMC_CS1, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_cs1.mmc2_cmd */
 
-	/* SDIO (MMC3) */
-	{MMC3_CLK, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_clk.clk */
-	{MMC3_CMD, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_cmd.cmd */
-	{MMC3_DAT0, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_dat0.dat0 */
-	{MMC3_DAT1, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_dat1.dat1 */
-	{MMC3_DAT2, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_dat2.dat2 */
-	{MMC3_DAT3, (M0 | PIN_INPUT_PULLUP)},	/* mmc3_dat3.dat3 */
-
-	/* BT_EN */
-	{MMC3_DAT4, (M14 | PIN_OUTPUT_PULLDOWN)},	/* mmc3_dat4.gpio1_22 */
-	/* WLAN EN */
-	{MMC3_DAT6, (M14 | PIN_OUTPUT_PULLDOWN)},	/* mmc3_dat6.gpio1_24 */
-	/* WLAN_IRQ */
-	{MMC3_DAT7, (M14 | PIN_INPUT_PULLUP)},		/* mmc3_dat7.gpio1_15 */
-
 	/* MDIO bus */
 	{MDIO_MCLK, (M0 | PIN_OUTPUT)},	/* mdio_mclk  */
 	{MDIO_D, (M0 | PIN_INPUT)},	/* mdio_d  */
@@ -71,22 +56,6 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	/* ETH0 IRQ */
 	{VIN2A_CLK0, (M14 | PIN_INPUT)},			/* vin2a_clk0.gpio3_28 */
 
-	/* ETH1 (RGMII1) */
-	{VIN2A_D12, (M3 | PIN_OUTPUT | MANUAL_MODE)},	/* vin2a_d12.rgmii1_txc */
-	{VIN2A_D13, (M3 | PIN_OUTPUT | MANUAL_MODE)},	/* vin2a_d13.rgmii1_txctl */
-	{VIN2A_D14, (M3 | PIN_OUTPUT | MANUAL_MODE)},	/* vin2a_d14.rgmii1_txd3 */
-	{VIN2A_D15, (M3 | PIN_OUTPUT | MANUAL_MODE)},	/* vin2a_d15.rgmii1_txd2 */
-	{VIN2A_D16, (M3 | PIN_OUTPUT | MANUAL_MODE)},	/* vin2a_d16.rgmii1_txd1 */
-	{VIN2A_D17, (M3 | PIN_OUTPUT | MANUAL_MODE)},	/* vin2a_d17.rgmii1_txd0 */
-	{VIN2A_D18, (M3 | PIN_INPUT | MANUAL_MODE)},	/* vin2a_d18.rgmii1_rxc */
-	{VIN2A_D19, (M3 | PIN_INPUT | MANUAL_MODE)},	/* vin2a_d19.rgmii1_rxctl */
-	{VIN2A_D20, (M3 | PIN_INPUT | MANUAL_MODE)},	/* vin2a_d20.rgmii1_rxd3 */
-	{VIN2A_D21, (M3 | PIN_INPUT | MANUAL_MODE)},	/* vin2a_d21.rgmii1_rxd2 */
-	{VIN2A_D22, (M3 | PIN_INPUT | MANUAL_MODE)},	/* vin2a_d22.rgmii1_rxd1 */
-	{VIN2A_D23, (M3 | PIN_INPUT | MANUAL_MODE)},	/* vin2a_d23.rgmii1_rxd0 */
-	/* ETH1 IRQ */
-	{GPMC_A12, (M14 | PIN_INPUT)},				/* gpmc_a12.gpio2_2 */
-
 	/* USB1 and USB2 DRVVBUS */
 	{USB1_DRVVBUS, (M0 | PIN_OUTPUT)},	/* usb1_drvvbus.usb1_drvvbus */
 	{USB2_DRVVBUS, (M0 | PIN_OUTPUT_PULLDOWN)},	/* usb2_drvvbus.usb2_drvvbus */
@@ -103,47 +72,6 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	/* QSPI1 expansion chip selects */
 	{GPMC_CS2, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_cs2.qspi1_cs0 */
 	{GPMC_CS3, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_cs3.qspi1_cs1*/
-
-	/* LCD display (vout2) */
-	{VIN2A_DE0, (M4 | PIN_OUTPUT)},		/* vin2a_de0.vout2_de */
-	{VIN2A_FLD0, (M4 | PIN_OUTPUT)},	/* vin2a_fld0.vout2_clk */
-	{VIN2A_HSYNC0, (M4 | PIN_OUTPUT)},	/* vin2a_hsync0.vout2_hsync */
-	{VIN2A_VSYNC0, (M4 | PIN_OUTPUT)},	/* vin2a_vsync0.vout2_vsync */
-	{MCASP1_ACLKR, (M6 | PIN_OUTPUT)},	/* mcasp1_aclkr.vout2_d0 */
-	{MCASP1_FSR, (M6 | PIN_OUTPUT)},	/* mcasp1_fsr.vout2_d1 */
-	{MCASP1_AXR2, (M6 | PIN_OUTPUT)},	/* mcasp1_axr2.vout2_d2 */
-	{MCASP1_AXR3, (M6 | PIN_OUTPUT)},	/* mcasp1_axr3.vout2_d3 */
-	{MCASP1_AXR4, (M6 | PIN_OUTPUT)},	/* mcasp1_axr4.vout2_d4 */
-	{MCASP1_AXR5, (M6 | PIN_OUTPUT)},	/* mcasp1_axr5.vout2_d5 */
-	{MCASP1_AXR6, (M6 | PIN_OUTPUT)},	/* mcasp1_axr6.vout2_d6 */
-	{MCASP1_AXR7, (M6 | PIN_OUTPUT)},	/* mcasp1_axr7.vout2_d7 */
-	{MCASP2_ACLKR, (M6 | PIN_OUTPUT)},	/* mcasp2_aclkr.vout2_d8 */
-	{MCASP2_FSR, (M6 | PIN_OUTPUT)},	/* mcasp2_fsr.vout2_d9 */
-	{MCASP2_AXR0, (M6 | PIN_OUTPUT)},	/* mcasp2_axr0.vout2_d10 */
-	{MCASP2_AXR1, (M6 | PIN_OUTPUT)},	/* mcasp2_axr1.vout2_d11 */
-	{MCASP2_AXR4, (M6 | PIN_OUTPUT)},	/* mcasp2_axr4.vout2_d12 */
-	{MCASP2_AXR5, (M6 | PIN_OUTPUT)},	/* mcasp2_axr5.vout2_d13 */
-	{MCASP2_AXR6, (M6 | PIN_OUTPUT)},	/* mcasp2_axr6.vout2_d14 */
-	{MCASP2_AXR7, (M6 | PIN_OUTPUT)},	/* mcasp2_axr7.vout2_d15 */
-	{MCASP4_ACLKX, (M6 | PIN_OUTPUT)},	/* mcasp4_aclkx.vout2_d16 */
-	{MCASP4_FSX, (M6 | PIN_OUTPUT)},	/* mcasp4_fsx.vout2_d17 */
-	{MCASP4_AXR0, (M6 | PIN_OUTPUT)},	/* mcasp4_axr0.vout2_d18 */
-	{MCASP4_AXR1, (M6 | PIN_OUTPUT)},	/* mcasp4_axr1.vout2_d19 */
-	{MCASP5_ACLKX, (M6 | PIN_OUTPUT)},	/* mcasp5_aclkx.vout2_d20 */
-	{MCASP5_FSX, (M6 | PIN_OUTPUT)},	/* mcasp5_fsx.vout2_d21 */
-	{MCASP5_AXR0, (M6 | PIN_OUTPUT)},	/* mcasp5_axr0.vout2_d22 */
-	{MCASP5_AXR1, (M6 | PIN_OUTPUT)},	/* mcasp5_axr1.vout2_d23 */
-	/* LCD EN */
-	{VOUT1_D23, (M14 | PIN_OUTPUT_PULLDOWN)},	/* vout1_d23.gpio8_23 */
-	/* Backlight PWM */
-	{VIN1A_D0, (M10 | PIN_OUTPUT_PULLDOWN)},	/* vin1a_d0.ehrpwm1A */
-	/* EDT Touch IRQ */
-	{VOUT1_D22, (M14 | PIN_INPUT_PULLUP)},		/* vout1_d22.gpio8_22 */
-
-	/* PCIe PERSTn/PWRGD */
-	{VOUT1_D4, (M14 | PIN_INPUT_PULLDOWN)},	/* vout1_d4.gpio8_4 */
-	/* PCIe (U28-OE) */
-	{VOUT1_D7, (M14 | PIN_INPUT_PULLUP)},	/* vout1_d7.gpio8_7 */
 
 	/* VTT_EN */
 	{VIN2A_D7, (M14 | PIN_OUTPUT)},		/* vin2a_d7.gpio4_8 */
