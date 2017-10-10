@@ -25,6 +25,8 @@ choice
 	  The phyCORE-AM572x SOM (PCM-057) can be populated with different DDR3
 	  chips resulting in various configurations and total available memory.
 
+	config PCM_057_256M16_x2_DDR
+		bool "1GiB (2x 256M16)"
 	config PCM_057_256M16_x4_DDR
 		bool "2GiB (4x 256M16)"
 	config PCM_057_512M16_x4_DDR
