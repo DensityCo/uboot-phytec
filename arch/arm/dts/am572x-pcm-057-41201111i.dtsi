@@ -27,6 +27,10 @@
 	status = "disabled";
 };
 
+&qspi_nor_cs0 {
+	status = "disabled";
+};
+
 &dss {
 	status = "disabled";
 };

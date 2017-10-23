@@ -92,17 +92,16 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	{USB2_DRVVBUS, (M0 | PIN_OUTPUT_PULLDOWN)}, /* usb2_drvvbus.usb2_drvvbus */
 
 	/* QSPI NOR (QSPI1) */
-	{GPMC_A18, (M1 | PIN_INPUT)},  /* gpmc_a18.qspi1_sclk */
-	{GPMC_A16, (M1 | PIN_INPUT)},  /* gpmc_a16.qspi1_d0 */
-	{GPMC_A17, (M1 | PIN_INPUT)},  /* gpmc_a17.qspi1_d1 */
-	{GPMC_A15, (M1 | PIN_INPUT_PULLUP)},  /* gpmc_a15.qspi1_d2 */
-	{GPMC_A14, (M1 | PIN_INPUT_PULLUP)},  /* gpmc_a14.qspi1_d3 */
-	{GPMC_A13, (M1 | PIN_INPUT)},  /* gpmc_a13.qspi1_rtclk */
-	{GPMC_A3, (M1 | PIN_OUTPUT)},	/* gpmc_a3.qspi1_cs2 */
+	{GPMC_CS2, (M1 | PIN_OUTPUT | MANUAL_MODE)}, /* gpmc_cs2.qspi1_cs0 */
+	{GPMC_CS3, (M1 | PIN_OUTPUT | MANUAL_MODE)}, /* gpmc_cs3.qspi1_cs1 */
+	{GPMC_A3, (M1 | PIN_OUTPUT | MANUAL_MODE)},  /* gpmc_a3.qspi1_cs2 */
+	{GPMC_A13, (M1 | PIN_INPUT | MANUAL_MODE)},  /* gpmc_a13.qspi1_rtclk */
+	{GPMC_A18, (M1 | PIN_INPUT | MANUAL_MODE)},  /* gpmc_a18.qspi1_sclk */
+	{GPMC_A16, (M1 | PIN_INPUT | MANUAL_MODE)},  /* gpmc_a16.qspi1_d0 */
+	{GPMC_A17, (M1 | PIN_INPUT | MANUAL_MODE)},  /* gpmc_a17.qspi1_d1 */
+	{GPMC_A15, (M1 | PIN_INPUT | MANUAL_MODE)}, /* gpmc_a15.qspi1_d2 */
+	{GPMC_A14, (M1 | PIN_INPUT | MANUAL_MODE)}, /* gpmc_a14.qspi1_d3 */
 
-	/* QSPI1 expansion chip selects */
-	{GPMC_CS2, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_cs2.qspi1_cs0 */
-	{GPMC_CS3, (M1 | PIN_INPUT_PULLUP)},	/* gpmc_cs3.qspi1_cs1*/
 
 	/* LCD display (vout2) */
 	{VIN2A_DE0, (M4 | PIN_OUTPUT)},    /* vin2a_de0.vout2_de */
@@ -197,6 +196,16 @@ const struct iodelay_cfg_entry iodelay_cfg_array_sr1_1[] = {
 };
 
 const struct iodelay_cfg_entry iodelay_cfg_array_sr2_0[] = {
+	{0x0218, 114, 0},     /* CFG_GPMC_A3_OUT */
+	{0x0144, 0, 0},       /* CFG_GPMC_A13_IN */
+	{0x0150, 2575, 966},  /* CFG_GPMC_A14_IN */
+	{0x015C, 2503, 889},  /* CFG_GPMC_A15_IN */
+	{0x0168, 2528, 1007}, /* CFG_GPMC_A16_IN */
+	{0x0170, 0, 0},       /* CFG_GPMC_A16_OUT */
+	{0x0174, 2533, 980},  /* CFG_GPMC_A17_IN */
+	{0x0188, 590, 0},     /* CFG_GPMC_A18_OUT */
+	{0x0374, 0, 0},       /* CFG_GPMC_CS2_OUT */
+	{0x0380, 70, 0},      /* CFG_GPMC_CS3_OUT */
 	{0x06F0, 260, 0},     /* CFG_RGMII0_RXC_IN */
 	{0x06FC, 0, 1412},    /* CFG_RGMII0_RXCTL_IN */
 	{0x0708, 123, 1047},  /* CFG_RGMII0_RXD0_IN */

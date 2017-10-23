@@ -93,6 +93,15 @@
 	"u-boot.img fat 1 1;" \
 	"uEnv.txt fat 1 1\0"
 
+#define DFU_ALT_INFO_QSPI \
+	"dfu_alt_info_qspi=" \
+	"MLO raw 0x0 0x040000;" \
+	"u-boot.img raw 0x040000 0x0100000;" \
+	"u-boot-spl-os raw 0x140000 0x080000;" \
+	"u-boot-env raw 0x1C0000 0x010000;" \
+	"u-boot-env.backup raw 0x1D0000 0x010000;" \
+	"kernel raw 0x1E0000 0x800000\0"
+
 #define DFU_ALT_INFO_RAM \
 	"dfu_alt_info_ram=" \
 	"kernel ram 0x80200000 0x4000000;" \
@@ -103,6 +112,7 @@
 	"dfu_bufsiz=0x10000\0" \
 	DFU_ALT_INFO_MMC \
 	DFU_ALT_INFO_EMMC \
+	DFU_ALT_INFO_QSPI \
 	DFU_ALT_INFO_RAM
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
@@ -209,5 +219,39 @@
 /* EEPROM */
 #define CONFIG_EEPROM_BUS_ADDRESS	0
 #define CONFIG_EEPROM_CHIP_ADDRESS	0x50
+
+/*
+ * Default to using SPI for environment, etc.
+ * 0x000000 - 0x040000 : QSPI.SPL (256KiB)
+ * 0x040000 - 0x140000 : QSPI.u-boot (1MiB)
+ * 0x140000 - 0x1C0000 : QSPI.u-boot-spl-os (512KiB)
+ * 0x1C0000 - 0x1D0000 : QSPI.u-boot-env (64KiB)
+ * 0x1D0000 - 0x1E0000 : QSPI.u-boot-env.backup1 (64KiB)
+ * 0x1E0000 - 0x9E0000 : QSPI.kernel (8MiB)
+ * 0x9E0000 - 0x2000000 : USERLAND
+ */
+#define CONFIG_SYS_SPI_KERNEL_OFFS      0x1E0000
+#define CONFIG_SYS_SPI_ARGS_OFFS        0x140000
+#define CONFIG_SYS_SPI_ARGS_SIZE        0x80000
+
+#ifdef CONFIG_SPL_BUILD
+#undef CONFIG_DM_SPI
+#undef CONFIG_DM_SPI_FLASH
+#endif
+
+/* SPI SPL */
+#define CONFIG_SPL_SPI_SUPPORT
+#define CONFIG_SPL_DMA_SUPPORT
+#define CONFIG_TI_EDMA3
+#define CONFIG_SPL_SPI_LOAD
+#define CONFIG_SPL_SPI_FLASH_SUPPORT
+#define CONFIG_SYS_SPI_U_BOOT_OFFS     0x40000
+
+/* SPI */
+#undef	CONFIG_OMAP3_SPI
+#define CONFIG_TI_SPI_MMAP
+#define CONFIG_SF_DEFAULT_SPEED                76800000
+#define CONFIG_SF_DEFAULT_MODE                 SPI_MODE_0
+#define CONFIG_QSPI_QUAD_SUPPORT
 
 #endif /* __CONFIG_AM572X_PHYCORE_RDK_H */
