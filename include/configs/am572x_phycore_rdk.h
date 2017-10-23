@@ -37,8 +37,8 @@
 
 #ifdef CONFIG_ENV_IS_IN_MMC
 #define CONFIG_SYS_MMC_ENV_DEV		1
-#define CONFIG_ENV_OFFSET		0x100000
-#define CONFIG_ENV_OFFSET_REDUND	0x110000
+#define CONFIG_ENV_OFFSET		0x200000
+#define CONFIG_ENV_OFFSET_REDUND	0x210000
 #endif
 
 #ifdef CONFIG_ENV_IS_IN_FAT
@@ -61,7 +61,7 @@
 /* Define the default GPT table for eMMC */
 #define PARTS_DEFAULT \
 	"uuid_disk=${uuid_gpt_disk};" \
-	"name=env,start=1MiB,size=1MiB,uuid=${uuid_gpt_env};" \
+	"name=env,start=2MiB,size=1MiB,uuid=${uuid_gpt_env};" \
 	"name=rootfs,start=3MiB,size=-,uuid=${uuid_gpt_rootfs}"
 
 #define DFU_ALT_INFO_MMC \
@@ -70,9 +70,9 @@
 	"rootfs part 0 2;" \
 	"MLO fat 0 1;" \
 	"MLO.raw raw 0x100 0x100;" \
-	"u-boot.img.raw raw 0x300 0x400;" \
+	"u-boot.img.raw raw 0x300 0x800;" \
 	"spl-os-args.raw raw 0x80 0x80;" \
-	"spl-os-image.raw raw 0x900 0x2000;" \
+	"spl-os-image.raw raw 0x1400 0x2000;" \
 	"spl-os-args fat 0 1;" \
 	"spl-os-image fat 0 1;" \
 	"u-boot.img fat 0 1;" \
@@ -85,9 +85,9 @@
 	"rootfs part 1 2;" \
 	"MLO fat 1 1;" \
 	"MLO.raw raw 0x100 0x100;" \
-	"u-boot.img.raw raw 0x300 0x400;" \
+	"u-boot.img.raw raw 0x300 0x800;" \
 	"spl-os-args.raw raw 0x80 0x80;" \
-	"spl-os-image.raw raw 0x900 0x2000;" \
+	"spl-os-image.raw raw 0x1400 0x2000;" \
 	"spl-os-args fat 1 1;" \
 	"spl-os-image fat 1 1;" \
 	"u-boot.img fat 1 1;" \
