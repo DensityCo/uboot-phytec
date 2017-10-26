@@ -58,6 +58,9 @@ config TARGET_AM57XX_EVM
 	bool "AM57XX"
 	select TI_I2C_BOARD_DETECT
 
+config TARGET_AM572X_PHYCORE_RDK
+	bool "PHYTEC phyCORE-AM572x RDK"
+
 endchoice
 
 config SYS_SOC
@@ -158,6 +161,7 @@ endif
 
 source "board/compulab/cl-som-am57x/Kconfig"
 source "board/compulab/cm_t54/Kconfig"
+source "board/phytec/am572x_phycore_rdk/Kconfig"
 source "board/ti/omap5_uevm/Kconfig"
 source "board/ti/dra7xx/Kconfig"
 source "board/ti/am57xx/Kconfig"
