@@ -198,7 +198,6 @@
 #define CONFIG_DRA7XX_DWC2
 
 /* USB Device Firmware Update support */
-#define CONFIG_USB_FUNCTION_DFU
 #define CONFIG_DFU_RAM
 
 #ifndef CONFIG_SPL_BUILD
