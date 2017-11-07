@@ -24,6 +24,7 @@
 #include <asm/arch/omap.h>
 #include <environment.h>
 #include <usb.h>
+#include <spl.h>
 #include <linux/usb/gadget.h>
 #include <dwc3-uboot.h>
 #include <dwc3-omap-uboot.h>
@@ -312,6 +313,38 @@ void recalibrate_iodelay(void)
 err:
 	/* Closeup.. remove isolation */
 	__recalibrate_iodelay_end(ret);
+}
+#endif
+
+/*
+ * Routine: mmc_get_env_part
+ * Description:  setup environment storage device from bootup device
+ */
+#ifdef CONFIG_SYS_MMC_ENV_DEV
+int mmc_get_env_dev(void)
+{
+	u32 boot_params = *((u32 *)OMAP_SRAM_SCRATCH_BOOT_PARAMS);
+	struct omap_boot_parameters *omap_boot_params;
+
+	if ((boot_params < NON_SECURE_SRAM_START) ||
+			(boot_params > NON_SECURE_SRAM_END))
+		return CONFIG_SYS_MMC_ENV_DEV;
+
+	omap_boot_params = (struct omap_boot_parameters *)boot_params;
+
+	int bootdevice = omap_boot_params->boot_device;
+
+	// CAUTION gd->arch.omap_boot_device is not set.....
+	int envdev = CONFIG_SYS_MMC_ENV_DEV;
+
+	/*
+	 * If booted from eMMC boot partition then force eMMC
+	 * FIRST boot partition to be env storage
+	 */
+	if (bootdevice == BOOT_DEVICE_MMC2_2)
+		envdev = 1;
+
+	return envdev;
 }
 #endif
 
