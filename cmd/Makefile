@@ -154,6 +154,7 @@ obj-$(CONFIG_CMD_RIO) += rio.o
 # Power
 obj-$(CONFIG_CMD_PMIC) += pmic.o
 obj-$(CONFIG_CMD_REGULATOR) += regulator.o
+obj-$(CONFIG_CMD_WDT) += wdt.o
 endif # !CONFIG_SPL_BUILD
 
 ifdef CONFIG_SPL_BUILD

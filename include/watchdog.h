@@ -42,8 +42,10 @@ int init_func_watchdog_reset(void);
 		#define WATCHDOG_RESET bl hw_watchdog_reset
 	#else
 		extern void hw_watchdog_reset(void);
+		void hw_watchdog_disable(void);
 
 		#define WATCHDOG_RESET hw_watchdog_reset
+		#define WATCHDOG_DISABLE hw_watchdog_disable
 	#endif /* __ASSEMBLY__ */
 #else
 	/*
