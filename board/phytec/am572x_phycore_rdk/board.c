@@ -41,6 +41,7 @@
 DECLARE_GLOBAL_DATA_PTR;
 
 #define GPIO_DDR_VTT_EN 104 /* vin2a_d7.gpio4_8 */
+#define GPIO_FAN_N_EN 34 /* gpmc_a12.gpio2_2 */
 
 const struct omap_sysinfo sysinfo = {
 	"Board: phyCORE-AM572x RDK\n"
@@ -603,9 +604,20 @@ static inline void vtt_regulator_enable(void)
 	gpio_direction_output(GPIO_DDR_VTT_EN, 1);
 }
 
+/* fan enable */
+static inline void fan_enable(void)
+{
+	if (omap_hw_init_context() == OMAP_INIT_CONTEXT_UBOOT_AFTER_SPL)
+		return;
+
+	gpio_request(GPIO_FAN_N_EN, "fan_n_en");
+	gpio_direction_output(GPIO_FAN_N_EN, 0);
+}
+
 int board_early_init_f(void)
 {
 	vtt_regulator_enable();
+	fan_enable();
 	return 0;
 }
 #endif
