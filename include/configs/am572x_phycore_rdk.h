@@ -164,6 +164,8 @@
 /* Enhance our eMMC support / experience. */
 #define CONFIG_CMD_GPT
 #define CONFIG_EFI_PARTITION
+#define CONFIG_RANDOM_UUID
+#define CONFIG_HSMMC2_8BIT
 
 /* CPSW Ethernet */
 #define CONFIG_BOOTP_DNS		/* Configurable parts of CMD_DHCP */
@@ -186,23 +188,11 @@
 #define CONFIG_SUPPORT_EMMC_BOOT
 
 /* USB xHCI HOST */
-#define CONFIG_USB_HOST
-#define CONFIG_USB_XHCI_DWC3
-#define CONFIG_USB_XHCI
 #define CONFIG_USB_XHCI_OMAP
-#define CONFIG_USB_STORAGE
 #define CONFIG_SYS_USB_XHCI_MAX_ROOT_PORTS 2
 
 #define CONFIG_OMAP_USB_PHY
 #define CONFIG_OMAP_USB3PHY1_HOST
-#define CONFIG_DRA7XX_DWC2
-
-/* USB Device Firmware Update support */
-#define CONFIG_DFU_RAM
-
-#ifndef CONFIG_SPL_BUILD
-#define CONFIG_DFU_MMC
-#endif
 
 /* SATA */
 #define CONFIG_BOARD_LATE_INIT
@@ -233,17 +223,9 @@
 #define CONFIG_SYS_SPI_ARGS_OFFS        0x140000
 #define CONFIG_SYS_SPI_ARGS_SIZE        0x80000
 
-#ifdef CONFIG_SPL_BUILD
-#undef CONFIG_DM_SPI
-#undef CONFIG_DM_SPI_FLASH
-#endif
-
 /* SPI SPL */
-#define CONFIG_SPL_SPI_SUPPORT
-#define CONFIG_SPL_DMA_SUPPORT
 #define CONFIG_TI_EDMA3
 #define CONFIG_SPL_SPI_LOAD
-#define CONFIG_SPL_SPI_FLASH_SUPPORT
 #define CONFIG_SYS_SPI_U_BOOT_OFFS     0x40000
 
 /* SPI */
