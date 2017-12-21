@@ -14,9 +14,9 @@
 	compatible = "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
 
 	aliases {
-		rtc2 = &rtc;
+		rtc0 = &rtc;
 		rtc1 = &tps659038_rtc;
-		rtc0 = &i2c_rtc;
+		rtc2 = &i2c_rtc;
 	};
 
 	vdd_3v3: fixedregulator-vdd_3v3 {
