@@ -39,6 +39,9 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+#define TPS65903X_PRIMARY_SECONDARY_PAD2 0xFB
+#define TPS65903X_PAD2_POWERHOLD_MASK    0x20
+
 #define GPIO_DDR_VTT_EN 104 /* vin2a_d7.gpio4_8 */
 
 const struct omap_sysinfo sysinfo = {
@@ -282,14 +285,32 @@ void dram_init_banksize(void)
 
 int board_late_init(void)
 {
+	u8 val;
+
 	/*
 	 * DEV_CTRL.DEV_ON = 1 please - else palmas switches off in 8 seconds
 	 * This is the POWERHOLD-in-Low behavior.
 	 */
 	palmas_i2c_write_u8(TPS65903X_CHIP_P1, 0xA0, 0x1);
 
+	/*
+	 * Default FIT boot on HS devices. Non FIT images are not allowed
+	 * on HS devices.
+	 */
 	if (get_device_type() == HS_DEVICE)
 		setenv("boot_fit", "1");
+
+	/*
+	 * Set the GPIO7 Pad to POWERHOLD. This has higher priority
+	 * over DEV_CTRL.DEV_ON bit. This can be reset in case of
+	 * PMIC Power off. So to be on the safer side set it back
+	 * to POWERHOLD mode irrespective of the current state.
+	 */
+	palmas_i2c_read_u8(TPS65903X_CHIP_P1, TPS65903X_PRIMARY_SECONDARY_PAD2,
+			   &val);
+	val = val | TPS65903X_PAD2_POWERHOLD_MASK;
+	palmas_i2c_write_u8(TPS65903X_CHIP_P1, TPS65903X_PRIMARY_SECONDARY_PAD2,
+			    val);
 
 	return 0;
 }
