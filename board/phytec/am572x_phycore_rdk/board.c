@@ -367,13 +367,64 @@ err:
 }
 #endif
 
-#if !defined(CONFIG_SPL_BUILD) && defined(CONFIG_GENERIC_MMC)
+#if defined(CONFIG_GENERIC_MMC)
 int board_mmc_init(bd_t *bis)
 {
 	omap_mmc_init(0, 0, 0, -1, -1);
 	omap_mmc_init(1, 0, 0, -1, -1);
 
 	return 0;
+}
+#endif
+
+#if defined(CONFIG_IODELAY_RECALIBRATION) && \
+	(defined(CONFIG_SPL_BUILD) || !defined(CONFIG_DM_MMC))
+
+struct pinctrl_desc {
+	const char *name;
+	struct omap_hsmmc_pinctrl_state *pinctrl;
+};
+
+static struct pinctrl_desc pinctrl_descs_hsmmc1[] = {
+	{"default", &hsmmc1_default},
+	{"hs", &hsmmc1_default},
+	{NULL}
+};
+
+static struct pinctrl_desc pinctrl_descs_hsmmc2_am572[] = {
+	{"default", &hsmmc2_default_hs},
+	{"hs", &hsmmc2_default_hs},
+	{"ddr_1_8v", &hsmmc2_ddr_am572},
+	{NULL}
+};
+
+struct omap_hsmmc_pinctrl_state *platform_fixup_get_pinctrl_by_mode
+			         (struct hsmmc *base, const char *mode)
+{
+	struct pinctrl_desc *p = NULL;
+
+	switch ((u32)&base->res1) {
+	case OMAP_HSMMC1_BASE:
+		p = pinctrl_descs_hsmmc1;
+		break;
+	case OMAP_HSMMC2_BASE:
+		p = pinctrl_descs_hsmmc2_am572;
+		break;
+	default:
+		break;
+}
+
+	if (!p) {
+		printf("%s no pinctrl defined for MMC@%p\n", __func__,
+		       base);
+		return NULL;
+	}
+	while (p->name) {
+		if (strcmp(mode, p->name) == 0)
+			return p->pinctrl;
+		p++;
+	}
+	return NULL;
 }
 #endif
 
