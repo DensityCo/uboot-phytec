@@ -13,3 +13,6 @@
 #include "am572x-pcm-948.dtsi"     /* Carrier Board */
 
 #include "am572x-pcm-057-50500111i.dtsi" /* SOM variant */
+
+/ {
+};
