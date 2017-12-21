@@ -9,6 +9,8 @@
  * TI AM5726 Processor
  */
 
+#include "am57xx-industrial-grade.dtsi"
+
 / {
 	model = "PHYTEC phyCORE-AM5726 with 2GiB DDR3, Industrial Temp";
 	compatible = "phytec,am572x-pcm-057-40201111i", "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
