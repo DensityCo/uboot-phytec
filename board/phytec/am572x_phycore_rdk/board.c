@@ -313,6 +313,7 @@ int board_late_init(void)
 			    val);
 
 	omap_die_id_serial();
+	omap_set_fastboot_vars();
 
 	return 0;
 }
