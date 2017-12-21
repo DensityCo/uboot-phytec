@@ -176,7 +176,7 @@
 #define CONFIG_MII			/* Required in net/eth.c */
 #define CONFIG_PHY_GIGE			/* per-board part of CPSW */
 #define CONFIG_PHYLIB
-#define PHY_ANEG_TIMEOUT	8000	/* PHY needs longer aneg time at 1G */
+#define PHY_ANEG_TIMEOUT	16000	/* PHY needs longer aneg time at 1G */
 
 #define CONFIG_CMD_MEMTEST
 #define CONFIG_SYS_MEMTEST_START	CONFIG_SYS_SDRAM_BASE
