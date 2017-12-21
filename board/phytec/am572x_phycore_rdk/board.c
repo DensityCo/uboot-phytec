@@ -187,11 +187,42 @@ struct vcores_data am572x_phycore_rdk_volts = {
 	.iva.abb_tx_done_mask	= OMAP_ABB_IVA_TXDONE_MASK,
 };
 
+int get_voltrail_opp(int rail_offset)
+{
+	int opp;
+
+	switch (rail_offset) {
+	case VOLT_MPU:
+		opp = DRA7_MPU_OPP;
+		break;
+	case VOLT_CORE:
+		opp = DRA7_CORE_OPP;
+		break;
+	case VOLT_GPU:
+		opp = DRA7_GPU_OPP;
+		break;
+	case VOLT_EVE:
+		opp = DRA7_DSPEVE_OPP;
+		break;
+	case VOLT_IVA:
+		opp = DRA7_IVA_OPP;
+		break;
+	default:
+		opp = OPP_NOM;
+	}
+
+	return opp;
+}
+
+void vcores_init(void)
+{
+	*omap_vcores = &am572x_phycore_rdk_volts;
+}
+
 void hw_data_init(void)
 {
 	*prcm = &dra7xx_prcm;
 	*dplls_data = &dra7xx_dplls;
-	*omap_vcores = &am572x_phycore_rdk_volts;
 	*ctrl = &dra7xx_ctrl;
 }
 
