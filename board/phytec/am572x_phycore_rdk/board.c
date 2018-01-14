@@ -283,9 +283,56 @@ void dram_init_banksize(void)
 	}
 }
 
+#ifdef CONFIG_SPL_BUILD
+void eeprom_set_board_name(void) { }
+
+void do_board_detect(void)
+{
+	int rc;
+	rc = phytec_i2c_eeprom_get(CONFIG_EEPROM_BUS_ADDRESS,
+			CONFIG_EEPROM_CHIP_ADDRESS);
+	if (rc)
+		printf("%s: phytec_i2c_eeprom_get failed %d\n",
+			__func__, rc);
+}
+#else
+void eeprom_set_board_name(void)
+{
+	char *name = "am572x_phycore_rdk";
+	int rc;
+
+	rc = phytec_i2c_eeprom_get(CONFIG_EEPROM_BUS_ADDRESS,
+			CONFIG_EEPROM_CHIP_ADDRESS);
+	if (rc)
+		goto invalid_eeprom;
+
+	if (phytec_board_match("41300111I"))
+		name = "am572x_phycore_rdk_41300111i";
+	else if (phytec_board_match("41201111I"))
+		name = "am572x_phycore_rdk_41201111i";
+	else if (phytec_board_match("40201111I"))
+		name = "am572x_phycore_rdk_40201111i";
+	else if (phytec_board_match("50201111I"))
+		name = "am572x_phycore_rdk_50201111i";
+	else if (phytec_board_match("50500111I"))
+		name = "am572x_phycore_rdk_50500111i";
+	else if (phytec_board_match("10200110I"))
+		name = "am572x_phycore_rdk_10200110i";
+	else if (phytec_board_match("40200110C"))
+		name = "am572x_phycore_rdk_40200110c";
+	else
+		printf("Unknown board name. Defaulting to %s\n", name);
+
+invalid_eeprom:
+	setenv("board_name", name);
+}
+#endif /* CONFIG_SPL_BUILD */
+
 int board_late_init(void)
 {
 	u8 val;
+
+	eeprom_set_board_name();
 
 	/*
 	 * DEV_CTRL.DEV_ON = 1 please - else palmas switches off in 8 seconds
@@ -323,18 +370,6 @@ void set_muxconf_regs(void)
 	do_set_mux32((*ctrl)->control_padconf_core_base,
 			early_padconf, ARRAY_SIZE(early_padconf));
 }
-
-#ifdef CONFIG_SPL_BUILD
-void do_board_detect(void)
-{
-	int rc;
-	rc = phytec_i2c_eeprom_get(CONFIG_EEPROM_BUS_ADDRESS,
-			CONFIG_EEPROM_CHIP_ADDRESS);
-	if (rc)
-		printf("%s: phytec_i2c_eeprom_get failed %d\n",
-			__func__, rc);
-}
-#endif
 
 #ifdef CONFIG_IODELAY_RECALIBRATION
 void recalibrate_iodelay(void)
