@@ -139,6 +139,20 @@
 	"findfdt="\
 		"if test $board_name = am572x_phycore_rdk; then " \
 			"setenv fdtfile am572x-phycore-rdk.dtb; fi;" \
+		"if test $board_name = am572x_phycore_rdk_41300111i; then " \
+			"setenv fdtfile am572x-phycore-rdk-41300111i.dtb; fi;" \
+		"if test $board_name = am572x_phycore_rdk_41201111i; then " \
+			"setenv fdtfile am572x-phycore-rdk-41201111i.dtb; fi;" \
+		"if test $board_name = am572x_phycore_rdk_40201111i; then " \
+			"setenv fdtfile am572x-phycore-rdk-40201111i.dtb; fi;" \
+		"if test $board_name = am572x_phycore_rdk_50201111i; then " \
+			"setenv fdtfile am572x-phycore-rdk-50201111i.dtb; fi;" \
+		"if test $board_name = am572x_phycore_rdk_50500111i; then " \
+			"setenv fdtfile am572x-phycore-rdk-50500111i.dtb; fi;" \
+		"if test $board_name = am572x_phycore_rdk_10200110i; then " \
+			"setenv fdtfile am572x-phycore-rdk-10200110i.dtb; fi;" \
+		"if test $board_name = am572x_phycore_rdk_40200110c; then " \
+			"setenv fdtfile am572x-phycore-rdk-40200110c.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
 	DFUARGS \
