@@ -69,4 +69,5 @@ int __maybe_unused phytec_i2c_eeprom_set(int i2c_bus, int dev_addr,
 int __maybe_unused phytec_i2c_eeprom_compare(int i2c_bus, int dev_addr,
 		struct phytec_common_eeprom *ep);
 
+int __maybe_unused phytec_board_match(char *name);
 #endif /* __PHYTEC_EEPROM_H */

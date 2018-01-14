@@ -160,3 +160,14 @@ int __maybe_unused phytec_i2c_eeprom_compare(int i2c_bus, int dev_addr,
 
 	return 0;
 }
+
+int __maybe_unused phytec_board_match(char *name)
+{
+	struct phytec_common_eeprom *ep = PHYTEC_EEPROM_DATA;
+	size_t cfg_len = sizeof(name)/sizeof(name[0]);
+
+	if (cfg_len <= sizeof(ep->kit_opt)/sizeof(ep->kit_opt[0]))
+		return !strncmp((char *)ep->kit_opt, name, cfg_len);
+	else
+		return -EINVAL;
+}
