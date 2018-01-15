@@ -332,7 +332,8 @@ int board_late_init(void)
 {
 	u8 val;
 
-	eeprom_set_board_name();
+	if (!getenv("override_board"))
+		eeprom_set_board_name();
 
 	/*
 	 * DEV_CTRL.DEV_ON = 1 please - else palmas switches off in 8 seconds

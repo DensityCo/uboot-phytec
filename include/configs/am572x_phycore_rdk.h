@@ -136,6 +136,7 @@
 		"tftp ${fdtaddr} ${tftploc}${fdtfile}; " \
 		"run netargs; " \
 		"bootz ${loadaddr} - ${fdtaddr}\0" \
+	"override_board=\0" \
 	"findfdt="\
 		"if test $board_name = am572x_phycore_rdk; then " \
 			"setenv fdtfile am572x-phycore-rdk.dtb; fi;" \
