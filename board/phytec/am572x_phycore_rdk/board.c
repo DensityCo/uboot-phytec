@@ -51,8 +51,8 @@ const struct omap_sysinfo sysinfo = {
 void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 {
 	struct phytec_common_eeprom *ep;
-	uint8_t ecc_opt;
-	uint8_t ddr3_opt;
+	unsigned char ecc_opt;
+	unsigned char ddr3_opt;
 	int rc;
 
 	rc = phytec_i2c_eeprom_get(CONFIG_EEPROM_BUS_ADDRESS,
@@ -69,23 +69,23 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 	ddr3_opt = ep->kit_opt[0];
 
 	switch (ecc_opt) {
-	case 0:
+	case '0':
 		switch (ddr3_opt) {
-			case 1:
+			case '1':
 				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
 				break;
-			case 4:
-			case 5:
+			case '4':
+			case '5':
 				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
 				break;
 			default:
 				printf("DDR3 option not supported\n");
 		}
 		break;
-	case 1:
+	case '1':
 		switch (ddr3_opt) {
-			case 4:
-			case 5:
+			case '4':
+			case '5':
 				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_ECC_lisa_regs;
 				break;
 			default:
@@ -105,7 +105,7 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 {
 	struct phytec_common_eeprom *ep;
-	uint8_t ddr3_opt;
+	unsigned char ddr3_opt;
 	int rc;
 
 	rc = phytec_i2c_eeprom_get(CONFIG_EEPROM_BUS_ADDRESS,
@@ -119,11 +119,11 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 	ddr3_opt = ep->kit_opt[0];
 
 	switch (ddr3_opt) {
-	case 1:
-	case 4:
+	case '1':
+	case '4':
 		*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
 		break;
-	case 5:
+	case '5':
 		*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
 		break;
 	default:
@@ -240,7 +240,7 @@ int board_init(void)
 void dram_init_banksize(void)
 {
 	struct phytec_common_eeprom *ep;
-	uint8_t ddr3_opt;
+	unsigned char ddr3_opt;
 	u64 ram_size;
 	int rc;
 
@@ -256,13 +256,13 @@ void dram_init_banksize(void)
 	ddr3_opt = ep->kit_opt[0];
 
 	switch (ddr3_opt) {
-	case 1:
+	case '1':
 		ram_size = 0x40000000;
 		break;
-	case 4:
+	case '4':
 		ram_size = 0x80000000;
 		break;
-	case 5:
+	case '5':
 		ram_size = 0x100000000;
 		break;
 	default:
