@@ -76,6 +76,9 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	/* VTT_EN */
 	{VIN2A_D7, (M14 | PIN_OUTPUT)},		/* vin2a_d7.gpio4_8 */
 
+	/* 5V TOF */
+	{VIN2A_D4, (M14 | PIN_OUTPUT)},		/* vin2a_d4.gpio4_5 */
+
 	{ON_OFF, (M1 | PIN_OUTPUT)},	/* on_off.on_off */
 	{RTC_PORZ, (M0 | PIN_INPUT)},	/* rtc_porz.rtc_porz */
 	{RTCK, (M0 | PIN_OUTPUT)},	/* rtck.rtck */
@@ -94,6 +97,10 @@ const struct pad_conf_entry early_padconf[] = {
 	/* I2C1 */
 	{I2C1_SDA, (M0 | PIN_INPUT_PULLUP)},	/* I2C1_SDA */
 	{I2C1_SCL, (M0 | PIN_INPUT_PULLUP)},	/* I2C1_SCL */
+
+	/* I2C3 */
+	{GPIO6_10, (M2 | PIN_INPUT_PULLUP)},	/* I2C3_SDA */
+	{GPIO6_11, (M2 | PIN_INPUT_PULLUP)},	/* I2C3_SCL */
 };
 
 #ifdef CONFIG_IODELAY_RECALIBRATION

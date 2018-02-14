@@ -42,6 +42,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define GPIO_DDR_VTT_EN 104 /* vin2a_d7.gpio4_8 */
 #define GPIO_FAN_N_EN 34 /* gpmc_a12.gpio2_2 */
+#define GPIO_5V_TOF 101 /* vin2a_d4.gpio4_5 */
 
 const struct omap_sysinfo sysinfo = {
 	"Board: phyCORE-AM572x RDK\n"
@@ -261,6 +262,30 @@ int board_late_init(void)
 
 	if (get_device_type() == HS_DEVICE)
 		setenv("boot_fit", "1");
+
+#ifndef CONFIG_SPL_BUILD
+	/* turn on front LED */
+	i2c_set_bus_num(2);
+	if(!i2c_probe(0x60)) {
+		char c;
+
+		/* Disable LED all-call address and set normal mode */
+		c = 0;
+		i2c_write(0x60, 0x0, 1, (uint8_t *)&c, 1);
+		/* PCA963X_OPEN_DRAIN */
+		c = 1;
+		i2c_write(0x60, 0x1, 1, (uint8_t *)&c, 1);
+
+		/* blue pwm */
+		c = 20; /* pwm brightness */
+		i2c_write(0x60, 0x2+0, 1, (uint8_t *)&c, 1);
+
+		c = 0x12; /* binary 01 00 10 (led2:green full, led1:red off, led0:blue pwm) */
+		i2c_write(0x60, 0x8, 1, (uint8_t *)&c, 1);
+	} else {
+		printf("No front LED found\n");
+	}
+#endif
 
 	return 0;
 }
@@ -614,10 +639,20 @@ static inline void fan_enable(void)
 	gpio_direction_output(GPIO_FAN_N_EN, 0);
 }
 
+static inline void _5v_tof_enable(void)
+{
+	if (omap_hw_init_context() == OMAP_INIT_CONTEXT_UBOOT_AFTER_SPL)
+		return;
+
+	gpio_request(GPIO_5V_TOF, "5v_tof");
+	gpio_direction_output(GPIO_5V_TOF, 1);
+}
+
 int board_early_init_f(void)
 {
 	vtt_regulator_enable();
 	fan_enable();
+	_5v_tof_enable();
 	return 0;
 }
 #endif
