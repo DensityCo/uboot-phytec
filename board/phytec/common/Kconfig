@@ -2,6 +2,10 @@ config PHYTEC_EEPROM
 	bool "Support for EEPROM-based board detection for PHYTEC platforms"
 	default y
 
+config NAND
+	bool "Support for NAND on PHYTEC platforms"
+	default n
+
 if ARCH_OMAP2
 
 config SPL_ENV_SUPPORT

@@ -37,6 +37,10 @@
 #include <cpsw.h>
 #endif
 
+#ifdef CONFIG_NAND
+#include <nand.h>
+#endif
+
 DECLARE_GLOBAL_DATA_PTR;
 
 #define TPS65903X_PRIMARY_SECONDARY_PAD2 0xFB
@@ -411,8 +415,12 @@ err:
 #if defined(CONFIG_GENERIC_MMC)
 int board_mmc_init(bd_t *bis)
 {
+	/* init SD */
 	omap_mmc_init(0, 0, 0, -1, -1);
+#if !defined(CONFIG_NAND)
+	/* init eMMC */
 	omap_mmc_init(1, 0, 0, -1, -1);
+#endif
 
 	return 0;
 }
@@ -484,6 +492,10 @@ int spl_start_uboot(void)
 		return 1;
 
 #ifdef CONFIG_SPL_ENV_SUPPORT
+#if defined(CONFIG_NAND) && defined(CONFIG_ENV_IS_IN_NAND)
+	nand_init();
+#endif
+
 	env_init();
 	env_relocate_spec();
 	if (getenv_yesno("boot_os") != 1)

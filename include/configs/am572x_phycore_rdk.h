@@ -26,25 +26,34 @@
 
 /* Store environment on SD card by default
  *
- * To store the u-boot environment in eMMC instead of
- * SD, uncomment the CONFIG_ENV_IS_IN_MMC line below
- * and comment the CONFIG_ENV_IS_IN_FAT line instead
+ * Uncomment the line for the device on which
+ * you would like to store the u-boot
+ * environment and comment the other options:
+ * SD:		CONFIG_ENV_IS_IN_FAT
+ * eMMC:	CONFIG_ENV_IS_IN_MMC
+ * NAND:	CONFIG_ENV_IS_IN_NAND
  */
-/* #define CONFIG_ENV_IS_IN_MMC */
 #define CONFIG_ENV_IS_IN_FAT
+/* #define CONFIG_ENV_IS_IN_MMC */
+/* #define CONFIG_ENV_IS_IN_NAND */
 
+#ifdef CONFIG_ENV_IS_IN_FAT
 #define CONFIG_ENV_SIZE			(64 << 10)
+#define FAT_ENV_INTERFACE		"mmc"
+#define FAT_ENV_DEVICE_AND_PART		"0:1"
+#define FAT_ENV_FILE			"uboot.env"
+#endif
 
 #ifdef CONFIG_ENV_IS_IN_MMC
+#define CONFIG_ENV_SIZE			(64 << 10)
 #define CONFIG_SYS_MMC_ENV_DEV		1
 #define CONFIG_ENV_OFFSET		0x200000
 #define CONFIG_ENV_OFFSET_REDUND	0x210000
 #endif
 
-#ifdef CONFIG_ENV_IS_IN_FAT
-#define FAT_ENV_INTERFACE		"mmc"
-#define FAT_ENV_DEVICE_AND_PART		"0:1"
-#define FAT_ENV_FILE			"uboot.env"
+#ifdef CONFIG_ENV_IS_IN_NAND
+#define CONFIG_ENV_SIZE			(128 << 10)
+#define CONFIG_ENV_OFFSET		0x280000
 #endif
 
 #define CONSOLEDEV			"ttyO2"
@@ -160,7 +169,9 @@
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
 	DFUARGS \
 	NETARGS \
+	EXTRA_ENV_SETTINGS_NAND \
 
+#ifndef CONFIG_NAND
 #define CONFIG_BOOTCOMMAND \
 	"if test ${dofastboot} -eq 1; then " \
 		"echo Boot fastboot requested, resetting dofastboot ...;" \
@@ -176,13 +187,110 @@
 	"setenv mmcdev 1; setenv bootpart 1:2; run mmcboot" \
 	""
 
-#include <configs/ti_omap5_common.h>
-
 /* Enhance our eMMC support / experience. */
 #define CONFIG_CMD_GPT
 #define CONFIG_EFI_PARTITION
 #define CONFIG_RANDOM_UUID
 #define CONFIG_HSMMC2_8BIT
+#define CONFIG_SUPPORT_EMMC_BOOT
+
+#define EXTRA_ENV_SETTINGS_NAND \
+	""
+
+#else
+/* NAND support */
+
+/* NAND: device related configs */
+#define CONFIG_SYS_NAND_PAGE_SIZE	2048
+#define CONFIG_SYS_NAND_OOBSIZE		64
+#define CONFIG_SYS_NAND_BLOCK_SIZE	(128*1024)
+#define CONFIG_SYS_NAND_PAGE_COUNT	(CONFIG_SYS_NAND_BLOCK_SIZE / \
+					 CONFIG_SYS_NAND_PAGE_SIZE)
+#define CONFIG_SYS_NAND_5_ADDR_CYCLE
+
+/* NAND: driver related configs */
+#define CONFIG_NAND_OMAP_ELM
+#define CONFIG_SYS_NAND_ONFI_DETECTION
+#define CONFIG_NAND_OMAP_ECCSCHEME	OMAP_ECC_BCH8_CODE_HW
+#define CONFIG_SYS_NAND_BAD_BLOCK_POS	NAND_LARGE_BADBLOCK_POS
+#define CONFIG_SYS_NAND_ECCPOS		{ 2, 3, 4, 5, 6, 7, 8, 9, \
+					 10, 11, 12, 13, 14, 15, 16, 17, \
+					 18, 19, 20, 21, 22, 23, 24, 25, \
+					 26, 27, 28, 29, 30, 31, 32, 33, \
+					 34, 35, 36, 37, 38, 39, 40, 41, \
+					 42, 43, 44, 45, 46, 47, 48, 49, \
+					 50, 51, 52, 53, 54, 55, 56, 57, }
+#define CONFIG_SYS_NAND_ECCSIZE		512
+#define CONFIG_SYS_NAND_ECCBYTES	14
+
+/* NAND: MTD and UBIFS related configs */
+#define CONFIG_CMD_UBIFS
+#define CONFIG_LZO
+#define CONFIG_RBTREE
+#define CONFIG_MTD_PARTITIONS
+#define MTDIDS_DEFAULT			"nand0=nand.0"
+#define MTDPARTS_DEFAULT		"mtdparts=nand.0:" \
+					"128k(NAND.SPL)," \
+					"128k(NAND.SPL.backup1)," \
+					"128k(NAND.SPL.backup2)," \
+					"128k(NAND.SPL.backup3)," \
+					"2m(NAND.u-boot)," \
+					"128k(NAND.u-boot-env)," \
+					"-(NAND.file-system)"
+#define CONFIG_SYS_NAND_U_BOOT_OFFS	0x00080000
+
+/* NAND: SPL falcon mode configs */
+#ifdef CONFIG_SPL_OS_BOOT
+#define CONFIG_CMD_SPL_NAND_OFS		0x00080000 /* os-boot params*/
+#define CONFIG_SYS_NAND_SPL_KERNEL_OFFS	0x00200000 /* kernel offset */
+#define CONFIG_CMD_SPL_WRITE_SIZE	0x2000
+#endif
+
+#define EXTRA_ENV_SETTINGS_NAND \
+	NANDARGS \
+	"nandloadfdt=ubifsload ${fdtaddr} ${bootdir}/${fdtfile}\0" \
+	"nandroot=ubi0:rootfs rw ubi.mtd=NAND.file-system\0" \
+	"nandboot=echo Booting from nand ...;" \
+		"run nandargs;" \
+		"ubi part NAND.file-system;" \
+		"ubifsmount ubi0:rootfs;" \
+		"ubifsload ${loadaddr} ${bootdir}/${bootfile};" \
+		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
+			"if run nandloadfdt; then " \
+				"bootz ${loadaddr} - ${fdtaddr}; " \
+			"else " \
+				"if test ${boot_fdt} = try; then " \
+					"bootz; " \
+				"else " \
+					"echo WARNING: Cannot load DTB; " \
+				"fi; " \
+			"fi; " \
+		"else " \
+			"bootz; " \
+		"fi;\0"
+
+#define CONFIG_BOOTCOMMAND \
+	"if test ${dofastboot} -eq 1; then " \
+		"echo Boot fastboot requested, resetting dofastboot ...;" \
+		"setenv dofastboot 0; saveenv;" \
+		"echo Booting into fastboot ...; fastboot 0;" \
+	"fi;" \
+	"if test ${boot_fit} -eq 1; then " \
+		"run update_to_fit;" \
+	"fi;" \
+	"run findfdt; " \
+	"run envboot; " \
+	"run mmcboot;" \
+	"run nandboot;" \
+	""
+
+#ifdef CONFIG_SPL_BUILD
+#undef CONFIG_CMD_UBIFS
+#endif
+
+#endif /* !defined(CONFIG_NAND) */
+
+#include <configs/ti_omap5_common.h>
 
 /* CPSW Ethernet */
 #define CONFIG_BOOTP_DNS		/* Configurable parts of CMD_DHCP */
@@ -201,8 +309,6 @@
 #define CONFIG_SYS_MEMTEST_START	CONFIG_SYS_SDRAM_BASE
 #define CONFIG_SYS_MEMTEST_END		(CONFIG_SYS_SDRAM_BASE + \
 						0x10000000)
-
-#define CONFIG_SUPPORT_EMMC_BOOT
 
 /* USB xHCI HOST */
 #define CONFIG_USB_XHCI_OMAP
