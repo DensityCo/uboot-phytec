@@ -63,6 +63,25 @@
 };
 
 &dra7_pmx_core {
+	gpmc_nand_pins_default: gpmc_nand_pins_default {
+		pinctrl-single,pins = <
+			0x0 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad0 */
+			0x4 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad1 */
+			0x8 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad2 */
+			0xC (PIN_INPUT | MUX_MODE0)		/* gpmc_ad3 */
+			0x10 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad4 */
+			0x14 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad5 */
+			0x18 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad6 */
+			0x1C (PIN_INPUT | MUX_MODE0)		/* gpmc_ad7 */
+			0xB4 (PIN_OUTPUT_PULLUP | MUX_MODE0)	/* gpmc_cs0 */
+			0xC4 (PIN_OUTPUT | MUX_MODE0)		/* gpmc_advn_ale */
+			0xC8 (PIN_OUTPUT | MUX_MODE0)		/* gpmc_oen_ren */
+			0xCC (PIN_OUTPUT | MUX_MODE0)		/* gpmc_wen */
+			0xD0 (PIN_OUTPUT | MUX_MODE0)		/* gpmc_ben0 */
+			0xD8 (PIN_INPUT | MUX_MODE0)		/* gpmc_wait0 */
+		>;
+	};
+
 	leds_som_pins_default: leds_som_pins_default {
 		pinctrl-single,pins = <
 			0x188 (PIN_OUTPUT | MUX_MODE14)	/* vin2a_d8.gpio4_9 */
@@ -274,6 +293,78 @@
 		>;
 	};
 
+};
+
+&gpmc {
+	status = "disabled";
+	pinctrl-names = "default";
+	pinctrl-0 = <&gpmc_nand_pins_default>;
+
+	ranges = <0 0 0x08000000 0x01000000>;		/* minimum GPMC partition = 16MB */
+
+	nand@0,0 {
+		compatible = "ti,omap2-nand";
+		reg = <0 0 4>;				/* device IO registers */
+		interrupt-parent = <&gpmc>;
+		interrupts = <0 IRQ_TYPE_NONE>,		/* fifoevent */
+			<1 IRQ_TYPE_NONE>;		/* termcount */
+		rb-gpios = <&gpmc 0 GPIO_ACTIVE_HIGH>;	/* gpmc_wait0 pin */
+		/* Settings for Winbond W29N08GV 1GB NAND */
+		ti,nand-ecc-opt = "bch8";
+		ti,elm-id = <&elm>;
+		nand-bus-width = <8>;
+		gpmc,device-width = <1>;
+		gpmc,sync-clk-ps = <0>;
+		gpmc,cs-on-ns = <0>;
+		gpmc,cs-rd-off-ns = <40>;
+		gpmc,cs-wr-off-ns = <90>;
+		gpmc,adv-on-ns = <0>;
+		gpmc,adv-rd-off-ns = <40>;
+		gpmc,adv-wr-off-ns = <90>;
+		gpmc,we-on-ns = <0>;
+		gpmc,we-off-ns = <20>;
+		gpmc,oe-on-ns = <5>;
+		gpmc,oe-off-ns = <25>;
+		gpmc,access-ns = <30>;
+		gpmc,rd-cycle-ns = <40>;
+		gpmc,wr-cycle-ns = <90>;
+		gpmc,bus-turnaround-ns = <0>;
+		gpmc,cycle2cycle-delay-ns = <0>;
+		gpmc,clk-activation-ns = <0>;
+		gpmc,wr-data-mux-bus-ns = <0>;
+
+		/* MTD partition table for 1GB NAND */
+		#address-cells = <1>;
+		#size-cells = <1>;
+		partition@0 {
+			label = "NAND.SPL";
+			reg = <0x00000000 0x00020000>;
+		};
+		partition@1 {
+			label = "NAND.SPL.backup1";
+			reg = <0x00020000 0x00020000>;
+		};
+		partition@2 {
+			label = "NAND.SPL.backup2";
+			reg = <0x00040000 0x00020000>;
+		};
+		partition@3 {
+			label = "NAND.SPL.backup3";
+			reg = <0x00060000 0x00020000>;
+		};
+		partition@4 {
+			label = "NAND.u-boot";
+			reg = <0x00080000 0x00200000>;
+		};
+		partition@5 {
+			label = "NAND.u-boot-env";
+			reg = <0x00280000 0x00020000>;
+		};
+		partition@6 {
+			label = "NAND.file-system";
+			reg = <0x002A0000 0>;
+		};
+	};
 };
 
 &i2c1 {
