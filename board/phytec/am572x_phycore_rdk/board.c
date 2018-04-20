@@ -78,6 +78,9 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 			case '1':
 				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
 				break;
+			case '3':
+				*dmm_lisa_regs = &am572x_phycore_rdk_2Gx1_lisa_regs;
+				break;
 			case '4':
 			case '5':
 				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
@@ -99,6 +102,8 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 	default:
 #if defined(CONFIG_PCM_057_256M16_x2_DDR)
 	*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
+#elif defined(CONFIG_PCM_057_512M16_x2_DDR)
+	*dmm_lisa_regs = &am572x_phycore_rdk_2Gx1_lisa_regs;
 #elif (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
 	defined(CONFIG_PCM_057_512M16_x4_DDR))
 		*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
@@ -127,6 +132,7 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 	case '4':
 		*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
 		break;
+	case '3':
 	case '5':
 		*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
 		break;
@@ -134,7 +140,8 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 #if (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
 	defined(CONFIG_PCM_057_256M16_x2_DDR))
 		*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
-#elif defined(CONFIG_PCM_057_512M16_x4_DDR)
+#elif (defined(CONFIG_PCM_057_512M16_x4_DDR) || \
+	defined(CONFIG_PCM_057_512M16_x2_DDR))
 		*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
 #endif
 	}
@@ -263,6 +270,7 @@ void dram_init_banksize(void)
 	case '1':
 		ram_size = 0x40000000;
 		break;
+	case '3':
 	case '4':
 		ram_size = 0x80000000;
 		break;
@@ -272,7 +280,8 @@ void dram_init_banksize(void)
 	default:
 #if defined(CONFIG_PCM_057_256M16_x2_DDR)
 		ram_size = 0x40000000;
-#elif defined(CONFIG_PCM_057_256M16_x4_DDR)
+#elif (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
+	defined(CONFIG_PCM_057_512M16_x2_DDR))
 		ram_size = 0x80000000;
 #elif defined(CONFIG_PCM_057_512M16_x4_DDR)
 		ram_size = 0x100000000;
@@ -326,6 +335,10 @@ void eeprom_set_board_name(void)
 		name = "am572x_phycore_rdk_40200110c";
 	else if (phytec_board_match("40A00111I"))
 		name = "am572x_phycore_rdk_40a00111i";
+	else if (phytec_board_match("10302111I"))
+		name = "am571x_phycore_rdk_10302111i";
+	else if (phytec_board_match("30302111I"))
+		name = "am571x_phycore_rdk_30302111i";
 	else
 		printf("Unknown board name. Defaulting to %s\n", name);
 
@@ -752,9 +765,12 @@ int board_fit_config_name_match(const char *name)
 		return 0;
 	else if (!strcmp(name, "am572x-phycore-rdk-40a00111i"))
 		return 0;
+	else if (!strcmp(name, "am571x-phycore-rdk-10302111i"))
+		return 0;
+	else if (!strcmp(name, "am571x-phycore-rdk-30302111i"))
+		return 0;
 	else
 		return -1;
-
 }
 #endif
 

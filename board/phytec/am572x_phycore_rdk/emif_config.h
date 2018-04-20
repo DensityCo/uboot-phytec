@@ -11,7 +11,14 @@
 #define _EMIF_CONFIG_PCM057_H_
 
 const struct dmm_lisa_map_regs am572x_phycore_rdk_1Gx1_lisa_regs = {
+	.dmm_lisa_map_3 = 0xFF020100,
 	.dmm_lisa_map_3 = 0x80600100,
+	.is_ma_present  = 0x1
+};
+
+const struct dmm_lisa_map_regs am572x_phycore_rdk_2Gx1_lisa_regs = {
+	.dmm_lisa_map_3 = 0xFF020100,
+	.dmm_lisa_map_2 = 0x80700100,
 	.is_ma_present  = 0x1
 };
 
