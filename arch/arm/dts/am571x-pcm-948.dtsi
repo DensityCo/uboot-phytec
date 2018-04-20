@@ -1,0 +1,14 @@
+/*
+ * Copyright (C) 2018 PHYTEC America, LLC. - https://www.phytec.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+#include "am57xx-pcm-948-common.dtsi"
+
+/ {
+	model = "PHYTEC phyCORE-AM571x Carrier Board";
+	compatible = "phytec,am571x-pcm-948", "phytec,am571x-phycore-som", "ti,am5718", "ti,dra722", "ti,dra72", "ti,dra7";
+};

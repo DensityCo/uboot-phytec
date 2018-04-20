@@ -1,0 +1,18 @@
+/*
+ * Copyright (C) 2018 PHYTEC America, LLC. - https://www.phytec.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * DTS for PHYTEC kit KPCM-057-SYS with PCM-057-10302111I
+ */
+/dts-v1/;
+
+#include "am571x-phycore-som.dtsi" /* Superset - enables all SOM features */
+#include "am571x-pcm-948.dtsi"     /* Carrier Board */
+
+#include "am571x-pcm-057-10302111i.dtsi" /* SOM variant */
+
+/ {
+};
