@@ -2,7 +2,7 @@
  * (C) Copyright 2015 PHYTEC America, LLC
  * Author: Russell Robinson <rrobinson@phytec.com>
  *
- * Configuration settings for the PHYTEC phyCORE-AM572x RDK.
+ * Configuration settings for the PHYTEC phyCORE-AM57xx RDK.
  * See ti_omap5_common.h for omap5 common settings.
  *
  * Based on include/configs/beagle_x15.h
@@ -10,8 +10,8 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
-#ifndef __CONFIG_AM572X_PHYCORE_RDKH
-#define __CONFIG_AM572X_PHYCORE_RDKH
+#ifndef __CONFIG_AM57XX_PHYCORE_RDKH
+#define __CONFIG_AM57XX_PHYCORE_RDKH
 
 #define CONFIG_DRA7XX
 
@@ -362,4 +362,4 @@
 #define CONFIG_SF_DEFAULT_MODE                 SPI_MODE_0
 #define CONFIG_QSPI_QUAD_SUPPORT
 
-#endif /* __CONFIG_AM572X_PHYCORE_RDK_H */
+#endif /* __CONFIG_AM57XX_PHYCORE_RDK_H */

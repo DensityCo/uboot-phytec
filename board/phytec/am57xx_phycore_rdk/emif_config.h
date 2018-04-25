@@ -10,13 +10,13 @@
 #ifndef _EMIF_CONFIG_PCM057_H_
 #define _EMIF_CONFIG_PCM057_H_
 
-const struct dmm_lisa_map_regs am572x_phycore_rdk_1Gx1_lisa_regs = {
+const struct dmm_lisa_map_regs am57xx_phycore_rdk_1Gx1_lisa_regs = {
 	.dmm_lisa_map_3 = 0xFF020100,
 	.dmm_lisa_map_3 = 0x80600100,
 	.is_ma_present  = 0x1
 };
 
-const struct dmm_lisa_map_regs am572x_phycore_rdk_2Gx1_lisa_regs = {
+const struct dmm_lisa_map_regs am57xx_phycore_rdk_2Gx1_lisa_regs = {
 	.dmm_lisa_map_3 = 0xFF020100,
 	.dmm_lisa_map_2 = 0x80700100,
 	.is_ma_present  = 0x1
@@ -36,7 +36,7 @@ const struct dmm_lisa_map_regs am572x_phycore_rdk_1Gx2_lisa_regs = {
 };
 
 /* MT41K256M16TW-107 memory timings */
-const struct emif_regs am572x_phycore_rdk_emif_532mhz_256M16_regs = {
+const struct emif_regs am57xx_phycore_rdk_emif_532mhz_256M16_regs = {
 	.sdram_config_init	= 0x61851b32,
 	.sdram_config		= 0x61851b32,
 	.sdram_config2		= 0x08000000,
@@ -62,7 +62,7 @@ const struct emif_regs am572x_phycore_rdk_emif_532mhz_256M16_regs = {
 };
 
 /* MT41K512M16HA-125 memory timings */
-const struct emif_regs am572x_phycore_rdk_emif_532mhz_512M16_regs = {
+const struct emif_regs am57xx_phycore_rdk_emif_532mhz_512M16_regs = {
 	.sdram_config_init	= 0x61851bb2,
 	.sdram_config		= 0x61851bb2,
 	.sdram_config2		= 0x08000000,
@@ -88,7 +88,7 @@ const struct emif_regs am572x_phycore_rdk_emif_532mhz_512M16_regs = {
 };
 
 /* Ext phy ctrl regs 1-35 */
-const u32 am572x_phycore_rdk_emif_ext_phy_ctrl_const_regs[] = {
+const u32 am57xx_phycore_rdk_emif_ext_phy_ctrl_const_regs[] = {
 	0x10040100,
 	0x00910091,
 	0x00950095,

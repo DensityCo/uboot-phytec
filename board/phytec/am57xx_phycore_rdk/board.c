@@ -49,7 +49,7 @@ DECLARE_GLOBAL_DATA_PTR;
 #define GPIO_DDR_VTT_EN 104 /* vin2a_d7.gpio4_8 */
 
 const struct omap_sysinfo sysinfo = {
-	"Board: phyCORE-AM572x RDK\n"
+	"Board: phyCORE-AM57xx RDK\n"
 };
 
 void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
@@ -66,20 +66,20 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 			"Using fallback defaults.\n", __func__);
 	ep = PHYTEC_EEPROM_DATA;
 
-	/* ECC board population option at ep->kit_opt[1] for am572x */
+	/* ECC board population option at ep->kit_opt[1] for am57xx */
 	ecc_opt = ep->kit_opt[1];
 
-	/* ddr3 board population option at ep->kit_opt[0] for am572x */
+	/* ddr3 board population option at ep->kit_opt[0] for am57xx */
 	ddr3_opt = ep->kit_opt[0];
 
 	switch (ecc_opt) {
 	case '0':
 		switch (ddr3_opt) {
 			case '1':
-				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
+				*dmm_lisa_regs = &am57xx_phycore_rdk_1Gx1_lisa_regs;
 				break;
 			case '3':
-				*dmm_lisa_regs = &am572x_phycore_rdk_2Gx1_lisa_regs;
+				*dmm_lisa_regs = &am57xx_phycore_rdk_2Gx1_lisa_regs;
 				break;
 			case '4':
 			case '5':
@@ -101,9 +101,9 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 		break;
 	default:
 #if defined(CONFIG_PCM_057_256M16_x2_DDR)
-	*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
+	*dmm_lisa_regs = &am57xx_phycore_rdk_1Gx1_lisa_regs;
 #elif defined(CONFIG_PCM_057_512M16_x2_DDR)
-	*dmm_lisa_regs = &am572x_phycore_rdk_2Gx1_lisa_regs;
+	*dmm_lisa_regs = &am57xx_phycore_rdk_2Gx1_lisa_regs;
 #elif (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
 	defined(CONFIG_PCM_057_512M16_x4_DDR))
 		*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
@@ -124,36 +124,36 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 			"Using fallback defaults.\n", __func__);
 	ep = PHYTEC_EEPROM_DATA;
 
-	/* ddr3 board population option at ep->kit_opt[0] for am572x */
+	/* ddr3 board population option at ep->kit_opt[0] for am57xx */
 	ddr3_opt = ep->kit_opt[0];
 
 	switch (ddr3_opt) {
 	case '1':
 	case '4':
-		*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
+		*regs = &am57xx_phycore_rdk_emif_532mhz_256M16_regs;
 		break;
 	case '3':
 	case '5':
-		*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
+		*regs = &am57xx_phycore_rdk_emif_532mhz_512M16_regs;
 		break;
 	default:
 #if (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
 	defined(CONFIG_PCM_057_256M16_x2_DDR))
-		*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
+		*regs = &am57xx_phycore_rdk_emif_532mhz_256M16_regs;
 #elif (defined(CONFIG_PCM_057_512M16_x4_DDR) || \
 	defined(CONFIG_PCM_057_512M16_x2_DDR))
-		*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
+		*regs = &am57xx_phycore_rdk_emif_532mhz_512M16_regs;
 #endif
 	}
 }
 
 void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 {
-	*regs = am572x_phycore_rdk_emif_ext_phy_ctrl_const_regs;
-	*size = ARRAY_SIZE(am572x_phycore_rdk_emif_ext_phy_ctrl_const_regs);
+	*regs = am57xx_phycore_rdk_emif_ext_phy_ctrl_const_regs;
+	*size = ARRAY_SIZE(am57xx_phycore_rdk_emif_ext_phy_ctrl_const_regs);
 }
 
-struct vcores_data am572x_phycore_rdk_volts = {
+struct vcores_data am57xx_phycore_rdk_volts = {
 	.mpu.value[OPP_NOM]	= VDD_MPU_DRA7_NOM,
 	.mpu.efuse.reg[OPP_NOM]	= STD_FUSE_OPP_VMIN_MPU_NOM,
 	.mpu.efuse.reg_bits	= DRA752_EFUSE_REGBITS,
@@ -230,7 +230,7 @@ int get_voltrail_opp(int rail_offset)
 
 void vcores_init(void)
 {
-	*omap_vcores = &am572x_phycore_rdk_volts;
+	*omap_vcores = &am57xx_phycore_rdk_volts;
 }
 
 void hw_data_init(void)
@@ -263,7 +263,7 @@ void dram_init_banksize(void)
 
 	ep = PHYTEC_EEPROM_DATA;
 
-	/* ddr3 board population option at ep->kit_opt[0] for am572x */
+	/* ddr3 board population option at ep->kit_opt[0] for am57xx */
 	ddr3_opt = ep->kit_opt[0];
 
 	switch (ddr3_opt) {

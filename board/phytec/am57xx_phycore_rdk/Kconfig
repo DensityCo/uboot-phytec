@@ -1,13 +1,13 @@
-if TARGET_AM572X_PHYCORE_RDK
+if TARGET_AM57XX_PHYCORE_RDK
 
 config SYS_BOARD
-	default "am572x_phycore_rdk"
+	default "am57xx_phycore_rdk"
 
 config SYS_VENDOR
 	default "phytec"
 
 config SYS_CONFIG_NAME
-	default "am572x_phycore_rdk"
+	default "am57xx_phycore_rdk"
 
 config CONS_INDEX
 	int "UART used for console"
@@ -22,7 +22,7 @@ choice
 	prompt "Select DDR3L Total Memory Size"
 	default PCM_057_256M16_x4_DDR
 	help
-	  The phyCORE-AM572x SOM (PCM-057) can be populated with different DDR3
+	  The phyCORE-AM57xx SOM (PCM-057) can be populated with different DDR3
 	  chips resulting in various configurations and total available memory.
 
 	config PCM_057_256M16_x2_DDR
