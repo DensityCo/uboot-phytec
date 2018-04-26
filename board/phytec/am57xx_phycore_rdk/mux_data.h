@@ -35,20 +35,20 @@ const struct pad_conf_entry core_padconf_array_essential[] = {
 	{GPMC_CS1, (M1 | PIN_INPUT_PULLUP)}, /* gpmc_cs1.mmc2_cmd */
 
 	/* NAND (GPMC) */
-	{GPMC_AD0, (M0 | PIN_INPUT)}, 		/* gpmc_ad0 */
-	{GPMC_AD1, (M0 | PIN_INPUT)}, 		/* gpmc_ad1 */
-	{GPMC_AD2, (M0 | PIN_INPUT)}, 		/* gpmc_ad2 */
-	{GPMC_AD3, (M0 | PIN_INPUT)}, 		/* gpmc_ad3 */
-	{GPMC_AD4, (M0 | PIN_INPUT)}, 		/* gpmc_ad4 */
-	{GPMC_AD5, (M0 | PIN_INPUT)}, 		/* gpmc_ad5 */
-	{GPMC_AD6, (M0 | PIN_INPUT)}, 		/* gpmc_ad6 */
-	{GPMC_AD7, (M0 | PIN_INPUT)}, 		/* gpmc_ad7 */
-	{GPMC_CS0, (M0 | PIN_OUTPUT_PULLUP)}, 	/* gpmc_cs0 */
-	{GPMC_ADVN_ALE, (M0 | PIN_OUTPUT)}, 	/* gpmc_advn_ale */
-	{GPMC_OEN_REN, (M0 | PIN_OUTPUT)}, 	/* gpmc_oen_ren */
-	{GPMC_WEN, (M0 | PIN_OUTPUT)}, 		/* gpmc_wen */
-	{GPMC_BEN0, (M0 | PIN_OUTPUT)}, 	/* gpmc_ben0 */
-	{GPMC_WAIT0, (M0 | PIN_INPUT)}, 	/* gpmc_wait0 */
+	{GPMC_AD0, (M0 | PIN_INPUT_SLEW)}, 			/* gpmc_ad0 */
+	{GPMC_AD1, (M0 | PIN_INPUT_SLEW)}, 			/* gpmc_ad1 */
+	{GPMC_AD2, (M0 | PIN_INPUT_SLEW)}, 			/* gpmc_ad2 */
+	{GPMC_AD3, (M0 | PIN_INPUT_SLEW)}, 			/* gpmc_ad3 */
+	{GPMC_AD4, (M0 | PIN_INPUT_SLEW)}, 			/* gpmc_ad4 */
+	{GPMC_AD5, (M0 | PIN_INPUT_SLEW)}, 			/* gpmc_ad5 */
+	{GPMC_AD6, (M0 | PIN_INPUT_SLEW)}, 			/* gpmc_ad6 */
+	{GPMC_AD7, (M0 | PIN_INPUT_SLEW)}, 			/* gpmc_ad7 */
+	{GPMC_CS0, (M0 | PIN_OUTPUT_PULLUP | SLEWCONTROL)}, 	/* gpmc_cs0 */
+	{GPMC_ADVN_ALE, (M0 | PIN_OUTPUT | SLEWCONTROL)}, 	/* gpmc_advn_ale */
+	{GPMC_OEN_REN, (M0 | PIN_OUTPUT | SLEWCONTROL)}, 	/* gpmc_oen_ren */
+	{GPMC_WEN, (M0 | PIN_OUTPUT | SLEWCONTROL)}, 		/* gpmc_wen */
+	{GPMC_BEN0, (M0 | PIN_OUTPUT | SLEWCONTROL)}, 		/* gpmc_ben0 */
+	{GPMC_WAIT0, (M0 | PIN_INPUT)}, 			/* gpmc_wait0 */
 
 	/* SDIO (MMC3) */
 	{MMC3_CLK, (M0 | PIN_INPUT_PULLUP)},  /* mmc3_clk.clk */
