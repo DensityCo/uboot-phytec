@@ -221,20 +221,20 @@
 
 	gpmc_nand_pins_default: gpmc_nand_pins_default {
 		pinctrl-single,pins = <
-			0x0 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad0 */
-			0x4 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad1 */
-			0x8 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad2 */
-			0xC (PIN_INPUT | MUX_MODE0)		/* gpmc_ad3 */
-			0x10 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad4 */
-			0x14 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad5 */
-			0x18 (PIN_INPUT | MUX_MODE0)		/* gpmc_ad6 */
-			0x1C (PIN_INPUT | MUX_MODE0)		/* gpmc_ad7 */
-			0xB4 (PIN_OUTPUT_PULLUP | MUX_MODE0)	/* gpmc_cs0 */
-			0xC4 (PIN_OUTPUT | MUX_MODE0)		/* gpmc_advn_ale */
-			0xC8 (PIN_OUTPUT | MUX_MODE0)		/* gpmc_oen_ren */
-			0xCC (PIN_OUTPUT | MUX_MODE0)		/* gpmc_wen */
-			0xD0 (PIN_OUTPUT | MUX_MODE0)		/* gpmc_ben0 */
-			0xD8 (PIN_INPUT | MUX_MODE0)		/* gpmc_wait0 */
+			0x00 (PIN_INPUT_SLEW | MUX_MODE0)			/* gpmc_ad0 */
+			0x04 (PIN_INPUT_SLEW | MUX_MODE0)			/* gpmc_ad1 */
+			0x08 (PIN_INPUT_SLEW | MUX_MODE0)			/* gpmc_ad2 */
+			0x0C (PIN_INPUT_SLEW | MUX_MODE0)			/* gpmc_ad3 */
+			0x10 (PIN_INPUT_SLEW | MUX_MODE0)			/* gpmc_ad4 */
+			0x14 (PIN_INPUT_SLEW | MUX_MODE0)			/* gpmc_ad5 */
+			0x18 (PIN_INPUT_SLEW | MUX_MODE0)			/* gpmc_ad6 */
+			0x1C (PIN_INPUT_SLEW | MUX_MODE0)			/* gpmc_ad7 */
+			0xB4 (PIN_OUTPUT_PULLUP | SLEWCONTROL | MUX_MODE0)	/* gpmc_cs0 */
+			0xC4 (PIN_OUTPUT | SLEWCONTROL | MUX_MODE0)		/* gpmc_advn_ale */
+			0xC8 (PIN_OUTPUT | SLEWCONTROL | MUX_MODE0)		/* gpmc_oen_ren */
+			0xCC (PIN_OUTPUT | SLEWCONTROL | MUX_MODE0)		/* gpmc_wen */
+			0xD0 (PIN_OUTPUT | SLEWCONTROL | MUX_MODE0)		/* gpmc_ben0 */
+			0xD8 (PIN_INPUT | MUX_MODE0)				/* gpmc_wait0 */
 		>;
 	};
 };
