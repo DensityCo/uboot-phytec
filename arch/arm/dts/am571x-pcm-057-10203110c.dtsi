@@ -1,0 +1,38 @@
+/*
+ * Copyright (C) 2018 PHYTEC America, LLC. - www.phytec.com
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+
+ * TI AM5716 Processor
+ */
+
+#include "am57xx-commercial-grade.dtsi"
+
+/ {
+	model = "PHYTEC phyCORE-AM5716 with 1GiB DDR3 (1 bank), Commercial Temp";
+	compatible = "phytec,am571x-pcm-057-10203110c", "phytec,am571x-phycore-som", "ti,am5716", "ti,dra722", "ti,dra72", "ti,dra7";
+
+	memory {
+		device_type = "memory";
+		reg = <0x0 0x40000000 0x0 0x0>; /* 1GiB */
+	};
+};
+
+&qspi {
+	status = "disabled";
+};
+
+&qspi_nor {
+	status = "disabled";
+};
+
+&qspi_nor_cs0 {
+	status = "disabled";
+};
+
+&dss {
+	status = "disabled";
+};
