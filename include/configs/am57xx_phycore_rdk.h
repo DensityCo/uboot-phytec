@@ -147,8 +147,8 @@
 		"bootz ${loadaddr} - ${fdtaddr}\0" \
 	"override_board=\0" \
 	"findfdt="\
-		"if test $board_name = am572x_phycore_rdk; then " \
-			"setenv fdtfile am572x-phycore-rdk.dtb; fi;" \
+		"if test $board_name = am57xx_phycore_rdk; then " \
+			"setenv fdtfile am57xx-phycore-rdk.dtb; fi;" \
 		"if test $board_name = am572x_phycore_rdk_41300111i; then " \
 			"setenv fdtfile am572x-phycore-rdk-41300111i.dtb; fi;" \
 		"if test $board_name = am572x_phycore_rdk_41201111i; then " \
@@ -169,6 +169,8 @@
 			"setenv fdtfile am571x-phycore-rdk-10302111i.dtb; fi;" \
 		"if test $board_name = am571x_phycore_rdk_30302111i; then " \
 			"setenv fdtfile am571x-phycore-rdk-30302111i.dtb; fi;" \
+		"if test $board_name = am571x_phycore_rdk_10203110c; then " \
+			"setenv fdtfile am571x-phycore-rdk-10203110c.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
 	DFUARGS \
