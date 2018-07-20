@@ -52,8 +52,8 @@
 #endif
 
 #ifdef CONFIG_ENV_IS_IN_NAND
-#define CONFIG_ENV_SIZE			(128 << 10)
-#define CONFIG_ENV_OFFSET		0x280000
+#define CONFIG_ENV_SIZE			(256 << 10)
+#define CONFIG_ENV_OFFSET		0x300000
 #endif
 
 #define CONSOLEDEV			"ttyO2"
@@ -207,9 +207,9 @@
 /* NAND support */
 
 /* NAND: device related configs */
-#define CONFIG_SYS_NAND_PAGE_SIZE	2048
-#define CONFIG_SYS_NAND_OOBSIZE		64
-#define CONFIG_SYS_NAND_BLOCK_SIZE	(128*1024)
+#define CONFIG_SYS_NAND_PAGE_SIZE	4096
+#define CONFIG_SYS_NAND_OOBSIZE		224
+#define CONFIG_SYS_NAND_BLOCK_SIZE	(64*4096)
 #define CONFIG_SYS_NAND_PAGE_COUNT	(CONFIG_SYS_NAND_BLOCK_SIZE / \
 					 CONFIG_SYS_NAND_PAGE_SIZE)
 #define CONFIG_SYS_NAND_5_ADDR_CYCLE
@@ -236,18 +236,18 @@
 #define CONFIG_MTD_PARTITIONS
 #define MTDIDS_DEFAULT			"nand0=nand.0"
 #define MTDPARTS_DEFAULT		"mtdparts=nand.0:" \
-					"128k(NAND.SPL)," \
-					"128k(NAND.SPL.backup1)," \
-					"128k(NAND.SPL.backup2)," \
-					"128k(NAND.SPL.backup3)," \
+					"256k(NAND.SPL)," \
+					"256k(NAND.SPL.backup1)," \
+					"256k(NAND.SPL.backup2)," \
+					"256k(NAND.SPL.backup3)," \
 					"2m(NAND.u-boot)," \
-					"128k(NAND.u-boot-env)," \
+					"256k(NAND.u-boot-env)," \
 					"-(NAND.file-system)"
-#define CONFIG_SYS_NAND_U_BOOT_OFFS	0x00080000
+#define CONFIG_SYS_NAND_U_BOOT_OFFS	0x00100000
 
 /* NAND: SPL falcon mode configs */
 #ifdef CONFIG_SPL_OS_BOOT
-#define CONFIG_CMD_SPL_NAND_OFS		0x00080000 /* os-boot params*/
+#define CONFIG_CMD_SPL_NAND_OFS		0x00100000 /* os-boot params*/
 #define CONFIG_SYS_NAND_SPL_KERNEL_OFFS	0x00200000 /* kernel offset */
 #define CONFIG_CMD_SPL_WRITE_SIZE	0x2000
 #endif
