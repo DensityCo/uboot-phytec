@@ -335,11 +335,7 @@ void eeprom_set_board_name(void)
 		name = "am572x_phycore_rdk_40200110c";
 	else if (phytec_board_match("40A00111I"))
 		name = "am572x_phycore_rdk_40a00111i";
-	else if (phytec_board_match("10302111I"))
-		name = "am571x_phycore_rdk_10302111i";
-	else if (phytec_board_match("30302111I"))
-		name = "am571x_phycore_rdk_30302111i";
-	else if (phytec_board_match("10302110C"))
+	else if (phytec_board_match("10203110C"))
 		name = "am571x_phycore_rdk_10203110c";
 	else
 		printf("PHYTEC: unknown board name. Defaulting to %s," \
@@ -767,10 +763,6 @@ int board_fit_config_name_match(const char *name)
 	else if (!strcmp(name, "am572x-phycore-rdk-40200110c"))
 		return 0;
 	else if (!strcmp(name, "am572x-phycore-rdk-40a00111i"))
-		return 0;
-	else if (!strcmp(name, "am571x-phycore-rdk-10302111i"))
-		return 0;
-	else if (!strcmp(name, "am571x-phycore-rdk-30302111i"))
 		return 0;
 	else if (!strcmp(name, "am571x-phycore-rdk-10203110c"))
 		return 0;
