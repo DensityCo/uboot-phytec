@@ -169,6 +169,8 @@
 			"setenv fdtfile am572x-phycore-rdk-10201111i.dtb; fi;" \
 		"if test $board_name = am571x_phycore_rdk_10203110c; then " \
 			"setenv fdtfile am571x-phycore-rdk-10203110c.dtb; fi;" \
+		"if test $board_name = am571x_phycore_rdk_10203111i; then " \
+			"setenv fdtfile am571x-phycore-rdk-10203111i.dtb; fi;" \
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0" \
 	DFUARGS \

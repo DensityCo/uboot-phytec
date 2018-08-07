@@ -158,7 +158,8 @@ dtb-$(CONFIG_TARGET_AM57XX_PHYCORE_RDK) += am57xx-phycore-rdk.dtb \
 	am572x-phycore-rdk-40200110c.dtb \
 	am572x-phycore-rdk-40a00111i.dtb \
 	am572x-phycore-rdk-10201111i.dtb \
-	am571x-phycore-rdk-10203110c.dtb
+	am571x-phycore-rdk-10203110c.dtb \
+	am571x-phycore-rdk-10203111i.dtb
 
 dtb-$(CONFIG_TARGET_STV0991) += stv0991.dtb
 
