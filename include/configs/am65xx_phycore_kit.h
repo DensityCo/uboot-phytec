@@ -1,14 +1,15 @@
 /*
- * Configuration header file for K3 AM654 EVM
+ * Copyright (C) 2018 PHYTEC America, LLC
  *
- * Copyright (C) 2017-2018 Texas Instruments Incorporated - http://www.ti.com/
- *	Lokesh Vutla <lokeshvutla@ti.com>
+ * Configuration header file for PHYTEC phyCORE-AM65x Kit
+ *
+ * Based on include/configs/am65x_evm.h
  *
  * SPDX-License-Identifier:     GPL-2.0+
  */
 
-#ifndef __CONFIG_AM654_EVM_H
-#define __CONFIG_AM654_EVM_H
+#ifndef __CONFIG_AM65XX_PHYCORE_KIT_H
+#define __CONFIG_AM65XX_PHYCORE_KIT_H
 
 #include <linux/sizes.h>
 #include <config_distro_bootcmd.h>
@@ -18,11 +19,11 @@
 #define CONFIG_ENV_SIZE			(128 << 10)
 
 /* DDR Configuration */
-#define CONFIG_NR_DRAM_BANKS		2
+#define CONFIG_NR_DRAM_BANKS		1
 #define CONFIG_SYS_SDRAM_BASE1		0x880000000
 
 /* SPL Loader Configuration */
-#ifdef CONFIG_TARGET_AM654_A53_EVM
+#ifdef CONFIG_TARGET_AM65XX_PHYCORE_KIT_A53
 #define CONFIG_SPL_TEXT_BASE		0x80080000
 #define CONFIG_SYS_INIT_SP_ADDR         (CONFIG_SPL_TEXT_BASE +	\
 					CONFIG_NON_SECURE_MSRAM_SIZE)
@@ -69,58 +70,59 @@
 
 #define CONFIG_SYS_BOOTM_LEN 		SZ_64M
 
-#define PARTS_DEFAULT \
-	/* Linux partitions */ \
-	"uuid_disk=${uuid_gpt_disk};" \
-	"name=rootfs,start=0,size=-,uuid=${uuid_gpt_rootfs}\0" \
-	/* Android partitions */ \
-	"partitions_android=" \
-	"uuid_disk=${uuid_gpt_disk};" \
-	"name=bootloader,start=5M,size=8M,uuid=${uuid_gpt_bootloader};" \
-	"name=tiboot3,start=4M,size=1M,uuid=${uuid_gpt_tiboot3};" \
-	"name=boot,start=13M,size=40M,uuid=${uuid_gpt_boot};" \
-	"name=vendor,size=512M,uuid=${uuid_gpt_vendor};" \
-	"name=system,size=2048M,uuid=${uuid_gpt_system};" \
+#define PARTS_DEFAULT							\
+	/* Linux partitions */						\
+	"uuid_disk=${uuid_gpt_disk};"					\
+	"name=rootfs,start=0,size=-,uuid=${uuid_gpt_rootfs}\0"		\
+	/* Android partitions */					\
+	"partitions_android="						\
+	"uuid_disk=${uuid_gpt_disk};"					\
+	"name=bootloader,start=5M,size=8M,uuid=${uuid_gpt_bootloader};"	\
+	"name=tiboot3,start=4M,size=1M,uuid=${uuid_gpt_tiboot3};"	\
+	"name=boot,start=13M,size=40M,uuid=${uuid_gpt_boot};"		\
+	"name=vendor,size=512M,uuid=${uuid_gpt_vendor};"		\
+	"name=system,size=2048M,uuid=${uuid_gpt_system};"		\
 	"name=userdata,size=-,uuid=${uuid_gpt_userdata}\0"
 
 /* U-Boot general configuration */
-#define EXTRA_ENV_AM65X_BOARD_SETTINGS					\
+#define EXTRA_ENV_SETTINGS						\
 	"findfdt="							\
-		"setenv name_fdt k3-am654-base-board.dtb;"		\
-		"setenv fdtfile ${name_fdt};"				\
-		"setenv overlay_files ${name_overlays}\0"		\
+		"setenv overlay_files ${default_overlays} "		\
+			"${extra_overlays}\0"				\
+	"fdtfile=k3-am65xx-phycore-kit.dtb\0"				\
+	"default_overlays=k3-am65xx-phytec-lcd-018.dtbo\0"		\
 	"loadaddr=0x80080000\0"						\
 	"fdtaddr=0x82000000\0"						\
 	"overlayaddr=0x83000000\0"					\
 	"name_kern=Image\0"						\
-	"console=ttyS2,115200n8\0"					\
-	"args_all=setenv optargs earlycon=ns16550a,mmio32,0x02800000 "	\
+	"console=ttyS3,115200n8\0"					\
+	"args_all=setenv optargs earlycon=ns16550a,mmio32,0x02810000 "	\
 		"${mtdparts}\0"						\
 	"run_kern=booti ${loadaddr} ${rd_spec} ${fdtaddr}\0"
 
 /* U-Boot MMC-specific configuration */
-#define EXTRA_ENV_AM65X_BOARD_SETTINGS_MMC				\
-	"boot=mmc\0"							\
-	"mmcdev=1\0"							\
-	"bootpart=1:2\0"						\
-	"bootdir=/boot\0"						\
-	"rd_spec=-\0"							\
-	"init_mmc=run args_all args_mmc\0"				\
-	"get_fdt_mmc=load mmc ${bootpart} ${fdtaddr} ${bootdir}/${name_fdt}\0" \
-	"get_overlay_mmc="						\
-		"fdt address ${fdtaddr};"				\
-		"fdt resize 0x100000;"					\
-		"for overlay in $overlay_files;"			\
-		"do;"							\
+#define EXTRA_ENV_SETTINGS_MMC							\
+	"boot=mmc\0"								\
+	"mmcdev=1\0"								\
+	"bootpart=1:2\0"							\
+	"bootdir=/boot\0"							\
+	"rd_spec=-\0"								\
+	"init_mmc=run args_all args_mmc\0"					\
+	"get_fdt_mmc=load mmc ${bootpart} ${fdtaddr} ${bootdir}/${fdtfile}\0"	\
+	"get_overlay_mmc="							\
+		"fdt address ${fdtaddr};"					\
+		"fdt resize 0x100000;"						\
+		"for overlay in $overlay_files;"				\
+		"do;"								\
 		"load mmc ${bootpart} ${overlayaddr} ${bootdir}/${overlay};"	\
-		"fdt apply ${overlayaddr};"				\
-		"done;\0"						\
-	"get_kern_mmc=load mmc ${bootpart} ${loadaddr} "		\
-		"${bootdir}/${name_kern}\0"				\
+		"fdt apply ${overlayaddr};"					\
+		"done;\0"							\
+	"get_kern_mmc=load mmc ${bootpart} ${loadaddr} "			\
+		"${bootdir}/${name_kern}\0"					\
 	"partitions=" PARTS_DEFAULT
 
 /* Command for booting the Android from eMMC */
-#define EXTRA_ENV_AM65X_BOARD_SETTINGS_EMMC_ANDROID			\
+#define EXTRA_ENV_SETTINGS_EMMC_ANDROID					\
 	"check_dofastboot="						\
 		"if test \"${dofastboot}\" -eq 1; then "		\
 			"echo Boot fastboot requested, "		\
@@ -158,36 +160,36 @@
 		"done;"							\
 		"bootm ${fit_loadaddr}#${fdtfile}${overlaystring}\0"
 
-#ifdef CONFIG_TARGET_AM654_A53_EVM
-#define EXTRA_ENV_AM65X_BOARD_SETTINGS_MTD				\
+#ifdef CONFIG_TARGET_AM65XX_PHYCORE_KIT_A53
+#define EXTRA_ENV_SETTINGS_MTD						\
 	"mtdids=" CONFIG_MTDIDS_DEFAULT "\0"				\
 	"mtdparts=" CONFIG_MTDPARTS_DEFAULT "\0"
 #else
-#define EXTRA_ENV_AM65X_BOARD_SETTINGS_MTD
+#define EXTRA_ENV_SETTINGS_MTD
 #endif
 
-#define EXTRA_ENV_AM65X_BOARD_SETTINGS_UBI				\
-	"init_ubi=run args_all args_ubi; sf probe; "			\
-		"ubi part ospi.rootfs; ubifsmount ubi:rootfs;\0"	\
-	"get_kern_ubi=ubifsload ${loadaddr} ${bootdir}/${name_kern}\0"	\
-	"get_fdt_ubi=ubifsload ${fdtaddr} ${bootdir}/${name_fdt}\0"	\
-	"args_ubi=setenv bootargs ${console} ${optargs} rootfstype=ubifs "\
+#define EXTRA_ENV_SETTINGS_UBI							\
+	"init_ubi=run args_all args_ubi; sf probe; "				\
+		"ubi part ospi.rootfs; ubifsmount ubi:rootfs;\0"		\
+	"get_kern_ubi=ubifsload ${loadaddr} ${bootdir}/${name_kern}\0"		\
+	"get_fdt_ubi=ubifsload ${fdtaddr} ${bootdir}/${fdtfile}\0"		\
+	"args_ubi=setenv bootargs ${console} ${optargs} rootfstype=ubifs "	\
 	"root=ubi0:rootfs rw ubi.mtd=ospi.rootfs\0"
 
-#define DFUARGS \
-	"dfu_bufsiz=0x20000\0" \
-	DFU_ALT_INFO_MMC \
-	DFU_ALT_INFO_EMMC \
+#define DFUARGS			\
+	"dfu_bufsiz=0x20000\0"	\
+	DFU_ALT_INFO_MMC	\
+	DFU_ALT_INFO_EMMC	\
 	DFU_ALT_INFO_OSPI
 
 /* Incorporate settings into the U-Boot environment */
-#define CONFIG_EXTRA_ENV_SETTINGS					\
-	DEFAULT_MMC_TI_ARGS						\
-	EXTRA_ENV_AM65X_BOARD_SETTINGS					\
-	EXTRA_ENV_AM65X_BOARD_SETTINGS_MMC				\
-	EXTRA_ENV_AM65X_BOARD_SETTINGS_EMMC_ANDROID			\
-	EXTRA_ENV_AM65X_BOARD_SETTINGS_MTD				\
-	EXTRA_ENV_AM65X_BOARD_SETTINGS_UBI				\
+#define CONFIG_EXTRA_ENV_SETTINGS		\
+	DEFAULT_MMC_TI_ARGS			\
+	EXTRA_ENV_SETTINGS			\
+	EXTRA_ENV_SETTINGS_MMC			\
+	EXTRA_ENV_SETTINGS_EMMC_ANDROID		\
+	EXTRA_ENV_SETTINGS_MTD			\
+	EXTRA_ENV_SETTINGS_UBI			\
 	DFUARGS
 
 #define CONFIG_SUPPORT_EMMC_BOOT
@@ -218,4 +220,4 @@
 /* Now for the remaining common defines */
 #include <configs/ti_armv7_common.h>
 
-#endif /* __CONFIG_AM654_EVM_H */
+#endif /* __CONFIG_AM65XX_PHYCORE_KIT_H */
