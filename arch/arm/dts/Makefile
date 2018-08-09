@@ -480,6 +480,9 @@ dtb-$(CONFIG_ARCH_STI) += stih410-b2260.dtb
 
 dtb-$(CONFIG_SOC_K3_AM6) += k3-am654-base-board.dtb k3-am654-r5-base-board.dtb
 
+dtb-$(CONFIG_TARGET_AM65XX_PHYCORE_KIT_A53)	+= k3-am65xx-phycore-kit.dtb
+dtb-$(CONFIG_TARGET_AM65XX_PHYCORE_KIT_R5)	+= k3-am65xx-phycore-kit-r5.dtb
+
 targets += $(dtb-y)
 
 # Add any required device tree compiler flags here
