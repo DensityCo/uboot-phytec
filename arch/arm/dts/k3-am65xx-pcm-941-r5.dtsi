@@ -8,3 +8,8 @@
 / {
 };
 
+&sdhci1 {
+	clock-names = "clk_xin", "clk_ahb";
+	clocks = <&clk_200mhz>, <&clk_200mhz>;
+	/delete-property/ power-domains;
+};

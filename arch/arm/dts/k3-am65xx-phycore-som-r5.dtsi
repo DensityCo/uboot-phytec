@@ -42,6 +42,13 @@
 			u-boot,dm-spl;
 		};
 
+		clk_200mhz: dummy_clock {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <200000000>;
+			u-boot,dm-spl;
+		};
+
 		ddr_s3_supply: ddr_s3_supply {
 			compatible = "regulator-gpio";
 			regulator-name = "s3";
