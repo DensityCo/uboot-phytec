@@ -91,6 +91,25 @@
 	};
 };
 
+&main_pmx0 {
+	main_mmc0_pins_default: main_mmc0_pins_default {
+		pinctrl-single,pins = <
+			AM65X_IOPAD(0x0188, PIN_INPUT | MUX_MODE0)		/* (D25) MMC0_DAT7 */
+			AM65X_IOPAD(0x018c, PIN_INPUT | MUX_MODE0)		/* (B26) MMC0_DAT6 */
+			AM65X_IOPAD(0x0190, PIN_INPUT | MUX_MODE0)		/* (A24) MMC0_DAT5 */
+			AM65X_IOPAD(0x0194, PIN_INPUT | MUX_MODE0)		/* (E24) MMC0_DAT4 */
+			AM65X_IOPAD(0x0198, PIN_INPUT | MUX_MODE0)		/* (A25) MMC0_DAT3 */
+			AM65X_IOPAD(0x019c, PIN_INPUT | MUX_MODE0)		/* (C26) MMC0_DAT2 */
+			AM65X_IOPAD(0x01a0, PIN_INPUT | MUX_MODE0)		/* (E25) MMC0_DAT1 */
+			AM65X_IOPAD(0x01a4, PIN_INPUT | MUX_MODE0)		/* (A26) MMC0_DAT0 */
+			AM65X_IOPAD(0x01a8, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* (B25) MMC0_CLK */
+			AM65X_IOPAD(0x01ac, PIN_INPUT | MUX_MODE0)		/* (B27) MMC0_CMD */
+			AM65X_IOPAD(0x01b0, PIN_INPUT | MUX_MODE0)		/* (C25) MMC0_DS */
+		>;
+		u-boot,dm-pre-reloc;
+	};
+};
+
 &main_pmx1 {
 	ddr_s5_supply_pin: ddr_s5_supply_pin {
 		pinctrl-single,pins = <
@@ -107,4 +126,21 @@
 		>;
 		u-boot,dm-spl;
 	};
+};
+
+&mmc_phy0 {
+	status = "okay";
+	ti,drv-strength-ohm = <50>;
+};
+
+&sdhci0 {
+	status = "okay";
+	non-removable;
+	xlnx,fails-without-test-cd;
+	bus-width = <8>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_mmc0_pins_default>;
+	clock-names = "clk_xin", "clk_ahb";
+	clocks = <&clk_200mhz>, <&clk_200mhz>;
+	/delete-property/ power-domains;
 };
