@@ -75,3 +75,11 @@
 &sdhci1 {
 	u-boot,dm-spl;
 };
+
+&main_uart1_pins_default {
+	u-boot,dm-spl;
+};
+
+&main_uart1 {
+	u-boot,dm-spl;
+};
