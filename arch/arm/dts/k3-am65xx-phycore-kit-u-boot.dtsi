@@ -2,3 +2,52 @@
 /*
  * Copyright (C) 2018 PHYTEC America, LLC - https://www.phytec.com
  */
+
+/ {
+	chosen {
+		tick-timer = &timer1;
+	};
+
+	soc0 {
+		u-boot,dm-spl;
+
+		timer1: timer@40400000 {
+			compatible = "ti,omap5430-timer";
+			reg = <0x0 0x40400000 0x0 0x80>;
+			ti,timer-alwon;
+			clock-frequency = <25000000>;
+			u-boot,dm-pre-reloc;
+		};
+	};
+};
+&secure_proxy {
+	u-boot,dm-spl;
+};
+
+&dmsc {
+	u-boot,dm-spl;
+};
+
+&k3_pds {
+	u-boot,dm-spl;
+};
+
+&k3_clks {
+	u-boot,dm-spl;
+};
+
+&k3_reset {
+	u-boot,dm-spl;
+};
+
+&main_pmx0 {
+	u-boot,dm-spl;
+};
+
+&main_pmx1 {
+	u-boot,dm-spl;
+};
+
+&wkup_pmx0 {
+	u-boot,dm-spl;
+};

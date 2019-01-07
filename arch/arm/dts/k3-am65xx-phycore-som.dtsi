@@ -6,4 +6,15 @@
 / {
 	model = "PHYTEC phyCORE-AM65x";
 	compatible =  "phytec,am65xx-phycore-som", "ti,am654";
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+		secure_ddr: secure_ddr@9e800000 {
+			reg = <0 0x9e800000 0 0x01800000>;	/* for OP-TEE */
+			alignment = <0x1000>;
+			no-map;
+		};
+	};
 };
