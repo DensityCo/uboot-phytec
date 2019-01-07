@@ -4,6 +4,8 @@
  */
 
 #include "k3-am6.dtsi"
+#include "k3-am65xx-phycore-som-ddr4-512M16_x2.dtsi"
+#include "k3-am654-ddr.dtsi"
 
 / {
 	aliases {
@@ -39,7 +41,34 @@
 			assigned-clock-rates = <800000000>;
 			u-boot,dm-spl;
 		};
+
+		ddr_s3_supply: ddr_s3_supply {
+			compatible = "regulator-gpio";
+			regulator-name = "s3";
+			regulator-min-microvolt = <0>;
+			regulator-max-microvolt = <3300000>;
+			gpios = <&wkup_gpio0 49 GPIO_ACTIVE_HIGH>;
+			states = <0 0x0 3300000 0x1>;
+			u-boot,dm-spl;
+		};
+
+		ddr_s5_supply: ddr_s5_supply {
+			compatible = "regulator-gpio";
+			regulator-name = "s5";
+			regulator-min-microvolt = <0>;
+			regulator-max-microvolt = <3300000>;
+			gpios = <&main_gpio1 87 GPIO_ACTIVE_HIGH>;
+			states = <0 0x0 3300000 0x1>;
+			u-boot,dm-spl;
+		};
 	};
+};
+
+&memorycontroller {
+	ddr-s3-supply = <&ddr_s3_supply>;
+	ddr-s5-supply = <&ddr_s5_supply>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&ddr_s3_supply_pin &ddr_s5_supply_pin>;
 };
 
 &dmsc {
@@ -51,6 +80,24 @@
 	k3_proc_ctrl: processor-contol {
 		compatible = "ti,sci-proc-control";
 		#proc-cells = <2>;
+		u-boot,dm-spl;
+	};
+};
+
+&main_pmx1 {
+	ddr_s5_supply_pin: ddr_s5_supply_pin {
+		pinctrl-single,pins = <
+			AM65X_IOPAD(0x0014, PIN_OUTPUT | MUX_MODE7)	/* (A22) EXT_REFCLK1.GPIO1_87 */
+		>;
+		u-boot,dm-spl;
+	};
+};
+
+&wkup_pmx0 {
+	ddr_s3_supply_pin: ddr_s3_supply_pin {
+		pinctrl-single,pins = <
+			AM65X_WKUP_IOPAD(0x0094, PIN_OUTPUT | MUX_MODE7)	/* (Y3) MCU_SPI0_D0.WKUP_GPIO0_49 */
+		>;
 		u-boot,dm-spl;
 	};
 };

@@ -51,3 +51,11 @@
 &wkup_pmx0 {
 	u-boot,dm-spl;
 };
+
+&main_gpio1 {
+	u-boot,dm-spl;
+};
+
+&wkup_gpio0 {
+	u-boot,dm-spl;
+};
