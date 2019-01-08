@@ -42,7 +42,16 @@ struct am654_ddrss_desc {
 	void __iomem *ddrss_ctl_cfg;
 	void __iomem *ddrss_phy_cfg;
 	struct clk ddrss_clk;
+#if defined(CONFIG_TARGET_AM65XX_PHYCORE_KIT_R5)
+/**
+ * @ddr_s5_supply:	DDR S5 supply regulator
+ * @ddr_s3_supply:	DDR S3 supply regulator
+ */
+	struct udevice *ddr_s5_supply;
+	struct udevice *ddr_s3_supply;
+#else
 	struct udevice *vtt_supply;
+#endif
 	struct power_domain ddrcfg_pwrdmn;
 	struct power_domain ddrdata_pwrdmn;
 	struct ddrss_params params;
@@ -621,12 +630,39 @@ static int am654_ddrss_power_on(struct am654_ddrss_desc *ddrss)
 
 	/* VTT enable */
 #if CONFIG_IS_ENABLED(DM_REGULATOR)
+#if defined(CONFIG_TARGET_AM65XX_PHYCORE_KIT_R5)
+	/* Enable S5 before S3 */
+	device_get_supply_regulator(ddrss->dev, "ddr-s5-supply",
+				    &ddrss->ddr_s5_supply);
+	ret = regulator_set_value(ddrss->ddr_s5_supply, 3300000);
+	if (ret) {
+		dev_err(ddrss->dev,
+			"%s: failed to enable DDR4 S5 supply regulator: %d\n",
+			__func__, ret);
+
+		return ret;
+	}
+
+	device_get_supply_regulator(ddrss->dev, "ddr-s3-supply",
+				    &ddrss->ddr_s3_supply);
+	ret = regulator_set_value(ddrss->ddr_s3_supply, 3300000);
+	if (ret) {
+		dev_err(ddrss->dev,
+			"%s: failed to enable DDR4 S3 supply regulator: %d\n",
+			__func__, ret);
+
+		return ret;
+	}
+
+	debug("VTT regulator enabled\n");
+#else
 	device_get_supply_regulator(ddrss->dev, "vtt-supply",
 				    &ddrss->vtt_supply);
 	ret = regulator_set_value(ddrss->vtt_supply, 3300000);
 	if (ret)
 		return ret;
 	debug("VTT regulator enabled\n");
+#endif
 #endif
 
 	return 0;
