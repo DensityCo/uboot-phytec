@@ -178,6 +178,10 @@ const struct pad_conf_entry early_padconf[] = {
 	{UART3_RXD, (M0 | PIN_INPUT_SLEW)}, /* UART3_RXD */
 	{UART3_TXD, (M0 | PIN_INPUT_SLEW)}, /* UART3_TXD */
 
+	/* RS232 (UART5) */
+	{VOUT1_D0, (M2 | PIN_INPUT_SLEW)},  /* VOUT1_D0.UART5_RXD */
+	{VOUT1_D1, (M2 | PIN_INPUT_SLEW)},  /* VOUT1_D1.UART5_TXD */
+
 	/* I2C1 */
 	{I2C1_SDA, (M0 | PIN_INPUT_PULLUP)}, /* I2C1_SDA */
 	{I2C1_SCL, (M0 | PIN_INPUT_PULLUP)}, /* I2C1_SCL */
