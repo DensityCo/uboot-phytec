@@ -136,7 +136,7 @@
 		>;
 	};
 
-	uart5_pins_sleep: uart5_pins_sleep{
+	uart5_pins_sleep: uart5_pins_sleep {
 		pinctrl-single,pins = <
 			0x1dc (PIN_INPUT | MUX_MODE15)
 			0x1e0 (PIN_INPUT | MUX_MODE15)
@@ -337,6 +337,7 @@
 
 	interrupts-extended = <&crossbar_mpu GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH
 			       &dra7_pmx_core 0x1dc>;
+	u-boot,dm-pre-reloc;
 };
 
 &mac {
