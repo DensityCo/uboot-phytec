@@ -15,6 +15,7 @@
 #include <usb.h>
 #include <debug_uart.h>
 #include <dt-bindings/pinctrl/k3-am6.h>
+#include <power/regulator.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -44,9 +45,38 @@ void board_debug_uart_init(void)
 }
 #endif
 
+int gpio_fan_enable(void)
+{
+	struct udevice *regulator;
+	int ret;
+
+	ret = regulator_get_by_platname("gpio-fan", &regulator);
+	if (ret) {
+		printf("%s: can't get regulator 'gpio-fan': %d\n", __func__,
+			ret);
+
+		return ret;
+	}
+
+	ret = regulator_set_value(regulator, 3300000);
+	if (ret) {
+		printf("%s: can't set 'gpio-fan' regulator to 3.3V: %d\n",
+			__func__, ret);
+
+		return ret;
+	}
+
+	return 0;
+}
+
 int board_init(void)
 {
-	return 0;
+	int ret;
+
+	/* enable carrier board GPIO fan */
+	ret = gpio_fan_enable();
+
+	return ret;
 }
 
 int dram_init(void)
