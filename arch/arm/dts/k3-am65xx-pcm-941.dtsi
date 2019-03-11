@@ -12,9 +12,26 @@
 		stdout-path = &main_uart1;
 		bootargs = "earlycon=ns16550a,mmio32,0x02810000";
 	};
+
+	gpio_fan_supply: gpio_fan_supply {
+		compatible = "regulator-gpio";
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio_fan_pins_default>;
+		regulator-name = "gpio-fan";
+		regulator-min-microvolt = <0>;
+		regulator-max-microvolt = <3300000>;
+		gpios = <&main_gpio1 49 GPIO_ACTIVE_HIGH>;
+		states = <0 0x0 3300000 0x1>;
+	};
 };
 
 &main_pmx0 {
+	gpio_fan_pins_default: gpio_fan_pins_default {
+		pinctrl-single,pins = <
+			AM65X_IOPAD(0x0244, PIN_OUTPUT | MUX_MODE7) /* (AB28) PRG0_PRU1_GPO0.GPIO1_49 */
+		>;
+	};
+
 	main_mmc1_pins_default: main_mmc1_pins_default {
 		pinctrl-single,pins = <
 			AM65X_IOPAD(0x02c4, PIN_INPUT_PULLUP | MUX_MODE0)	/* (D27) MMC1_DAT3 */
