@@ -48,6 +48,12 @@
 };
 
 &main_pmx1 {
+	eeprom_wc_pin: eeprom_wc_pin {
+		pinctrl-single,pins = <
+			AM65X_IOPAD(0x0018, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* (B22) TIMER_IO0.GPIO1_88 */
+		>;
+	};
+
 	main_i2c0_pins_default: main_i2c0_pins_default {
 		pinctrl-single,pins = <
 			AM65X_IOPAD(0x0000, PIN_INPUT | MUX_MODE0)      /* (D20) I2C0_SCL */
@@ -90,7 +96,9 @@
 
 	i2c_eeprom: eeprom@50 {
 		status = "okay";
-		compatible = "at,24c32";
+		compatible = "atmel,24c32";
+		pinctrl-names = "default";
+		pinctrl-0 = <&eeprom_wc_pin>;
 		reg = <0x50>;
 		pagesize = <32>;
 	};
