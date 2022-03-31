@@ -288,7 +288,10 @@ err:
 #if !defined(CONFIG_SPL_BUILD) && defined(CONFIG_GENERIC_MMC)
 int board_mmc_init(bd_t *bis)
 {
-	omap_mmc_init(0, 0, 0, -1, -1);
+// disable emmc init for development purposes
+//	omap_mmc_init(0, 0, 0, -1, -1)
+
+	// sdcard init
 	omap_mmc_init(1, 0, 0, -1, -1);
 
 	return 0;
