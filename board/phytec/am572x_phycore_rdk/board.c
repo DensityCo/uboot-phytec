@@ -593,8 +593,6 @@ int board_fit_config_name_match(const char *name)
 		return 0;
 	else if (!strcmp(name, "am572x-phycore-rdk-50500111i"))
 		return 0;
-	else if (!strcmp(name, "am572x-ksp-5015"))
-		return 0;
 	else
 		return -1;
 
