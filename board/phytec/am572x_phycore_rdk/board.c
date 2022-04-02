@@ -300,12 +300,15 @@ void dram_init_banksize(void)
 		}
 		break;
 	case 4:
+		printf("*************************************************ram4");
 		ram_size = 0x20000000;
 		break;
 	case 5:
+		printf("*************************************************ram5");
 		ram_size = 0x20000000;
 		break;
 	default:
+		printf("*************************************************default ram");
 #if defined(CONFIG_PCM_057_256M16_x2_DDR)
 		ram_size = 0x40000000;
 #elif defined(CONFIG_PCM_057_256M16_x4_DDR)
