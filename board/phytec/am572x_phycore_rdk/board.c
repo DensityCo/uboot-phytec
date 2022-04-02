@@ -288,10 +288,12 @@ void dram_init_banksize(void)
 	case 1:
 		if (is_single_core_soc())
 		{
+	            printf("single core");
                     ram_size = 0x20000000;
 		}
 		else
 		{
+	            printf("dual core");
 		    ram_size = 0x20000000;
 		}
 		break;
