@@ -237,6 +237,27 @@ int board_init(void)
 	return 0;
 }
 
+bool is_single_core_soc(void)
+{
+	bool result = false;
+	gpio_direction_input(GPIO_BOARD_ID_0);
+	gpio_direction_input(GPIO_BOARD_ID_1);
+	gpio_direction_input(GPIO_BOARD_ID_2);
+	gpio_direction_input(GPIO_BOARD_ID_3);
+
+	if (gpio_get_value(GPIO_BOARD_ID_0) == 0 &&
+	    gpio_get_value(GPIO_BOARD_ID_1) == 0 &&
+	    gpio_get_value(GPIO_BOARD_ID_2) == 0 &&
+	    gpio_get_value(GPIO_BOARD_ID_3))
+	{
+	    result = true;
+	}
+
+	return result;
+}
+
+
+
 void dram_init_banksize(void)
 {
 	struct phytec_common_eeprom *ep;
@@ -692,25 +713,6 @@ int board_early_init_f(void)
 	fan_enable();
 	_5v_tof_enable();
 	return 0;
-}
-
-bool is_single_core_soc(void)
-{
-	bool result = false;
-	gpio_direction_input(GPIO_BOARD_ID_0);
-	gpio_direction_input(GPIO_BOARD_ID_1);
-	gpio_direction_input(GPIO_BOARD_ID_2);
-	gpio_direction_input(GPIO_BOARD_ID_3);
-
-	if (gpio_get_value(GPIO_BOARD_ID_0) == 0 &&
-	    gpio_get_value(GPIO_BOARD_ID_1) == 0 &&
-	    gpio_get_value(GPIO_BOARD_ID_2) == 0 &&
-	    gpio_get_value(GPIO_BOARD_ID_3))
-	{
-	    result = true;
-	}
-
-	return result;
 }
 
 #endif
