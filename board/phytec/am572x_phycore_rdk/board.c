@@ -250,7 +250,13 @@ bool is_single_core_soc(void)
 	    gpio_get_value(GPIO_BOARD_ID_2) == 0 &&
 	    gpio_get_value(GPIO_BOARD_ID_3))
 	{
+	    printf("*************************single core");
 	    result = true;
+	}
+	else
+	{
+	    printf("*************************dual core");
+	
 	}
 
 	return result;
