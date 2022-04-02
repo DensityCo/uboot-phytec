@@ -292,7 +292,7 @@ void dram_init_banksize(void)
 		}
 		else
 		{
-		    ram_size = 0x40000000;
+		    ram_size = 0x20000000;
 		}
 		break;
 	case 4:
