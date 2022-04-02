@@ -237,7 +237,7 @@ int board_init(void)
 	return 0;
 }
 
-bool is_single_core_soc(void)
+static bool is_single_core_soc(void)
 {
 	bool result = false;
 	gpio_direction_input(GPIO_BOARD_ID_0);
