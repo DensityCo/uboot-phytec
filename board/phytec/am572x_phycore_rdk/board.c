@@ -40,6 +40,10 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+#define GPIO_BOARD_ID_0 26
+#define GPIO_BOARD_ID_1 27
+#define GPIO_BOARD_ID_2 28
+#define GPIO_BOARD_ID_3 29
 #define GPIO_DDR_VTT_EN 104 /* vin2a_d7.gpio4_8 */
 #define GPIO_FAN_N_EN 34 /* gpmc_a12.gpio2_2 */
 #define GPIO_5V_TOF 101 /* vin2a_d4.gpio4_5 */
@@ -253,7 +257,14 @@ void dram_init_banksize(void)
 
 	switch (ddr3_opt) {
 	case 1:
-		ram_size = 0x40000000;
+		if (is_single_board_soc())
+		{
+                    ram_size = 0x20000000;
+		}
+		else
+		{
+		    ram_size = 0x40000000;
+		}
 		break;
 	case 4:
 		ram_size = 0x80000000;
@@ -404,11 +415,11 @@ int mmc_get_env_dev(void)
 #if !defined(CONFIG_SPL_BUILD) && defined(CONFIG_GENERIC_MMC)
 int board_mmc_init(bd_t *bis)
 {
-// sdcard init for development purposes
+        // sdcard init for development purposes
 	omap_mmc_init(0, 0, 0, -1, -1);
 
 	// emmc init
-//	omap_mmc_init(1, 0, 0, -1, -1);
+	omap_mmc_init(1, 0, 0, -1, -1);
 
 	return 0;
 }
@@ -682,6 +693,26 @@ int board_early_init_f(void)
 	_5v_tof_enable();
 	return 0;
 }
+
+bool is_single_core_soc(void)
+{
+	bool result = false;
+	gpio_direction_input(GPIO_BOARD_ID_0);
+	gpio_direction_input(GPIO_BOARD_ID_1);
+	gpio_direction_input(GPIO_BOARD_ID_2);
+	gpio_direction_input(GPIO_BOARD_ID_3);
+
+	if (gpio_get_value(GPIO_BOARD_ID_0) == 0 &&
+	    gpio_get_value(GPIO_BOARD_ID_1) == 0 &&
+	    gpio_get_value(GPIO_BOARD_ID_2) == 0 &&
+	    gpio_get_value(GPIO_BOARD_ID_3))
+	{
+	    result = true;
+	}
+
+	return result;
+}
+
 #endif
 
 #ifdef CONFIG_SPL_LOAD_FIT
