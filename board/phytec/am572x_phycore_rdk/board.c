@@ -300,10 +300,10 @@ void dram_init_banksize(void)
 		}
 		break;
 	case 4:
-		ram_size = 0x80000000;
+		ram_size = 0x20000000;
 		break;
 	case 5:
-		ram_size = 0x100000000;
+		ram_size = 0x20000000;
 		break;
 	default:
 #if defined(CONFIG_PCM_057_256M16_x2_DDR)
