@@ -239,7 +239,8 @@ int board_init(void)
 
 bool is_single_core_soc(void)
 {
-	bool result = false;
+	bool result = true;
+#if 0
 	gpio_direction_input(GPIO_BOARD_ID_0);
 	gpio_direction_input(GPIO_BOARD_ID_1);
 	gpio_direction_input(GPIO_BOARD_ID_2);
@@ -258,6 +259,7 @@ bool is_single_core_soc(void)
 	    printf("*************************dual core");
 	
 	}
+#endif
 
 	return result;
 }
