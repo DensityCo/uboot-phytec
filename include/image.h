@@ -1168,9 +1168,6 @@ ulong android_image_get_kload(const struct andr_img_hdr *hdr);
  */
 int board_fit_config_name_match(const char *name);
 
-
-bool is_single_core_soc(void);
-
 #if defined(CONFIG_SPL_FIT_IMAGE_POST_PROCESS) || \
 	defined(CONFIG_FIT_IMAGE_POST_PROCESS)
 /**
