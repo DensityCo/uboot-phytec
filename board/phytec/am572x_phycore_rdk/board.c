@@ -237,7 +237,7 @@ int board_init(void)
 	return 0;
 }
 
-static bool is_single_core_soc(void)
+bool is_single_core_soc(void)
 {
 	bool result = false;
 	gpio_direction_input(GPIO_BOARD_ID_0);
@@ -278,7 +278,7 @@ void dram_init_banksize(void)
 
 	switch (ddr3_opt) {
 	case 1:
-		if (is_single_board_soc())
+		if (is_single_core_soc())
 		{
                     ram_size = 0x20000000;
 		}
