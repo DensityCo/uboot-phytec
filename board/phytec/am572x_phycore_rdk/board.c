@@ -93,11 +93,13 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 		}
 		break;
 	default:
-#if defined(CONFIG_PCM_057_256M16_x2_DDR)
+#if defined(CONFIG_PCM_057_256M16_x1_DDR)
+	*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
+#elif defined(CONFIG_PCM_057_256M16_x2_DDR)
 	*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
 #elif (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
 	defined(CONFIG_PCM_057_512M16_x4_DDR))
-		*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
+	*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
 #endif
 	}
 }
@@ -128,7 +130,8 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 		break;
 	default:
 #if (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
-	defined(CONFIG_PCM_057_256M16_x2_DDR))
+	defined(CONFIG_PCM_057_256M16_x2_DDR) || \
+	defined(CONFIG_PCM_057_256M16_x1_DDR))
 		*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
 #elif defined(CONFIG_PCM_057_512M16_x4_DDR)
 		*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
@@ -262,7 +265,9 @@ void dram_init_banksize(void)
 		ram_size = 0x100000000;
 		break;
 	default:
-#if defined(CONFIG_PCM_057_256M16_x2_DDR)
+#if defined(CONFIG_PCM_057_256M16_x1_DDR)
+		ram_size = 0x20000000;
+#elif defined(CONFIG_PCM_057_256M16_x2_DDR)
 		ram_size = 0x40000000;
 #elif defined(CONFIG_PCM_057_256M16_x4_DDR)
 		ram_size = 0x80000000;
@@ -270,6 +275,8 @@ void dram_init_banksize(void)
 		ram_size = 0x100000000;
 #endif
 	}
+
+	printf("memory: 0x%X\n", ram_size);
 
 	gd->bd->bi_dram[0].start = CONFIG_SYS_SDRAM_BASE;
 	gd->bd->bi_dram[0].size = get_effective_memsize();
@@ -685,7 +692,7 @@ int board_early_init_f(void)
 int board_fit_config_name_match(const char *name)
 {
 
-	if (!strcmp(name, "am572x-phycore-rdk"))
+	if (!strcmp(name, "am572x-phycore-rdk-factory"))
 		return 0;
 	else if (!strcmp(name, "am572x-phycore-rdk-41300111i"))
 		return 0;
