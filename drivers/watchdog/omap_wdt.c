@@ -45,7 +45,9 @@
 #include <asm/arch/cpu.h>
 
 /* Hardware timeout in seconds */
-#define WDT_HW_TIMEOUT 60
+#ifndef CONFIG_HW_WATCHDOG_TIMEOUT_MS
+#define CONFIG_HW_WATCHDOG_TIMEOUT_MS 60000
+#endif
 
 static unsigned int wdt_trgr_pattern = 0x1234;
 
@@ -68,7 +70,7 @@ void hw_watchdog_reset(void)
 static int omap_wdt_set_timeout(unsigned int timeout)
 {
 	struct wd_timer *wdt = (struct wd_timer *)WDT_BASE;
-	u32 pre_margin = GET_WLDR_VAL(timeout);
+	u32 pre_margin = GET_WLDR_VAL(timeout / 1000);
 
 	/* just count up at 32 KHz */
 	while (readl(&wdt->wdtwwps) & WDT_WWPS_PEND_WLDR)
@@ -79,30 +81,6 @@ static int omap_wdt_set_timeout(unsigned int timeout)
 		;
 
 	return 0;
-}
-
-void hw_watchdog_init(void)
-{
-	struct wd_timer *wdt = (struct wd_timer *)WDT_BASE;
-
-	/* initialize prescaler */
-	while (readl(&wdt->wdtwwps) & WDT_WWPS_PEND_WCLR)
-		;
-
-	writel(WDT_WCLR_PRE | (PTV << WDT_WCLR_PTV_OFF), &wdt->wdtwclr);
-	while (readl(&wdt->wdtwwps) & WDT_WWPS_PEND_WCLR)
-		;
-
-	omap_wdt_set_timeout(WDT_HW_TIMEOUT);
-
-	/* Sequence to enable the watchdog */
-	writel(0xBBBB, &wdt->wdtwspr);
-	while ((readl(&wdt->wdtwwps)) & WDT_WWPS_PEND_WSPR)
-		;
-
-	writel(0x4444, &wdt->wdtwspr);
-	while ((readl(&wdt->wdtwwps)) & WDT_WWPS_PEND_WSPR)
-		;
 }
 
 void hw_watchdog_disable(void)
@@ -117,5 +95,36 @@ void hw_watchdog_disable(void)
 		;
 	writel(0x5555, &wdt->wdtwspr);
 	while (readl(&wdt->wdtwwps) != 0x0)
+		;
+}
+
+void hw_watchdog_init(void)
+{
+	struct wd_timer *wdt = (struct wd_timer *)WDT_BASE;
+
+	/*
+	 * Make sure the watchdog is disabled. This is unfortunately required
+	 * because writing to various registers with the watchdog running has no
+	 * effect.
+	 */
+	hw_watchdog_disable();
+
+	/* initialize prescaler */
+	while (readl(&wdt->wdtwwps) & WDT_WWPS_PEND_WCLR)
+		;
+
+	writel(WDT_WCLR_PRE | (PTV << WDT_WCLR_PTV_OFF), &wdt->wdtwclr);
+	while (readl(&wdt->wdtwwps) & WDT_WWPS_PEND_WCLR)
+		;
+
+	omap_wdt_set_timeout(CONFIG_HW_WATCHDOG_TIMEOUT_MS);
+
+	/* Sequence to enable the watchdog */
+	writel(0xBBBB, &wdt->wdtwspr);
+	while ((readl(&wdt->wdtwwps)) & WDT_WWPS_PEND_WSPR)
+		;
+
+	writel(0x4444, &wdt->wdtwspr);
+	while ((readl(&wdt->wdtwwps)) & WDT_WWPS_PEND_WSPR)
 		;
 }

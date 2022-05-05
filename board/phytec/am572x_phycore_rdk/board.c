@@ -24,6 +24,7 @@
 #include <asm/arch/omap.h>
 #include <environment.h>
 #include <usb.h>
+#include <spl.h>
 #include <linux/usb/gadget.h>
 #include <dwc3-uboot.h>
 #include <dwc3-omap-uboot.h>
@@ -40,6 +41,8 @@
 DECLARE_GLOBAL_DATA_PTR;
 
 #define GPIO_DDR_VTT_EN 104 /* vin2a_d7.gpio4_8 */
+#define GPIO_FAN_N_EN 34 /* gpmc_a12.gpio2_2 */
+#define GPIO_5V_TOF 101 /* vin2a_d4.gpio4_5 */
 
 const struct omap_sysinfo sysinfo = {
 	"Board: phyCORE-AM572x RDK\n"
@@ -49,6 +52,7 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 {
 	struct phytec_common_eeprom *ep;
 	uint8_t ecc_opt;
+	uint8_t ddr3_opt;
 	int rc;
 
 	rc = phytec_i2c_eeprom_get(CONFIG_EEPROM_BUS_ADDRESS,
@@ -61,15 +65,37 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 	/* ECC board population option at ep->kit_opt[1] for am572x */
 	ecc_opt = ep->kit_opt[1];
 
+	/* ddr3 board population option at ep->kit_opt[0] for am572x */
+	ddr3_opt = ep->kit_opt[0];
+
 	switch (ecc_opt) {
 	case 0:
-		*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
+		switch (ddr3_opt) {
+			case 1:
+				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
+				break;
+			case 4:
+			case 5:
+				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
+				break;
+			default:
+				printf("DDR3 option not supported\n");
+		}
 		break;
 	case 1:
-		*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_ECC_lisa_regs;
+		switch (ddr3_opt) {
+			case 4:
+			case 5:
+				*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_ECC_lisa_regs;
+				break;
+			default:
+				printf("DDR3 option not supported\n");
+		}
 		break;
 	default:
-#if (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
+#if defined(CONFIG_PCM_057_256M16_x2_DDR)
+	*dmm_lisa_regs = &am572x_phycore_rdk_1Gx1_lisa_regs;
+#elif (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
 	defined(CONFIG_PCM_057_512M16_x4_DDR))
 		*dmm_lisa_regs = &am572x_phycore_rdk_1Gx2_lisa_regs;
 #endif
@@ -93,6 +119,7 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 	ddr3_opt = ep->kit_opt[0];
 
 	switch (ddr3_opt) {
+	case 1:
 	case 4:
 		*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
 		break;
@@ -100,7 +127,8 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 		*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
 		break;
 	default:
-#if defined(CONFIG_PCM_057_256M16_x4_DDR)
+#if (defined(CONFIG_PCM_057_256M16_x4_DDR) || \
+	defined(CONFIG_PCM_057_256M16_x2_DDR))
 		*regs = &am572x_phycore_rdk_emif_532mhz_256M16_regs;
 #elif defined(CONFIG_PCM_057_512M16_x4_DDR)
 		*regs = &am572x_phycore_rdk_emif_532mhz_512M16_regs;
@@ -162,6 +190,33 @@ struct vcores_data am572x_phycore_rdk_volts = {
 	.iva.abb_tx_done_mask	= OMAP_ABB_IVA_TXDONE_MASK,
 };
 
+int get_voltrail_opp(int rail_offset)
+{
+	int opp;
+
+	switch (rail_offset) {
+	case VOLT_MPU:
+		opp = DRA7_MPU_OPP;
+		break;
+	case VOLT_CORE:
+		opp = DRA7_CORE_OPP;
+		break;
+	case VOLT_GPU:
+		opp = DRA7_GPU_OPP;
+		break;
+	case VOLT_EVE:
+		opp = DRA7_DSPEVE_OPP;
+		break;
+	case VOLT_IVA:
+		opp = DRA7_IVA_OPP;
+		break;
+	default:
+		opp = OPP_NOM;
+	}
+
+	return opp;
+}
+
 void hw_data_init(void)
 {
 	*prcm = &dra7xx_prcm;
@@ -197,6 +252,9 @@ void dram_init_banksize(void)
 	ddr3_opt = ep->kit_opt[0];
 
 	switch (ddr3_opt) {
+	case 1:
+		ram_size = 0x40000000;
+		break;
 	case 4:
 		ram_size = 0x80000000;
 		break;
@@ -204,7 +262,9 @@ void dram_init_banksize(void)
 		ram_size = 0x100000000;
 		break;
 	default:
-#if defined(CONFIG_PCM_057_256M16_x4_DDR)
+#if defined(CONFIG_PCM_057_256M16_x2_DDR)
+		ram_size = 0x40000000;
+#elif defined(CONFIG_PCM_057_256M16_x4_DDR)
 		ram_size = 0x80000000;
 #elif defined(CONFIG_PCM_057_512M16_x4_DDR)
 		ram_size = 0x100000000;
@@ -229,6 +289,30 @@ int board_late_init(void)
 
 	if (get_device_type() == HS_DEVICE)
 		setenv("boot_fit", "1");
+
+#ifndef CONFIG_SPL_BUILD
+	/* turn on front LED */
+	i2c_set_bus_num(2);
+	if(!i2c_probe(0x60)) {
+		char c;
+
+		/* Disable LED all-call address and set normal mode */
+		c = 0;
+		i2c_write(0x60, 0x0, 1, (uint8_t *)&c, 1);
+		/* PCA963X_OPEN_DRAIN */
+		c = 1;
+		i2c_write(0x60, 0x1, 1, (uint8_t *)&c, 1);
+
+		/* blue pwm */
+		c = 20; /* pwm brightness */
+		i2c_write(0x60, 0x2+0, 1, (uint8_t *)&c, 1);
+
+		c = 0x12; /* binary 01 00 10 (led2:green full, led1:red off, led0:blue pwm) */
+		i2c_write(0x60, 0x8, 1, (uint8_t *)&c, 1);
+	} else {
+		printf("No front LED found\n");
+	}
+#endif
 
 	return 0;
 }
@@ -282,6 +366,38 @@ void recalibrate_iodelay(void)
 err:
 	/* Closeup.. remove isolation */
 	__recalibrate_iodelay_end(ret);
+}
+#endif
+
+/*
+ * Routine: mmc_get_env_part
+ * Description:  setup environment storage device from bootup device
+ */
+#ifdef CONFIG_SYS_MMC_ENV_DEV
+int mmc_get_env_dev(void)
+{
+	u32 boot_params = *((u32 *)OMAP_SRAM_SCRATCH_BOOT_PARAMS);
+	struct omap_boot_parameters *omap_boot_params;
+
+	if ((boot_params < NON_SECURE_SRAM_START) ||
+			(boot_params > NON_SECURE_SRAM_END))
+		return CONFIG_SYS_MMC_ENV_DEV;
+
+	omap_boot_params = (struct omap_boot_parameters *)boot_params;
+
+	int bootdevice = omap_boot_params->boot_device;
+
+	// CAUTION gd->arch.omap_boot_device is not set.....
+	int envdev = CONFIG_SYS_MMC_ENV_DEV;
+
+	/*
+	 * If booted from eMMC boot partition then force eMMC
+	 * FIRST boot partition to be env storage
+	 */
+	if (bootdevice == BOOT_DEVICE_MMC2_2)
+		envdev = 1;
+
+	return envdev;
 }
 #endif
 
@@ -537,9 +653,30 @@ static inline void vtt_regulator_enable(void)
 	gpio_direction_output(GPIO_DDR_VTT_EN, 1);
 }
 
+/* fan enable */
+static inline void fan_enable(void)
+{
+	if (omap_hw_init_context() == OMAP_INIT_CONTEXT_UBOOT_AFTER_SPL)
+		return;
+
+	gpio_request(GPIO_FAN_N_EN, "fan_n_en");
+	gpio_direction_output(GPIO_FAN_N_EN, 0);
+}
+
+static inline void _5v_tof_enable(void)
+{
+	if (omap_hw_init_context() == OMAP_INIT_CONTEXT_UBOOT_AFTER_SPL)
+		return;
+
+	gpio_request(GPIO_5V_TOF, "5v_tof");
+	gpio_direction_output(GPIO_5V_TOF, 1);
+}
+
 int board_early_init_f(void)
 {
 	vtt_regulator_enable();
+	fan_enable();
+	_5v_tof_enable();
 	return 0;
 }
 #endif
@@ -559,6 +696,8 @@ int board_fit_config_name_match(const char *name)
 	else if (!strcmp(name, "am572x-phycore-rdk-50201111i"))
 		return 0;
 	else if (!strcmp(name, "am572x-phycore-rdk-50500111i"))
+		return 0;
+	else if (!strcmp(name, "am572x-ksp-5015"))
 		return 0;
 	else
 		return -1;

@@ -43,13 +43,12 @@ int __maybe_unused phytec_i2c_eeprom_get(int i2c_bus, int dev_addr)
 
 	gpi2c_init();
 	rc = phytec_i2c_eeprom_init(i2c_bus, dev_addr);
-	if (rc)
-		return rc;
-
 	/* Set header to PHYTEC_DEAD_EEPROM_MAGIC to check for read failure */
 	ep->header = PHYTEC_DEAD_EEPROM_MAGIC;
 	/* Ensure fall-through to defaults on EEPROM read failure */
 	memset(&ep->kit_opt, 0xFF, 11);
+	if (rc)
+		return rc;
 
 	addr_len = 2;
 #ifndef CONFIG_SPL_BUILD
