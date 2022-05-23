@@ -119,6 +119,7 @@ dtb-$(CONFIG_TARGET_AM572X_PHYCORE_RDK) += am572x-phycore-rdk.dtb \
 	am572x-phycore-rdk-50201111i.dtb \
 	am572x-phycore-rdk-50500111i.dtb \
 	am572x-ksp-5015.dtb
+dtb-$(CONFIG_TARGET_DENSITY_LUNA_S5B) += am57xx-density-luna-s5b.dtb
 
 dtb-$(CONFIG_TARGET_STV0991) += stv0991.dtb
 

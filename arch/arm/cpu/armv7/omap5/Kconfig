@@ -21,6 +21,9 @@ config TARGET_AM57XX_EVM
 config TARGET_AM572X_PHYCORE_RDK
 	bool "PHYTEC phyCORE-AM572x RDK"
 
+config TARGET_DENSITY_LUNA_S5B
+	bool "Density Luna S5b"
+
 endchoice
 
 config SYS_SOC
@@ -57,6 +60,7 @@ source "board/ti/omap5_uevm/Kconfig"
 source "board/ti/dra7xx/Kconfig"
 source "board/ti/am57xx/Kconfig"
 source "board/phytec/am572x_phycore_rdk/Kconfig"
+source "board/density/luna_s5b/Kconfig"
 
 if TARGET_DRA7XX_EVM || TARGET_AM57XX_EVM \
 	|| TARGET_AM572X_PHYCORE_RDK
