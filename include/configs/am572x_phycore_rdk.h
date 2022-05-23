@@ -21,8 +21,8 @@
 
 #define CONFIG_VERY_BIG_RAM
 #define CONFIG_PHYS_64BIT
-#define CONFIG_MAX_MEM_MAPPED		0x20000000
-#define CONFIG_NR_DRAM_BANKS		1
+#define CONFIG_MAX_MEM_MAPPED		0x80000000
+#define CONFIG_NR_DRAM_BANKS		2
 
 /* Store environment on SD card by default
  *
@@ -110,7 +110,7 @@
 	DEFAULT_MMC_TI_ARGS \
 	DEFAULT_FIT_TI_ARGS \
 	"console=" CONSOLEDEV ",115200n8\0" \
-	"fdtfile=am572x-phycore-rdk-factory.dtb\0" \
+	"fdtfile=am572x-phycore-rdk.dtb\0" \
 	"bootpart=0:2\0" \
 	"bootdir=/boot\0" \
 	"bootfile=zImage\0" \
@@ -161,7 +161,7 @@
 #define CONFIG_CMD_MEMTEST
 #define CONFIG_SYS_MEMTEST_START	CONFIG_SYS_SDRAM_BASE
 #define CONFIG_SYS_MEMTEST_END		(CONFIG_SYS_SDRAM_BASE + \
-						CONFIG_MAX_MEM_MAPPED)
+						0x10000000)
 
 #define CONFIG_SUPPORT_EMMC_BOOT
 
