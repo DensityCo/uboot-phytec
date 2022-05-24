@@ -257,7 +257,7 @@ int board_late_init(void)
 	}
 #endif
 
-	juno_board_id board_id = get_board_id_raw();
+	juno_board_id board_id = get_board_id();
 	const char *board_name = get_board_name(board_id);
 	
 	if (setenv("board_id", get_board_name(board_id)))

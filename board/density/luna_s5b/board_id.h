@@ -48,7 +48,7 @@ typedef enum JUNO_BOARD_ID {
 #define BOARD_ID_MASK  0b00111100000000000000000000000000
 #define BOARD_ID_SHIFT 26
 
-/* static juno_board_id board_id = INVALID; */
+static juno_board_id board_id = INVALID;
 
 static inline const char* get_board_name(juno_board_id board_id)
 {
@@ -82,8 +82,8 @@ static inline const char* get_board_name(juno_board_id board_id)
 
 static inline juno_board_id get_board_id_raw(void)
 {
-    juno_board_id board_id = INVALID;
-    /* if (board_id != INVALID) return board_id; */
+    /* juno_board_id board_id = INVALID; */
+    if (board_id != INVALID) return board_id;
 
     unsigned int reg = 0;
 
@@ -121,28 +121,28 @@ static inline juno_board_id get_board_id_raw(void)
 
 static inline juno_board_id get_board_id(void)
 {
-    juno_board_id board_id = INVALID;
-    /* if (board_id != INVALID) return board_id; */
+    /* juno_board_id board_id = INVALID; */
+    if (board_id != INVALID) return board_id;
 
     if (gpio_request(BOARD_ID_PIN_3, "board_id_pin_3") != 0) return INVALID;
-    printf("%s: gpio 3 requested\n", __func__);
+    debug("%s: gpio 3 requested\n", __func__);
     if (gpio_request(BOARD_ID_PIN_2, "board_id_pin_2") != 0) return INVALID;
-    printf("%s: gpio 2 requested\n", __func__);
+    debug("%s: gpio 2 requested\n", __func__);
     if (gpio_request(BOARD_ID_PIN_1, "board_id_pin_1") != 0) return INVALID;
-    printf("%s: gpio 1 requested\n", __func__);
+    debug("%s: gpio 1 requested\n", __func__);
     if (gpio_request(BOARD_ID_PIN_0, "board_id_pin_0") != 0) return INVALID;
 
-    printf("%s: gpios requested\n", __func__);
+    debug("%s: gpios requested\n", __func__);
 
     if (gpio_direction_input(BOARD_ID_PIN_3) != 0) return INVALID;
-    printf("%s: gpio 3 direction set\n", __func__);
+    debug("%s: gpio 3 direction set\n", __func__);
     if (gpio_direction_input(BOARD_ID_PIN_2) != 0) return INVALID;
-    printf("%s: gpio 2 direction set\n", __func__);
+    debug("%s: gpio 2 direction set\n", __func__);
     if (gpio_direction_input(BOARD_ID_PIN_1) != 0) return INVALID;
-    printf("%s: gpio 1 direction set\n", __func__);
+    debug("%s: gpio 1 direction set\n", __func__);
     if (gpio_direction_input(BOARD_ID_PIN_0) != 0) return INVALID;
 
-    printf("%s: gpios set to input\n", __func__);
+    debug("%s: gpios set to input\n", __func__);
 
     board_id = (juno_board_id)
         gpio_get_value(BOARD_ID_PIN_3) << 3 |
