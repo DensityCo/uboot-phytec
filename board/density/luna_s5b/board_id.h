@@ -19,7 +19,7 @@ typedef enum JUNO_BOARD_ID {
     A1_A2_SAMSUNG = 0b1010,
     A3            = 0b1011,
     A4            = 0b1100,
-    A5            = 0b1111,
+    X1_275_1514   = 0b1111,
     INVALID       = 0b0000
 } juno_board_id;
 
@@ -50,10 +50,39 @@ typedef enum JUNO_BOARD_ID {
 
 /* static juno_board_id board_id = INVALID; */
 
+static inline const char* get_board_name(juno_board_id board_id)
+{
+    switch (board_id) {
+        case REV_7008_0:
+            return "REV_7008_0";
+        case X1_275_1400:
+            return "X1_275_1400";
+        case A1_275_1400:
+            return "A1_275_1400";
+        case X1_MICRON:
+            return "X1_MICRON";
+        case X1_SAMSUNG:
+            return "X1_SAMSUNG";
+        case A1_A2_SAMSUNG:
+            return "A1_A2_SAMSUNG";
+        case A3:
+            return "A3";
+        case A4:
+            return "A4";
+        case X1_275_1514:
+            return "X1_275_1514";
+        case INVALID:
+            return "INVALID";
+        default:
+            return "INVALID";
+    }
+
+    return "INVALID";
+}
+
 static inline juno_board_id get_board_id_raw(void)
 {
     juno_board_id board_id = INVALID;
-    
     /* if (board_id != INVALID) return board_id; */
 
     unsigned int reg = 0;

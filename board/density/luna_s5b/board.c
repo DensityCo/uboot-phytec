@@ -57,8 +57,7 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 	juno_board_id board_id = get_board_id_raw();
 
 	switch(board_id) {
-		case A4:
-		case A5: {
+		case X1_275_1514: {
 			*dmm_lisa_regs = &AM571x_DDR3L_532MHz_DENSITY_LUNA_S5b_512MB_dmm_regs;
 			break;
 		}
@@ -73,8 +72,7 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 	juno_board_id board_id = get_board_id_raw();
 
 	switch(board_id) {
-		case A4:
-		case A5: {
+		case X1_275_1514: {
 			*regs = &AM571x_DDR3L_532MHz_DENSITY_LUNA_S5b_512MB_emif_regs;
 			break;
 		}
@@ -89,8 +87,7 @@ void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 	juno_board_id board_id = get_board_id_raw();
 
 	switch(board_id) {
-		case A4:
-		case A5: {
+		case X1_275_1514: {
 			*regs = AM571x_DDR3L_532MHz_DENSITY_LUNA_S5b_512MB_emif1_ext_phy_regs;
 			*size = ARRAY_SIZE(AM571x_DDR3L_532MHz_DENSITY_LUNA_S5b_512MB_emif1_ext_phy_regs);
 			break;
@@ -190,7 +187,10 @@ int board_init(void)
 	gpmc_init();
 	gd->bd->bi_boot_params = (CONFIG_SYS_SDRAM_BASE + 0x100);
 
-	printf("BOARD ID: %d\n", (int)get_board_id_raw());
+	juno_board_id board_id = get_board_id_raw();
+	const char *board_name = get_board_name(board_id);
+
+	printf("BOARD ID: %s\n", board_name);
 
 	return 0;
 }
@@ -201,8 +201,7 @@ void dram_init_banksize(void)
 	juno_board_id board_id = get_board_id_raw();
 
 	switch(board_id) {
-		case A4:
-		case A5: {
+		case X1_275_1514: {
 			ram_size = 0x20000000;
 			break;
 		}
@@ -257,6 +256,12 @@ int board_late_init(void)
 		printf("No front LED found\n");
 	}
 #endif
+
+	juno_board_id board_id = get_board_id_raw();
+	const char *board_name = get_board_name(board_id);
+	
+	if (setenv("board_id", get_board_name(board_id)))
+		printf("error setting board_id!\n");
 
 	return 0;
 }
