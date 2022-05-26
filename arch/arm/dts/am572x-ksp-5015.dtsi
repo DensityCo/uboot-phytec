@@ -7,7 +7,7 @@
  */
 / {
 	model = "Density AM572x KSP-5015";
-	compatible = "phytec,am572x-ksp-5015", "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+	compatible = "phytec,am572x-ksp-5015", "phytec,am572x-phycore-som", "ti,dra72", "ti,dra74", "ti,dra7";
 
 	chosen {
 		stdout-path = &uart3;

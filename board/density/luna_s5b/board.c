@@ -1,8 +1,8 @@
 /*
- * Copyright (C) 2015 PHYTEC America, LLC
- * Author: Russell Robinson <rrobinson@phytec.com>
+ * Copyright (C) 2022 Density, Inc.
+ * Author: Erik Bolton <erik.bolton@density.io>
  *
- * Based on board/ti/beagle_x15/board.c
+ * Based on board/phytec/am572x_phycore_rdk/board.c
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
@@ -48,16 +48,19 @@ DECLARE_GLOBAL_DATA_PTR;
 #define GPIO_FAN_N_EN 34 /* gpmc_a12.gpio2_2 */
 #define GPIO_5V_TOF 101 /* vin2a_d4.gpio4_5 */
 
+#define SINGLE_CORE_BOARD_ID X1_275_1514
+/* #define SINGLE_CORE_BOARD_ID A4 */
+
 const struct omap_sysinfo sysinfo = {
 	"Board: Density Luna S5b\n"
 };
 
 void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 {
-	juno_board_id board_id = get_board_id_raw();
+	luna_board_id board_id = get_board_id_raw();
 
 	switch(board_id) {
-		case X1_275_1514: {
+		case SINGLE_CORE_BOARD_ID: {
 			*dmm_lisa_regs = &AM571x_DDR3L_532MHz_DENSITY_LUNA_S5b_512MB_dmm_regs;
 			break;
 		}
@@ -69,10 +72,10 @@ void emif_get_dmm_regs(const struct dmm_lisa_map_regs **dmm_lisa_regs)
 
 void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 {
-	juno_board_id board_id = get_board_id_raw();
+	luna_board_id board_id = get_board_id_raw();
 
 	switch(board_id) {
-		case X1_275_1514: {
+		case SINGLE_CORE_BOARD_ID: {
 			*regs = &AM571x_DDR3L_532MHz_DENSITY_LUNA_S5b_512MB_emif_regs;
 			break;
 		}
@@ -84,10 +87,10 @@ void emif_get_reg_dump(u32 emif_nr, const struct emif_regs **regs)
 
 void emif_get_ext_phy_ctrl_const_regs(u32 emif_nr, const u32 **regs, u32 *size)
 {
-	juno_board_id board_id = get_board_id_raw();
+	luna_board_id board_id = get_board_id_raw();
 
 	switch(board_id) {
-		case X1_275_1514: {
+		case SINGLE_CORE_BOARD_ID: {
 			*regs = AM571x_DDR3L_532MHz_DENSITY_LUNA_S5b_512MB_emif1_ext_phy_regs;
 			*size = ARRAY_SIZE(AM571x_DDR3L_532MHz_DENSITY_LUNA_S5b_512MB_emif1_ext_phy_regs);
 			break;
@@ -187,10 +190,8 @@ int board_init(void)
 	gpmc_init();
 	gd->bd->bi_boot_params = (CONFIG_SYS_SDRAM_BASE + 0x100);
 
-	juno_board_id board_id = get_board_id_raw();
-	const char *board_name = get_board_name(board_id);
-
-	printf("BOARD ID: %s\n", board_name);
+	luna_board_id board_id = get_board_id_raw();
+	printf("Board ID: %s\n", get_board_name(board_id));
 
 	return 0;
 }
@@ -198,10 +199,10 @@ int board_init(void)
 void dram_init_banksize(void)
 {
 	u64 ram_size;
-	juno_board_id board_id = get_board_id_raw();
+	luna_board_id board_id = get_board_id_raw();
 
 	switch(board_id) {
-		case X1_275_1514: {
+		case SINGLE_CORE_BOARD_ID: {
 			ram_size = 0x20000000;
 			break;
 		}
@@ -257,8 +258,7 @@ int board_late_init(void)
 	}
 #endif
 
-	juno_board_id board_id = get_board_id();
-	const char *board_name = get_board_name(board_id);
+	luna_board_id board_id = get_board_id();
 	
 	if (setenv("board_id", get_board_name(board_id)))
 		printf("error setting board_id!\n");
@@ -274,9 +274,7 @@ void set_muxconf_regs(void)
 
 #ifdef CONFIG_SPL_BUILD
 void do_board_detect(void)
-{
-	printf("board id: %d\n", (int)get_board_id());
-}
+{ }
 #endif
 
 #ifdef CONFIG_IODELAY_RECALIBRATION
@@ -365,6 +363,9 @@ int platform_fixup_disable_uhs_mode(void)
 #if defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_OS_BOOT)
 int spl_start_uboot(void)
 {
+	luna_board_id board_id = get_board_id_raw();
+	printf("Board ID: %s\n", get_board_name(board_id));
+
 	/* break into full u-boot on 'c' */
 	if (serial_tstc() && serial_getc() == 'c')
 		return 1;

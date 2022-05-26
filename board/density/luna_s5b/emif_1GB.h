@@ -2,8 +2,6 @@
  * Copyright (C) 2015 PHYTEC America, LLC
  * Author: Russell Robinson <rrobinson@phytec.com>
  *
- * Based on board/ti/beagle_x15/board.c
- *
  * SPDX-License-Identifier:	GPL-2.0+
  */
 

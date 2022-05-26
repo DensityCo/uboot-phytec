@@ -5,15 +5,25 @@
  */
 /dts-v1/;
 
-#include "am57xx-density-luna-s5b.dtsi" /* Superset - enables all board features */
+#include "dra72x.dtsi"
+
+#include "am57xx-density-luna-s5b.dtsi"
 #include "am572x-ksp-5015.dtsi"
 
 / {
 	model = "Density Luna S5b, Industrial Temp";
-	compatible = "phytec,am572x-pcm-057-factory", "phytec,am572x-phycore-som", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+	compatible = "phytec,am572x-pcm-057-factory", "phytec,am572x-ksp-5015", "ti,dra7";
 
 	memory {
 		device_type = "memory";
 		reg = <0x0 0x80000000 0x0 0x20000000>; /* 512MiB */
 	};
+};
+
+&qspi {
+	status = "disabled";
+};
+
+&qspi_nor {
+	status = "disabled";
 };

@@ -5,17 +5,17 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-#include "dra72x.dtsi"
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/interrupt-controller/irq.h>
 
 / {
-	model = "Density Luna S5b";
-	compatible = "density,luna-s5b", "ti,am5728", "ti,dra742", "ti,dra74", "ti,dra7";
+	model = "Phytec phyCORE-AM572x";
+	compatible = "phytec,am572x-phycore-som", "ti,dra72", "ti,dra74", "ti,dra7";
 
 	aliases {
 		rtc2 = &rtc;
 		rtc1 = &tps659038_rtc;
+		rtc0 = &i2c_rtc;
 	};
 
 	vdd_3v3: fixedregulator-vdd_3v3 {
@@ -38,9 +38,44 @@
 		enable-active-high;
 		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
 	};
+
+	phytec_leds: leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default", "sleep";
+		pinctrl-0 = <&leds_som_pins_default>;
+		pinctrl-1 = <&leds_som_pins_sleep>;
+
+		led@0 {
+			label = "am57xx-phycore-som:red";
+			gpios = <&gpio4 9 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "heartbeat";
+			default-state = "off";
+		};
+
+		led@1 {
+			label = "am57xx-phycore-som:green";
+			gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "cpu0";
+			default-state = "off";
+		};
+	};
 };
 
 &dra7_pmx_core {
+	leds_som_pins_default: leds_som_pins_default {
+		pinctrl-single,pins = <
+			0x188 (PIN_OUTPUT | MUX_MODE14)	/* vin2a_d8.gpio4_9 */
+			0x18c (PIN_OUTPUT | MUX_MODE14)	/* vin2a_d9.gpio4_10 */
+		>;
+	};
+
+	leds_som_pins_sleep: leds_som_pins_sleep {
+		pinctrl-single,pins = <
+			0x188 (PIN_INPUT_PULLDOWN | MUX_MODE15)
+			0x18c (PIN_INPUT_PULLDOWN | MUX_MODE15)
+		>;
+	};
+
 	i2c1_pins_default: i2c1_pins_default {
 		pinctrl-single,pins = <
 			0x400 (PIN_INPUT_PULLUP | MUX_MODE0)	/* i2c1_sda.sda */
@@ -150,6 +185,19 @@
 			0x418 (PIN_INPUT_PULLUP | MUX_MODE14)	/* wakeup0.gpio1_0 */
 		>;
 	};
+
+	qspi1_pins_default: qspi1_pins_default {
+		pinctrl-single,pins = <
+			0x74 (PIN_INPUT | MANUAL_MODE | MUX_MODE1)  /* gpmc_a13.qspi1_rtclk */
+			0x78 (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1)  /* gpmc_a14.qspi1_d3 */
+			0x7c (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1)  /* gpmc_a15.qspi1_d2 */
+			0x80 (PIN_INPUT | MANUAL_MODE | MUX_MODE1)  /* gpmc_a16.qspi1_d0 */
+			0x84 (PIN_INPUT | MANUAL_MODE | MUX_MODE1)  /* gpmc_a17.qspi1_d1 */
+			0x88 (PIN_INPUT | MANUAL_MODE | MUX_MODE1) /* gpmc_a18.qspi1_sclk */
+			0x4c (PIN_OUTPUT | MANUAL_MODE | MUX_MODE1) /* gpmc_a3.qspi1_cs2 */
+		>;
+	};
+
 };
 
 &dra7_iodelay_core {
@@ -186,6 +234,20 @@
 			0x368 (A_DELAY(11) | G_DELAY(0))	/* CFG_GPMC_CS1_OUT */
 		>;
 	};
+
+	qspi1_iodelay_conf: qspi1_iodelay_conf {
+		pinctrl-single,pins = <
+			0x144 (A_DELAY(0) | G_DELAY(0))         /* CFG_GPMC_A13_IN */
+			0x150 (A_DELAY(2575) | G_DELAY(966))    /* CFG_GPMC_A14_IN */
+			0x15c (A_DELAY(2503) | G_DELAY(889))    /* CFG_GPMC_A15_IN */
+			0x168 (A_DELAY(2528) | G_DELAY(1007))   /* CFG_GPMC_A16_IN */
+			0x170 (A_DELAY(0) | G_DELAY(0))         /* CFG_GPMC_A16_OUT */
+			0x174 (A_DELAY(2533) | G_DELAY(980))    /* CFG_GPMC_A17_IN */
+			0x188 (A_DELAY(590) | G_DELAY(0))       /* CFG_GPMC_A18_OUT */
+			0x218 (A_DELAY(114) | G_DELAY(0))       /* CFG_GPMC_A3_OUT */
+		>;
+	};
+
 };
 
 &i2c1 {
@@ -350,11 +412,17 @@
 		};
 	};
 
-	i2c_eeprom: eeprom@57 {
+	i2c_eeprom: eeprom@50 {
 		status = "okay";
 		compatible = "at,24c32";
-		reg = <0x57>;
+		reg = <0x50>;
 		pagesize = <32>;
+	};
+
+	i2c_rtc: rtc@68 {
+		status = "okay";
+		compatible = "rv4162";
+		reg = <0x68>;
 	};
 };
 
@@ -409,6 +477,61 @@
 	cap-mmc-dual-data-rate;
 	max-frequency = <96000000>;
 	/delete-property/ mmc-hs200-1_8v;
+};
+
+&qspi {
+	status = "okay";
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&qspi1_pins_default &qspi1_iodelay_conf>;
+
+	spi-max-frequency = <76800000>;
+
+	qspi_nor: m25p80@2 {
+		status = "okay";
+		compatible = "n25q128a13", "jedec,spi-flash";
+
+		reg = <2>;
+		spi-max-frequency = <76800000>;
+		spi-tx-bus-width = <1>;
+		spi-rx-bus-width = <2>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* MTD partition table.
+		 * The ROM checks the first four physical blocks
+		 * for a valid file to boot and the flash here is
+		 * 64KiB block size.
+		 */
+		partition@0 {
+			label = "QSPI.SPL";
+			reg = <0x00000000 0x000040000>;
+		};
+		partition@1 {
+			label = "QSPI.u-boot";
+			reg = <0x00040000 0x00100000>;
+		};
+		partition@2 {
+			label = "QSPI.u-boot-spl-os";
+			reg = <0x00140000 0x00080000>;
+		};
+		partition@3 {
+			label = "QSPI.u-boot-env";
+			reg = <0x001c0000 0x00010000>;
+		};
+		partition@4 {
+			label = "QSPI.u-boot-env.backup1";
+			reg = <0x001d0000 0x0010000>;
+		};
+		partition@5 {
+			label = "QSPI.kernel";
+			reg = <0x001e0000 0x0800000>;
+		};
+		partition@6 {
+			label = "QSPI.file-system";
+			reg = <0x009e0000 0x0>;
+		};
+	};
 };
 
 &rtc {

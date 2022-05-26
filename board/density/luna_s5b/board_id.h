@@ -9,8 +9,9 @@
 
 #include <asm/arch/mux_dra7xx.h>
 #include <asm/arch-omap5/clock.h>
+#include <common.h>
 
-typedef enum JUNO_BOARD_ID {
+typedef enum LUNA_BOARD_ID {
     REV_7008_0    = 0b0001,
     X1_275_1400   = 0b0010,
     A1_275_1400   = 0b0011,
@@ -21,7 +22,7 @@ typedef enum JUNO_BOARD_ID {
     A4            = 0b1100,
     X1_275_1514   = 0b1111,
     INVALID       = 0b0000
-} juno_board_id;
+} luna_board_id;
 
 #define BOARD_ID_PIN_3	GPIO_TO_PIN(1, 29)
 #define BOARD_ID_PIN_2  GPIO_TO_PIN(1, 28) 
@@ -48,9 +49,7 @@ typedef enum JUNO_BOARD_ID {
 #define BOARD_ID_MASK  0b00111100000000000000000000000000
 #define BOARD_ID_SHIFT 26
 
-static juno_board_id board_id = INVALID;
-
-static inline const char* get_board_name(juno_board_id board_id)
+inline const char* get_board_name(luna_board_id board_id)
 {
     switch (board_id) {
         case REV_7008_0:
@@ -80,10 +79,9 @@ static inline const char* get_board_name(juno_board_id board_id)
     return "INVALID";
 }
 
-static inline juno_board_id get_board_id_raw(void)
+inline luna_board_id get_board_id_raw(void)
 {
-    /* juno_board_id board_id = INVALID; */
-    if (board_id != INVALID) return board_id;
+    luna_board_id board_id = INVALID;
 
     unsigned int reg = 0;
 
@@ -114,15 +112,14 @@ static inline juno_board_id get_board_id_raw(void)
 
     /* GPIO1 - read pins */
     reg = (readl(GPIO1_CONFIG_BASE + GPIO1_DATAIN) & BOARD_ID_MASK) >> BOARD_ID_SHIFT;
-    board_id = (reg > 0) ? (juno_board_id)reg : INVALID;
+    board_id = (reg > 0) ? (luna_board_id)reg : INVALID;
 
     return board_id;
 }
 
-static inline juno_board_id get_board_id(void)
+static inline luna_board_id get_board_id(void)
 {
-    /* juno_board_id board_id = INVALID; */
-    if (board_id != INVALID) return board_id;
+    luna_board_id board_id = INVALID;
 
     if (gpio_request(BOARD_ID_PIN_3, "board_id_pin_3") != 0) return INVALID;
     debug("%s: gpio 3 requested\n", __func__);
@@ -144,7 +141,7 @@ static inline juno_board_id get_board_id(void)
 
     debug("%s: gpios set to input\n", __func__);
 
-    board_id = (juno_board_id)
+    board_id = (luna_board_id)
         gpio_get_value(BOARD_ID_PIN_3) << 3 |
         gpio_get_value(BOARD_ID_PIN_2) << 2 |
         gpio_get_value(BOARD_ID_PIN_1) << 1 |
