@@ -5,7 +5,7 @@
  */
 /dts-v1/;
 
-#include "dra72x.dtsi"
+#include "dra74x.dtsi"
 
 #include "am57xx-density-luna-s5b.dtsi"
 #include "am572x-ksp-5015.dtsi"
