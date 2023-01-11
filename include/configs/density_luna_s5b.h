@@ -1,17 +1,17 @@
 /*
- * (C) Copyright 2015 PHYTEC America, LLC
- * Author: Russell Robinson <rrobinson@phytec.com>
+ * Copyright (C) 2022 Density, Inc.
+ * Author: Erik Bolton <erik.bolton@density.io>
  *
- * Configuration settings for the PHYTEC phyCORE-AM572x RDK.
+ * Configuration settings for the Density Luna S5b.
  * See ti_omap5_common.h for omap5 common settings.
  *
- * Based on include/configs/beagle_x15.h
+ * Based on include/configs/am572x_phycore_rdk.h
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
-#ifndef __CONFIG_AM572X_PHYCORE_RDKH
-#define __CONFIG_AM572X_PHYCORE_RDKH
+#ifndef __CONFIG_DENSITY_LUNA_S5B_H
+#define __CONFIG_DENSITY_LUNA_S5B_H
 
 #define CONFIG_DRA7XX
 
@@ -197,8 +197,10 @@
 						CONFIG_SYS_SCSI_MAX_LUN)
 
 /* EEPROM */
+#if 0
 #define CONFIG_EEPROM_BUS_ADDRESS	0
 #define CONFIG_EEPROM_CHIP_ADDRESS	0x50
+#endif
 
 /* MISC */
 #define CONFIG_RESET_TO_RETRY
@@ -213,4 +215,4 @@
 #define CONFIG_SPL_WATCHDOG_SUPPORT
 #define CONFIG_HW_WATCHDOG_TIMEOUT_MS 40000
 
-#endif /* __CONFIG_AM572X_PHYCORE_RDK_H */
+#endif /* __CONFIG_DENSITY_LUNA_S5B_H */

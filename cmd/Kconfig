@@ -416,6 +416,11 @@ config CMD_REMOTEPROC
 	help
 	  Support for Remote Processor control
 
+config CMD_WDT
+	bool "wdt"
+	help
+		Command to test watchdog timers
+
 config CMD_GPIO
 	bool "gpio"
 	help
