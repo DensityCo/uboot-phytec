@@ -298,8 +298,6 @@
 					regulator-name = "smps45";
 					regulator-min-microvolt = <850000>;
 					regulator-max-microvolt = <1150000>;
-					regulator-always-off;
-					regulator-boot-off;
 				};
 
 				smps6_reg: smps6 {
